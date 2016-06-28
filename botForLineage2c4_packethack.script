@@ -1,0 +1,4239 @@
+Const ProgramName =
+'Locomotiv ArtBko';
+{############################################################################# для пакетхака
+Инструкция:
+1. Внимательно НАСТРАИВАЕМ параметры в секции настройки
+   (90% ошибок и последующих глюков в скрипте вылезает именно отсюда!!!), жмем кнопку "Сохранить"
+2. Запускаем ПакетХак, запускаем скрипт, запускаем игрового клиента.
+   либо запускаем скрипт после захода в игру, и жмем кнопку на форме "Init"
+3. Добираемся до места кача
+4. Выбираем в таргет моба на которого хотим охотится и отправляем в общий чат->  1
+5. Выбираем следующего моба отправляем в общий чат цифру 2,  и т.д. можно выбрать до 10 разных тварей.
+6. Либо просто в секции настройки задаем ID мобов
+7. Становимся в центр кача и отправляем в общий чат-> pos , если все правильно то в чате будет выдано сообщение, что координаты заданы.
+8. Бежим к краю радиуса кача и отправляем в общий чат-> dist, в чате вылезет сообщение от системы, что радиус задан.
+9. Если радиус кача задан в секции настройки, то п.7 и 8  можно пропустить!!! становимся примерно в центр кача и отправляем в общий чат-> start ,
+   если все сделано верно, то будет выдано соответствующее сообщение.
+10.Если бот поймал моба в таргет и побежал его атаковать, то можно свернуть окно игры
+   и смотреть на информационное окно скрипта.
+
+В процессе кача, в общий чат можно посылать следующие управляющие команды:
+смотри в коде - procedure UserCommands
+
+Также можно управлять ботом кнопками с формы.
+
+Перед запуском бота прописываем ники своих персонажей и выбираем их профы.
+Cпойлера берем первым. Будет спойлить.
+AssistantName1 ЕЕ или ШЕ.
+AssistantName2 ПП или БИШ. блок бафов корректировать по надобности.
+Можно бить рейд боссов. Для этого главным выбираем воина по которому будут наводиться маги. На босса нажимаем rb и дальше
+начиная с него нажимаем 1 и на охрану 2,3 и т.д. Маги стреляют одним заклинанием. Другие нажимать вручную или дописать в коде.
+Заклинания прописаны для определенного лвл. Можно в коде корректировать.
+Можно на ферме спойлить и кормить, но не прописаны кугуары.
+Баферы бафают по таймеру автоматически при включенном бафе.
+Можно запустить 3 ближнего боя + 2 помощника + 4 мага одновременно или комбинации
+#############################################################################}
+
+
+
+//################### Сеция настройки бота ############################################ также выставить класс основы на 160 линии
+const
+ b1 = '2F FE 00 00 00 00 00 00 00 00'; //спойл
+ b2 = '2F 2A 00 00 00 00 00 00 00 00'; //свип 
+ b3 = '45 00 00 00 00 00 00 00 00 00'; //Сидеть стоять
+ b4 = '2F E2 00 00 00 00 00 00 00 00'; //отдых для палладина и дестра Relax 
+ b5 = '2F 52 00 00 00 00 00 00 00 00';//баф себя Magesty
+ b6 = '2F 56 00 00 00 00 00 00 00 00';//баф себя Reflect Damage
+ b7 = '2F 70 00 00 00 00 00 00 00 00';//баф себя Reflect Arrow
+ a1 = '2F 99 04 00 00 00 00 00 00 00'; //атака ветром Wind Strike
+ a2 = '2F 03 00 00 00 00 00 00 00 00'; //атака Power Strike
+ a3 = '2F 64 00 00 00 00 00 00 00 00'; //атака Stun
+ a4 = '2F 1C 00 00 00 00 00 00 00 00';//агрессия Agression
+ a5 = '2F 5C 00 00 00 00 00 00 00 00';//атака Sheld Stun
+ a7 = '2F 9D 04 00 00 00 00 00 00 00';//атака Flame Strike маг огонь
+ a8 = '2F 94 04 00 00 00 00 00 00 00';//атака Aura Burn маг ближняя
+ //-------- cх
+ a6 = '2F D7 04 00 00 00 00 00 00 00';//атака Hurricane ветер
+ //   '2F 9A 04 00 00 00 00 00 00 00';//атака Twister ветер
+ a9 = '2F F2 04 00 00 00 00 00 00 00';//атака Shadow Spark темная
+ a14 = '2F F3 04 00 00 00 00 00 00 00';//атака Shadow Flare темная
+ //--------
+ a10 = '2F 24 00 00 00 00 00 00 00 00';//атака Wirl Wind копьем
+ a11 = '2F 04 01 00 00 00 00 00 00 00';//атака Hammer Crash топором
+ //-------- спс 
+ //   '2F 97 04 00 00 00 00 00 00 00';//атака Aqua Swirl вода
+ //   '2F F0 04 00 00 00 00 00 00 00';//атака Solar Spark сакред
+ a12 = '2F D3 04 00 00 00 00 00 00 00';//атака Hydro Blast вода мощнее
+ a13 = '2F F1 04 00 00 00 00 00 00 00';//атака Solar Flare сакред мощнее
+ //--------
+ h1 = '2F F3 03 00 00 00 00 00 00 00'; //лечение heal
+ h2 = '2F F5 03 00 00 00 00 00 00 00'; //заливка маны
+ h3 = '2F C1 04 00 00 00 00 00 00 00'; //лечение great heal
+ h4 = '2F C3 04 00 00 00 00 00 00 00'; //лечение great group heal
+ h5 = '2F FA 03 00 00 00 00 00 00 00'; //лечение паралича
+ // ----------------bd
+ bd1 = '2F 12 01 00 00 00 00 00 00 00'; // dance of fire
+ bd2 = '2F 10 01 00 00 00 00 00 00 00'; // dance of inspiration
+ bd3 = '2F 15 01 00 00 00 00 00 00 00'; // dance of light
+ bd4 = '2F 0F 01 00 00 00 00 00 00 00'; // dance of warrior
+ bd5 = '2F 11 01 00 00 00 00 00 00 00'; // dance of mystic
+ bd6 = '2F 13 01 00 00 00 00 00 00 00'; // dance of fury
+ 
+ WarriorSpoilCrafterBd = 1;      // 0 - warrior; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр ####### Выставить кто будет основой NickName 
+ //NickName = 'Pontiff';          		//0 Твой ник в игре Dark Avenger
+ //NickName  = 'Dragon';          		//0 Твой ник в игре Temple Knight
+ NickName = 'Frodo';         //1 Твой ник в игре Спойлер
+ //NickName = 'Dis';         				//1 Твой ник в игре Спойлер
+ //NickName = 'Zevs';          		//2 Твой ник в игре Крафтер
+ //NickName = 'Demon';          		//3 Твой ник в игре Blade Dancer
+ //NickName = 'Incubus';          		//4 Твой ник в игре Destroyer
+ 
+ WarriorSpoilCrafterBd2 = 2;      // 0 - DA; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
+ //AssistantName = '';					  // если помощников не будет
+ //AssistantName = '-Pastor';          		//0 Помощник Dark Avenger
+ //AssistantName = 'Schwarzenegger';        //1 Помощник  Спойлер
+ AssistantName = 'Zevs';          	//2 Помощник  Крафтер
+ //AssistantName = 'Demon';          		//3 Помощник Blade Dancer
+ //AssistantName  = 'Incubus';          	//4 Твой ник в игре Destroyer
+ //AssistantName  = '-Dragon';          		//3 Твой ник
+ 
+ AssistantName3  = '';//Terror';          		// Твой ник в игре Over
+ 
+ //AssistantName1 = '';  
+ //AssistantName2 = ''; 
+ AssistantName1 = 'Boa';     // Ник ше
+ AssistantName2 = 'Nico';     // Ник пп
+ //AssistantName1 = 'Pixie';    // Ник ee
+ //AssistantName2 = 'Pontiff';    // Ник биш
+ 
+ MageAssistantName = ''; //'Inquisitor';			// ДД-маги
+ MageAssistantName1 = ''; //Executioner';			// ДД-маги
+ MageAssistantName2 = ''; //'Gorgona';			// ДД-маги
+ MageAssistantName3 = ''; //'Sirena';
+ //MageAssistantName2 = 'Devil';
+ //MageAssistantName3 = 'Demonessa';
+ 
+ polyaxe = 1; // гном крафтер-основа пользуется 0 - топор, 1 - копье
+ polyaxeAssistant = 1; // гном крафтер-помощник пользуется 0 - топор, 1 - копье
+ 
+ Interlude = false;                 // C4 -false , C6 - true;
+ CharNumber = 0;                    // если больше одного перса на аккаунте, то задаем его порядковый номер, нумерация начинается с нуля.
+ Radius_Kacha = 1000;                 // Радиус кача, если 0 - то задавать вручную через клиента (изменять от 100 до 9999). Проверил на практике, что максимум не более 2000.
+ 
+ //############################################################################
+//---------------------------------------------------------------------------------------
+ HPLevelMain = 60;                // Уровень жизни в %, при котором лечат ассистенты во время боя или садится если нечем лечить
+ HPLevelRecharge = 70;			  // Уровень жизни в %, при котором лечит пп после убийства моба
+ MPLevelMain = 10;				  // Уровень маны в %, при котором садится 
+ MPLevelRecharge = 70;			  // Уровень маны в %, при котором заливает ше
+ //--------------------------------------------------------------------------------------
+ HPLevel = 60;					   // Уровень жизни для воина-помощника
+ HPLevel1 = 70;                    // Уровень жизни в %, при котором лечит себя или садится 1 ассистент во время отдыха основы
+ HPLevel2 = 70;                    // Уровень жизни в %, при котором лечит себя или садится 2 ассистент
+ HPLevel3 = 70;                    //
+ MPLevel = 50;					   // Уровень маны для воина-помощника	
+ MPLevel1 = 50;					   // Уровень мп в %, при котором садится 1 ассистент
+ MPLevel2 = 50;					   // Уровень мп в %, при котором садится 2 ассистент во время отдыха основы
+ MPLevel3 = 50;					   //
+ AssistHPlevelRecharge = 70;	   // при котором лечит пп после убийства моба
+ AssistMPlevelRecharge = 60;	   // при котором заливает ше после убийства моба
+//---------------------------------------------------------------------------------------
+ MageHPLevel = 50;                    // Уровень жизни в %, при котором садится 0 маг во время отдыха основы
+ MageHPLevel1 = 50;                    // Уровень жизни в %, при котором садится 1 маг
+ MageHPLevel2 = 50;                    // Уровень жизни в %, при котором садится 2 маг
+ MageHPLevel3 = 50;                    // Уровень жизни в %, при котором садится 3 маг
+ MageMPLevel = 50;                    // Уровень маны в %, при котором заливается 0 маг
+ MageMPLevel1 = 50;                    // Уровень маны в %, при котором заливается 1 маг
+ MageMPLevel2 = 50;                    // Уровень маны в %, при котором заливается 2 маг
+ MageMPLevel3 = 50;                    // Уровень маны в %, при котором заливается 3 маг
+//---------------------------------------------------------------------------------------
+//############# Секция расширенной настройки для опытных ботоводеров :) ###################################
+ TimerCombat_Interval = 1000;      // частота срабатывания таймера атаки в милисекундах, чем меньше это число, тем быстрее бот будет думать.
+ TimerPickUp_Interval = 500;       // частота срабатывания таймера сбора дропа, чем меньше это число, тем быстрее бот будет думать.
+ TimerForm_Interval = 2500;        // частота срабатывания таймера обновления формы, чем меньше это число, тем быстрее будут обновляться данные в форме.
+ TimerBafReload_Interval = 1020000;   // частота срабатывания таймера обновления бафов (раз в 17 минут).
+ Attack_Time = 120;                 // Время на убивание моба в секундах.
+ PickUp_Time = 15;                 // Врямя на поднятие дропа в секундах.
+ Vertical = 1000;                  // Вертикальный радиус кача
+//---------------------------------------------------------------------------------------
+ NpcTypeID1 = 0;                  // Если знаем, то задаем Type ID мобов, на которых будем охотиться
+ NpcTypeID2 = 0;                  // Если здесь одни нули, то задавать мобов будем через клиента
+ NpcTypeID3 = 0;                  // Для интерлюда задаем в формате 102xxxx , где xxxx  - ID моба
+ NpcTypeID4 = 0;                  // Для С4 в формате 100хххх , где xxxx  - ID моба
+ NpcTypeID5 = 0;
+ NpcTypeID6 = 0;
+ NpcTypeID7 = 0;
+ NpcTypeID8 = 0;
+ NpcTypeID9 = 0;
+ NpcTypeID10= 0;
+ NpcTypeID11= 0;
+ NpcTypeID12= 0;
+ NpcTypeID13= 0;
+ NpcTypeID14= 0;
+ NpcTypeID15= 0;
+ NpcTypeID16= 0;
+ NpcTypeID17= 0;
+ NpcTypeID18= 0;
+ NpcTypeID19= 0;
+ NpcTypeID20= 0;
+//########################################################################################
+ NpcTypeID_List_Razmer = 20;       // Размер списка мобов (не трогать!)
+ OX = 1; OY = 2; OZ= 3;            //  Служебные константы
+ maximumItems = 500;               // Размер базы мобов и дропа.
+ OblastVidimosti = 500000;         //  (не трогать!!!) Область видимости объектов (изменять от 1000 до 500000).
+
+var
+ diepause,spoilpause,sit,sit1,sit2,sit3,fixSit,checkPause,checkBaf1,checkBaf2,checkBaf3,hitMe,rest,selfBaf,selfBaf2,selfBafBD: integer; 
+ full,bers,sacred,arrow,a1o,a1w,a1a1,a1a2,a1m,a1m1,a1m2,a1m3,a2o,a2w,a2a1,a2a2,a2m,a2m1,a2m2,a2m3,a3all,bd,baferOutParty: integer; // переменные для бафов
+ onlyOne, onlyOne1, onlyOne2, onlyOne3, global_i, activeDefence: integer; // onlyOne переменные чтоб цепляться магами к основе только один раз при move to pain
+ InitMode, RestartMode, PickUpMode : boolean;
+ farm, food, farm_level: integer;
+ noHealSEmode: integer; // 0- первый ассистент лечит воинов 1- не лечит
+ useMagicSS: string;  // задавать атаку магам
+ useMagicSH: string;  // задавать атаку магам
+//-------------------------------------- БД  --------------------------------------------------
+ MobsObjID   : array [1..maximumItems] of integer;        // ID моба
+ LastKilledMobObjID   : array [1..maximumItems] of integer;        // ID убитого моба
+ MobsNpcTypeID : array [1..maximumItems] of integer;      // Тип моба
+ MobsDist : array [1..maximumItems] of integer;           // Расстояние от центра кача до моба
+ MobsXYZ  : array [1..maximumItems, 1..3] of integer;     // Координаты
+ MobsIsAttackable : array [1..maximumItems] of boolean;   // Можно ли моба атаковать
+ MobsIsSwipable : array [1..maximumItems] of boolean;   // Можно ли моба свипать
+ MobsAgression : array [1..maximumItems] of boolean;      // Моб атакует меня или стоит в сторонке...
+ MobsUpdated : array [1..maximumItems] of boolean;        // Метка об обновлении моба
+ MobsLastIndex: integer;                                  // индекс последнего элемента базы
+
+ NpcTypeID_List : array [1..NpcTypeID_List_Razmer] of integer;  // Список мобов  (коды мобов)
+ NpcTypeID_List_Count : integer;                          // Текущий размер списка
+ NpcTypeID_CurrentMob : integer;
+
+ KookaburraCrystalArray  : array[0..NpcTypeID_List_Razmer] of integer;				//Предустановленные мобы для фермы
+ KookaburraGoldenArray  : array[0..NpcTypeID_List_Razmer] of integer;				//Предустановленные мобы для фермы
+ BuffaloCrystalArray  : array[0..NpcTypeID_List_Razmer] of integer;				//Предустановленные мобы для фермы
+ BuffaloGoldenArray  : array[0..NpcTypeID_List_Razmer] of integer;				//Предустановленные мобы для фермы
+ CougarCrystalArray  : array[0..NpcTypeID_List_Razmer] of integer;				//Предустановленные мобы для фермы
+ CougarGoldenArray  : array[0..NpcTypeID_List_Razmer] of integer;				//Предустановленные мобы для фермы
+ 
+ Items_ObjectID : array [1..maximumItems] of integer;     // БД дропа с мобов
+ Items_ItemID : array [1..maximumItems] of integer;
+ Items_XYZ : array [1..maximumItems, 1..3] of integer;
+ ItemsLastIndex: integer;
+
+ TargetID, TargetID2: integer;                  // Текущая цель, приоритетная цель для помощника, последний убитый моб
+ TargetIDprevious, TargetID2previous: integer;   // цели убитые последними
+ 
+ MobsKilled : integer;                                    //   счетчик убитых мобов
+ idprov:boolean;
+ CenterX, CenterY, CenterZ : integer;                     // Центр кача
+ CenterFixed : boolean;
+ Radius: integer;                                         // Радиус кача
+//--------------------------------------------------------
+ MyX, MyY, MyZ, MyXCheck, MyYCheck : integer;                                 // Мои статы
+ MyID, MyHP, MyMaxHP: integer;
+ MyMP, MyMaxMP : integer;
+ HPlevelProcent : integer;                                 // уровень жизни соответственно процентам
+ MPlevelProcent : integer;	
+ HPlevelProcentRecharge : integer;                                 // уровень жизни соответственно процентам
+ MPlevelProcentRecharge : integer;								   
+ //--------------------------------------------------------
+ AssistX, AssistY, AssistZ : integer;                       					// Статы помошника-воина
+ AssistID, AssistHP, AssistMaxHP: integer;
+ AssistMP, AssistMaxMP: integer;
+ AssistHPlevelProcent: integer;							
+ AssistMPlevelProcent: integer;
+ AssistHPlevelProcentRecharge: integer;
+ AssistMPlevelProcentRecharge: integer;
+//--------------------------------------------------------
+ AssistX1, AssistY1, AssistZ1 : integer;                       					// Статы помошника 1
+ AssistID1, AssistHP1, AssistMaxHP1: integer;
+ AssistMP1, AssistMaxMP1 : integer;
+ AssistHPlevelProcent1 : integer;							
+ AssistMPlevelProcent1 : integer;
+//--------------------------------------------------------
+ AssistX2, AssistY2, AssistZ2 : integer;                       					// Статы помошника 2
+ AssistID2, AssistHP2, AssistMaxHP2: integer;
+ AssistMP2, AssistMaxMP2 : integer;
+ AssistHPlevelProcent2 : integer;							
+ AssistMPlevelProcent2 : integer;							
+//--------------------------------------------------------
+ AssistX3, AssistY3, AssistZ3 : integer;                       					// Статы помошника 3
+ AssistID3, AssistHP3, AssistMaxHP3: integer;
+ AssistMP3, AssistMaxMP3 : integer;
+ AssistHPlevelProcent3 : integer;							
+ AssistMPlevelProcent3 : integer;							
+//--------------------------------------------------------
+ MageAssistX, MageAssistY, MageAssistZ : integer;                       					// Статы мага
+ MageAssistID, MageAssistHP, MageAssistMaxHP: integer;
+ MageAssistMP, MageAssistMaxMP : integer;
+ MageAssistHPlevelProcent : integer;							
+ MageAssistMPlevelProcent : integer;							
+//--------------------------------------------------------
+ MageAssistX1, MageAssistY1, MageAssistZ1 : integer;                       					// Статы мага 1
+ MageAssistID1, MageAssistHP1, MageAssistMaxHP1: integer;
+ MageAssistMP1, MageAssistMaxMP1 : integer;
+ MageAssistHPlevelProcent1 : integer;							
+ MageAssistMPlevelProcent1 : integer;							
+//--------------------------------------------------------
+ MageAssistX2, MageAssistY2, MageAssistZ2 : integer;                       					// Статы мага 2
+ MageAssistID2, MageAssistHP2, MageAssistMaxHP2: integer;
+ MageAssistMP2, MageAssistMaxMP2 : integer;
+ MageAssistHPlevelProcent2 : integer;							
+ MageAssistMPlevelProcent2 : integer;							
+//--------------------------------------------------------
+ MageAssistX3, MageAssistY3, MageAssistZ3 : integer;                       					// Статы мага 3
+ MageAssistID3, MageAssistHP3, MageAssistMaxHP3: integer;
+ MageAssistMP3, MageAssistMaxMP3 : integer;
+ MageAssistHPlevelProcent3 : integer;							
+ MageAssistMPlevelProcent3 : integer;							
+//--------------------------------------------------------
+ frm: TForm;                                              // переменные описания формы
+ log, MobsDBscreen, ItemsDBScreen: TMemo;
+ panel: TPanel;
+ btnInit, btnStart, btnStop, btnPause: TButton;
+ frmParamIndex: byte;
+ textX, textY, textZ, textMyID, textMyHP, textMyMaxHP: TEdit;
+ textMyMP, textMyMaxMP, textMyCP, textMyMaxCP: TEdit;
+ textCenterX, textCenterY, textCenterZ, textRadius : TEdit;
+ textTargetID, textMobX, textMobY, textMobZ : TEdit;
+ textAttackCycle, textMobsLastIndex, textMobsKilled: TEdit;
+ cbFilterRadius : TCheckBox; l1: Tlabel;
+//----------------------------------------------------------
+ TimerForm, TimerParty, TimerCombat, TimerPickUp, TimerCheckDB, TimerBaf1, TimerBaf2, TimerBaf3, TimerBafReload, TimerBafReloadBD, 
+ AllStandUp, newMagicAttack, newMagicAttack1, newMagicAttack2, newMagicAttack3, TimerAgr, TimerGoOut, RBTargetReload : TTimer;              // таймеры
+ tickParty, time1, time2: integer;
+ Calculated_AttackTime, Calculated_PickUpTime : integer;
+ AttackCycle: integer;                                      // Цикл атаки
+ rbMode: integer;											// режим охоты на рейд-босса
+ agrSpeed: integer;											// частота агра на рейд-босса задается в игре
+ TargetRB, TargetRBID: integer;											//тип и ID рейд-босса
+ crystal_food: integer;
+ golden_food: integer;
+ catchfood: integer;
+ skilRecharge: integer;
+ enchant: integer; //захват id затачиваемого предмета
+ enchantFlag: integer;
+ enchantScroll: integer;
+//##############################################################################################
+
+procedure Init; //Вызывается при включении скрипта
+ var
+  i,n : integer;
+ begin
+  skilRecharge:= 3000; // время перезарядки магического атакующего скила 5000 для сх
+  noHealSEmode:= 0; // 0- первый ассистент лечит воинов 1- не лечит
+  farm:= 0;
+  food:= 0;
+  catchfood:= 0;
+  crystal_food:=0; // id пищи на ферме могут меняться - отлавливать через команду farm
+  golden_food:=0;
+  useMagicSS:= a12;   // по умолчанию атака водой
+  useMagicSH:= a6;   // по умолчанию атака ветром
+  agrSpeed:= 5;	   // частота агра на рейд-босса по умолчанию 5
+  rbMode:= 0;
+  sacred:= 0; //баф бд sacred отключен
+  arrow:= 0; //баф себя бд отклонение стрел отключен
+  TargetRB:= 0;
+  TargetRBID:= 0;
+  activeDefence:= 0;   // активная защита помощником: 0 - выключить, 1 - включить(защищает баферов без включения боевого таймера)
+  MyID:= 0;        // обнуляем ВСЕ данные
+  MyX:= 0;
+  MyY:= 0;
+  MyZ:= 0;
+  MyHP:= 0;
+  MyMaxHP:= 0;
+  MyMP:= 0;
+  MyMaxMP:= 0;
+  tickParty:= 1;
+  checkBaf1:= 0;
+  checkBaf2:= 0;
+  checkBaf3:= 0;
+  time1:= 1;
+  time2:= 9;
+  hitMe:= 0;
+  rest:= 0;
+  selfBaf:= 0;
+  selfBaf2:= 0;
+  selfBafBD:= 0;
+  Calculated_AttackTime:= round (1000 / TimerCombat_Interval * Attack_Time);
+  Calculated_PickUpTime:= round (1000 / TimerPickUp_Interval * PickUp_Time);
+  HPlevelProcent:= 0;
+  MPlevelProcent:= 0; 
+  HPlevelProcentRecharge:= 0;
+  MPlevelProcentRecharge:= 0;
+  //----------------------------------------------------------
+  AssistID:= 0;
+  AssistX:= 0;
+  AssistY:= 0;
+  AssistZ:= 0;
+  AssistHP:= 0;
+  AssistMaxHP:= 0;
+  AssistMP:= 0;
+  AssistMaxMP:= 0;
+  AssistID1:= 0;
+  AssistX1:= 0;
+  AssistY1:= 0;
+  AssistZ1:= 0;
+  AssistHP1:= 0;
+  AssistMaxHP1:= 0;
+  AssistMP1:= 0;
+  AssistMaxMP1:= 0;
+  AssistID2:= 0;
+  AssistX2:= 0;
+  AssistY2:= 0;
+  AssistZ2:= 0;
+  AssistHP2:= 0;
+  AssistMaxHP2:= 0;
+  AssistMP2:= 0;
+  AssistMaxMP2:= 0;
+  AssistID3:= 0;
+  AssistX3:= 0;
+  AssistY3:= 0;
+  AssistZ3:= 0;
+  AssistHP3:= 0;
+  AssistMaxHP3:= 0;
+  AssistMP3:= 0;
+  AssistMaxMP3:= 0;
+  AssistHPlevelProcent:= 0;							
+  AssistMPlevelProcent:= 0;
+  AssistHPlevelProcentRecharge:= 0;
+  AssistMPlevelProcentRecharge:= 0; 
+  AssistHPlevelProcent1:= 0;							
+  AssistMPlevelProcent1:= 0; 
+  AssistHPlevelProcent2:= 0;						
+  AssistMPlevelProcent2:= 0; 
+  AssistHPlevelProcent3:= 0;						
+  AssistMPlevelProcent3:= 0; 
+  //----------------------------------------------------------  
+  MageAssistID:= 0;
+  MageAssistX:= 0;
+  MageAssistY:= 0;
+  MageAssistZ:= 0;
+  MageAssistHP:= 0;
+  MageAssistMaxHP:= 0;
+  MageAssistMP:= 0;
+  MageAssistMaxMP:= 0;
+  MageAssistHPlevelProcent:= 0;							
+  MageAssistMPlevelProcent:= 0; 
+  MageAssistID1:= 0;
+  MageAssistX1:= 0;
+  MageAssistY1:= 0;
+  MageAssistZ1:= 0;
+  MageAssistHP1:= 0;
+  MageAssistMaxHP1:= 0;
+  MageAssistMP1:= 0;
+  MageAssistMaxMP1:= 0;
+  MageAssistHPlevelProcent1:= 0;							
+  MageAssistMPlevelProcent1:= 0; 
+  MageAssistID2:= 0;
+  MageAssistX2:= 0;
+  MageAssistY2:= 0;
+  MageAssistZ2:= 0;
+  MageAssistHP2:= 0;
+  MageAssistMaxHP2:= 0;
+  MageAssistMP2:= 0;
+  MageAssistMaxMP2:= 0;
+  MageAssistHPlevelProcent2:= 0;							
+  MageAssistMPlevelProcent2:= 0; 
+  MageAssistID3:= 0;
+  MageAssistX3:= 0;
+  MageAssistY3:= 0;
+  MageAssistZ3:= 0;
+  MageAssistHP3:= 0;
+  MageAssistMaxHP3:= 0;
+  MageAssistMP3:= 0;
+  MageAssistMaxMP3:= 0;
+  MageAssistHPlevelProcent3:= 0;							
+  MageAssistMPlevelProcent3:= 0; 
+  a1o:= 0; a1w:= 0; a1a1:= 0; a1a2:= 0; a1m:= 0; a1m1:= 0; a1m2:= 0; a1m3:= 0; a2o:= 0; a2w:= 0; a2a1:= 0; a2a2:= 0; a2m:= 0; a2m1:= 0; a2m2:= 0; a2m3:= 0; a3all:= 0;
+  onlyOne:= 0; onlyOne1:= 0; onlyOne2:= 0; onlyOne3:= 0; bd:= 0; baferOutParty:= 0; 
+  full:= 0;
+  bers:= 0;
+  diepause:= 0;
+  spoilpause:= 0;
+  global_i:= 1;
+  farm_level:= 1;
+  enchantFlag:= 0;
+  //----------------------------------------------------------  
+  InitMode:= true;
+  RestartMode:= false;
+  MobsLastIndex:= 0;
+  for i:=1 to maximumItems do                                // Очищаем базу
+   begin
+    MobsObjID[i]:= 0;
+    LastKilledMobObjID[i]:= 0;
+    MobsNpcTypeID[i]:=0;
+    MobsDist[i]:= 0;
+    MobsXYZ[i, OX]:= 0;
+    MobsXYZ[i, OY]:= 0;
+    MobsXYZ[i, OZ]:= 0;
+    MobsIsAttackable[i]:= false;
+    MobsIsSwipable[i]:= false;
+    MobsAgression[i]:= false;
+    MobsUpdated[i]:=false;
+   end;
+  TimerCombat:=TTimer.Create(nil);           // создаем таймеры
+  TimerCombat.OnTimer:=@OnTimerCombat;
+  TimerCombat.enabled:=false;
+  TimerCombat.interval:= TimerCombat_Interval;
+  newMagicAttack:=TTimer.Create(nil);		// блокирующий таймер на перезарядку магического скила
+  newMagicAttack.OnTimer:=@OnnewMagicAttack; 
+  newMagicAttack.enabled:=false; //
+  newMagicAttack.interval:= skilRecharge; //
+  newMagicAttack1:=TTimer.Create(nil);		// блокирующий таймер на перезарядку магического скила
+  newMagicAttack1.OnTimer:=@OnnewMagicAttack1; 
+  newMagicAttack1.enabled:=false; //
+  newMagicAttack1.interval:= skilRecharge; //
+  newMagicAttack2:=TTimer.Create(nil);		// блокирующий таймер на перезарядку магического скила
+  newMagicAttack2.OnTimer:=@OnnewMagicAttack2; 
+  newMagicAttack2.enabled:=false; //
+  newMagicAttack2.interval:= skilRecharge; //
+  newMagicAttack3:=TTimer.Create(nil);		// блокирующий таймер на перезарядку магического скила
+  newMagicAttack3.OnTimer:=@OnnewMagicAttack3; 
+  newMagicAttack3.enabled:=false; //
+  newMagicAttack3.interval:= skilRecharge; //
+  TimerAgr:=TTimer.Create(nil);		// блокирующий таймер на скорость агрессии танка для рб
+  TimerAgr.OnTimer:=@OnTimerAgr; 
+  TimerAgr.enabled:=false; //
+  TimerAgr.interval:= 2000; //
+  TimerGoOut:=TTimer.Create(nil);		// таймер на передвижение за основой
+  TimerGoOut.OnTimer:=@OnTimerGoOut; 
+  TimerGoOut.enabled:=false; //
+  TimerGoOut.interval:= 1000; //
+  TimerParty:=TTimer.Create(nil);
+  TimerParty.OnTimer:=@OnTimerParty; //
+  TimerParty.enabled:=false; //
+  TimerParty.interval:=1000;
+  TimerBafReload:=TTimer.Create(nil);
+  TimerBafReload.OnTimer:=@OnTimerBafReload; //
+  TimerBafReload.enabled:=false; //
+  TimerBafReload.interval:=TimerBafReload_Interval;
+  TimerBafReloadBD:=TTimer.Create(nil);
+  TimerBafReloadBD.OnTimer:=@OnTimerBafReloadBD; //
+  TimerBafReloadBD.enabled:=false; //
+  TimerBafReloadBD.interval:=110000;
+  RBTargetReload:=TTimer.Create(nil);
+  RBTargetReload.OnTimer:=@OnRBTargetReload; //
+  RBTargetReload.enabled:=false; //
+  RBTargetReload.interval:=1000;
+  TimerBaf1:=TTimer.Create(nil);
+  TimerBaf1.OnTimer:=@OnTimerBaf1; //
+  TimerBaf1.enabled:=false; //
+  TimerBaf1.interval:=4000;
+  TimerBaf2:=TTimer.Create(nil);
+  TimerBaf2.OnTimer:=@OnTimerBaf2; //
+  TimerBaf2.enabled:=false; //
+  TimerBaf2.interval:=4000;
+  TimerBaf3:=TTimer.Create(nil);
+  TimerBaf3.OnTimer:=@OnTimerBaf3; //
+  TimerBaf3.enabled:=false; //
+  TimerBaf3.interval:=4000;
+  AllStandUp:=TTimer.Create(nil);
+  AllStandUp.OnTimer:=@OnAllStandUp; //
+  AllStandUp.enabled:=false; //
+  AllStandUp.interval:=1000;
+  TimerForm:=TTimer.Create(nil);
+  TimerForm.OnTimer:=@OnTimerForm;
+  TimerForm.enabled:=true;
+  TimerForm.interval:= TimerForm_Interval;
+  TimerPickUp:=TTimer.Create(nil);
+  TimerPickUp.OnTimer:=@OnTimerPickUp;
+  TimerPickUp.enabled:=false;
+  TimerPickUp.interval:= TimerPickUp_Interval;
+  TimerCheckDB:=TTimer.Create(nil);
+  TimerCheckDB.OnTimer:=@OnTimerCheckDB;
+  TimerCheckDB.enabled:=true;
+  TimerCheckDB.interval:= 20*60*1000; // раз в 20 минут
+  frmParamIndex:=0;                          // создаем контролы в форме
+  frm:= TForm.Create(nil);
+  frm.Caption:= ProgramName;
+  frm.BorderStyle := bsDialog;
+  frm.Position := poScreenCenter;
+  frm.Width:=650;
+  frm.Height:=500;
+  frm.OnClose := @FormClose;
+  MobsDBscreen:=TMemo.Create(frm);
+  MobsDBscreen.parent:=frm;
+  MobsDBscreen.ReadOnly:=true;
+  MobsDBscreen.ScrollBars:=0;
+  MobsDBscreen.Top:=157;
+  MobsDBscreen.Width:=457;
+  MobsDBscreen.Height:=185;
+  ItemsDBscreen:=TMemo.Create(frm);
+  ItemsDBscreen.parent:=frm;
+  ItemsDBscreen.ReadOnly:=true;
+  ItemsDBscreen.ScrollBars:=0;
+  ItemsDBscreen.Top:=1;
+  ItemsDBscreen.Width:=300;
+  ItemsDBscreen.Height:=155;
+  panel:=TPanel.Create(frm);
+  panel.parent:=frm;
+  panel.align:=alRight;
+  log:=TMemo.Create(panel);
+  log.parent:=frm;
+  log.align:=alBottom;
+  log.ReadOnly:=true;
+  log.ScrollBars:=2;
+  log.Width:=570;
+  log.Height:=100;
+  log.Lines.Add('Log...');
+  btnInit:= TButton.Create(frm);
+  btnInit.Name := 'btnInit';
+  btnInit.Parent := frm;
+  btnInit.SetBounds(370, 10, 75, 25);
+  btnInit.Caption := 'Init';
+  btnInit.OnClick := @BtnInit_Click;
+  btnStart:= TButton.Create(frm);
+  btnStart.Name := 'btnStart';
+  btnStart.Parent := frm;
+  btnStart.SetBounds(370, 40, 75, 25);
+  btnStart.Caption := 'Start';
+  btnStart.OnClick := @btnStart_Click;
+  btnStop:= TButton.Create(frm);
+  btnStop.Name := 'btnStop';
+  btnStop.Parent := frm;
+  btnStop.SetBounds(370, 70, 75, 25);
+  btnStop.Caption := 'Stop';
+  btnStop.OnClick := @btnStop_Click;
+  btnPause:= TButton.Create(frm);
+  btnPause.Name := 'btnPause';
+  btnPause.Parent := frm;
+  btnPause.SetBounds(370, 100, 75, 25);
+  btnPause.Caption := 'Pause';
+  btnPause.OnClick := @btnPause_Click;
+  l1:= TLabel.Create(frm);
+  l1.caption:='Filters:';
+  l1.parent:=frm;
+  l1.SetBounds(5, 347, 97, 17);
+  cbFilterRadius := TCheckBox.Create(frm);
+  cbFilterRadius.Name := 'cbFilterRadius';
+  cbFilterRadius.Parent := frm;
+  cbFilterRadius.SetBounds(60, 345, 97, 17);
+  cbFilterRadius.Caption := 'Radius';
+  textMyID:= CreateTextBox('textMyID');
+  CreateLabel('My ID :');
+  textX:= CreateTextBox('textX');
+  CreateLabel('My X :');
+  textY:= CreateTextBox('textY');
+  CreateLabel('My Y :');
+  textZ:= CreateTextBox('textZ');
+  CreateLabel('My Z :');
+  textMyHP:= CreateTextBox('textMyHP');
+  CreateLabel('My HP :');
+  textMyMaxHP:= CreateTextBox('textMyMaxHP');
+  CreateLabel('My MaxHP :');
+  textMyMP:= CreateTextBox('textMyMP');
+  CreateLabel('My MP :');
+  textMyMaxMP:= CreateTextBox('textMyMaxMP');
+  CreateLabel('My MaxMP :');
+  inc(frmParamIndex);
+  textCenterX:= CreateTextBox('textCenterX');
+  CreateLabel('center X:');
+  textCenterY:= CreateTextBox('textCenterY');
+  CreateLabel('center Y:');
+  textCenterZ:= CreateTextBox('textCenterZ');
+  CreateLabel('center Z:');
+  textRadius:= CreateTextBox('Radius');
+  CreateLabel('Radius :');
+  inc(frmParamIndex);
+  textTargetID:= CreateTextBox('TargetID');
+  CreateLabel('Target ID :');
+  textAttackCycle:= CreateTextBox('AttackCycle');
+  CreateLabel('Attack cicle:');
+  textMobsLastIndex:= CreateTextBox('MobsLastIndex');
+  CreateLabel('Mobs in base:');
+  textMobsKilled:= CreateTextBox('MobsKilled');
+  CreateLabel('killed mobs:');
+  inc(frmParamIndex);
+  ClearDB;
+  frm.Show;                // выводим форму на экран
+end;
+
+procedure btnPause_Click(Sender: TButton);
+ begin
+  PauseGame;
+ end;
+
+procedure btnStop_Click(Sender: TButton);
+ begin
+  StopGame;
+ end;
+procedure btnStart_Click(Sender: TButton);
+ begin
+  StartGame;
+ end;
+procedure BtnInit_Click(Sender: TButton);
+ begin
+  RestartMode:= true;
+  buf:= #$46;                //  авто релогин
+  SendToServerEx(NickName);
+ end;
+
+procedure AddtoNpcTypeID_List (NpcTypeID: integer);
+ begin
+  inc(NpcTypeID_List_Count);
+  NpcTypeID_List[NpcTypeID_List_Count]:= NpcTypeID;
+ end;
+
+procedure ClearDB;                          // Очистка БД
+ var                                        // Надо все занулять, иначе там хрень всякая вылезает или старые данные
+  i : integer;
+ begin
+  ItemsLastIndex:= 0;                       // Очищаем переменные
+  TargetID:= 0;
+  TargetID2:= 0;
+  TargetIDprevious:= 0;
+  TargetID2previous:= 0;
+  MobsKilled:= 0;
+  CenterX:= 0;
+  CenterY:= 0;
+  CenterZ:= 0;
+  CenterFixed:= false;
+  Radius:= Radius_Kacha;
+  AttackCycle:= 0;
+  NpcTypeID_List_Count:= 0;
+  if NpcTypeID1 <> 0 then AddtoNpcTypeID_List (NpcTypeID1);
+  if NpcTypeID2 <> 0 then AddtoNpcTypeID_List (NpcTypeID2);
+  if NpcTypeID3 <> 0 then AddtoNpcTypeID_List (NpcTypeID3);
+  if NpcTypeID4 <> 0 then AddtoNpcTypeID_List (NpcTypeID4);
+  if NpcTypeID5 <> 0 then AddtoNpcTypeID_List (NpcTypeID5);
+  if NpcTypeID6 <> 0 then AddtoNpcTypeID_List (NpcTypeID6);
+  if NpcTypeID7 <> 0 then AddtoNpcTypeID_List (NpcTypeID7);
+  if NpcTypeID8 <> 0 then AddtoNpcTypeID_List (NpcTypeID8);
+  if NpcTypeID9 <> 0 then AddtoNpcTypeID_List (NpcTypeID9);
+  if NpcTypeID10<> 0 then AddtoNpcTypeID_List (NpcTypeID10);
+  if NpcTypeID11<> 0 then AddtoNpcTypeID_List (NpcTypeID11);
+  if NpcTypeID12<> 0 then AddtoNpcTypeID_List (NpcTypeID12);
+  if NpcTypeID13<> 0 then AddtoNpcTypeID_List (NpcTypeID13);
+  if NpcTypeID14<> 0 then AddtoNpcTypeID_List (NpcTypeID14);
+  if NpcTypeID15<> 0 then AddtoNpcTypeID_List (NpcTypeID15);
+  if NpcTypeID16<> 0 then AddtoNpcTypeID_List (NpcTypeID16);
+  if NpcTypeID17<> 0 then AddtoNpcTypeID_List (NpcTypeID17);
+  if NpcTypeID18<> 0 then AddtoNpcTypeID_List (NpcTypeID18);
+  if NpcTypeID19<> 0 then AddtoNpcTypeID_List (NpcTypeID19);
+  if NpcTypeID20<> 0 then AddtoNpcTypeID_List (NpcTypeID20);
+  if (NpcTypeID_List_Count = 0) and (farm = 0) then
+   for i:=1 to NpcTypeID_List_Razmer do NpcTypeID_List[i]:= 0;
+  NpcTypeID_CurrentMob:= 0;
+  for i:=1 to maximumItems do                                // Очищаем базу
+   begin
+    Items_ObjectID[i]:= 0;
+    Items_ItemID[i]:= 0;
+    Items_XYZ[i, OX]:= 0;
+    Items_XYZ[i, OY]:= 0;
+    Items_XYZ[i, OZ]:= 0;
+   end;
+  btnStop.enabled:=false;
+  btnPause.enabled:= false;
+  sit:=0;
+  sit1:=0;
+  sit2:=0;
+  sit3:=0;
+ end;
+
+procedure addMobToDatabase(animal: string);
+ var 
+  i:integer;
+ begin
+  if (animal = 'kookaburra') then
+	begin
+		NpcTypeID_List_Count:= 0;
+		for i:=1 to NpcTypeID_List_Razmer do 
+		  begin
+			if (food = crystal_food) then NpcTypeID_List[i]:= KookaburraCrystalArray[i-1];
+			if (food = golden_food) then NpcTypeID_List[i]:= KookaburraGoldenArray[i-1];
+			inc(NpcTypeID_List_Count);
+		  end;
+	end;
+  if (animal = 'buffalo') then
+	begin
+		NpcTypeID_List_Count:= 0;
+		for i:=1 to NpcTypeID_List_Razmer do 
+		  begin
+			if (food = crystal_food) then NpcTypeID_List[i]:= BuffaloCrystalArray[i-1];
+			if (food = golden_food) then NpcTypeID_List[i]:= BuffaloGoldenArray[i-1];
+			inc(NpcTypeID_List_Count);
+		  end;
+	end;
+ end;
+
+//############################################################################################
+
+function rastoyanie(NpcX, NpcY, NpcZ : integer) : integer; // вычисление растояния между 2 точками
+ var
+  dx,dy,dz, summa : variant;
+ begin
+  try
+   dx:= NpcX-CenterX;
+   dy:= NpcY-CenterY;
+   dz:= NpcZ-CenterZ;
+   summa:= dx*dx+dy*dy;                                            // мне кажется, что так будет быстрее считаться
+   if summa = 0 then result:= 0 else result:= Round(sqrt(summa));  // обход возможной ошибки, если моб стоит прямо в центре кача
+   if abs(dz) > vertical then result := result + OblastVidimosti;  // добавляем коррекцию по вертикали
+  except
+   log.Lines.Add('error calculating distance');
+   result:= OblastVidimosti;
+  end;
+ end;
+
+function RastoyanieToMe(NpcX, NpcY : integer) : integer; // вычисление растояния между 2 точками
+ var
+  dx,dy, summa : integer;
+ begin
+  dx:= NpcX-MyX;
+  dy:= NpcY-MyY;
+  summa:= dx*dx+dy*dy;                                            // мне кажется, что так будет быстрее считаться
+  if summa = 0 then result:= 0 else result:= Round(sqrt(summa));  // обход возможной ошибки, если моб стоит прямо в центре кача
+end;
+
+procedure MoveToHead (x,y,i: integer);     // Процедура чтобы подбежать близко к основе принимает коородинаты помощника
+ var
+  goX,goY: integer;
+ begin	
+	if (MyX > x) then goX:= MyX - 100;
+	if (MyX <= x) then goX:= MyX + 100;
+	if (MyY > y) then goY:= MyY - 100;
+	if (MyY <= y) then goY:= MyY + 100;
+	if ((MyX > x) and (MyY > y)) or ((MyX <= x) and (MyY <= y)) then
+	  begin
+		if i=0 then MoveToMain(goX, goY, MyZ);	
+		if i=1 then MoveTo1(goX+40, goY-40, MyZ);	
+		if i=2 then MoveTo2(goX-40, goY+40, MyZ);	
+		if i=3 then MageMoveTo(goX-60, goY+40, MyZ);	
+		if i=4 then MageMoveTo1(goX+60, goY-40, MyZ);	
+		if i=5 then MageMoveTo2(goX+40, goY-60, MyZ);	
+		if i=6 then MageMoveTo3(goX-40, goY+60, MyZ);	
+		if i=7 then MoveTo(goX-60, goY+60, MyZ);	
+		if i=8 then MoveTo3(goX+60, goY-60, MyZ);	
+	  end else
+	  begin
+		if i=0 then MoveToMain(goX, goY, MyZ);	
+		if i=1 then MoveTo1(goX+40, goY+40, MyZ);	
+		if i=2 then MoveTo2(goX-40, goY-40, MyZ);	
+		if i=3 then MageMoveTo(goX-60, goY-40, MyZ);	
+		if i=4 then MageMoveTo1(goX+60, goY+40, MyZ);	
+		if i=5 then MageMoveTo2(goX+40, goY+60, MyZ);	
+		if i=6 then MageMoveTo3(goX-40, goY-60, MyZ);	
+		if i=7 then MoveTo(goX-60, goY-60, MyZ);		  
+		if i=8 then MoveTo3(goX+60, goY+60, MyZ);		  
+	  end;
+ end;
+
+procedure AddDroppedItem (ObjID, ItemID, X, Y, Z: integer);       // Процедура добавляет дропнутую вещь в БД
+ begin
+  if ItemsLastIndex = maximumItems then ItemsLastIndex:=0;        // обход переполнения базы предметов
+  inc (ItemsLastIndex);
+  Items_ObjectID[ItemsLastIndex]:= ObjID;
+  Items_ItemID[ItemsLastIndex]:= ItemID;
+  Items_XYZ[ItemsLastIndex, OX]:= X;
+  Items_XYZ[ItemsLastIndex, OY]:= Y;
+  Items_XYZ[ItemsLastIndex, OZ]:= Z;
+ end;
+
+procedure AddtoDB (id, TypeID, x,y,z : integer; IsAttackable : boolean);     // Процедура добавляет в БД нового моба
+ var
+  dist: integer;
+ begin
+  if (not initmode) then dist:= rastoyanie (x,y,z) else dist := OblastVidimosti;       // вычиляем расстояние от центра кача до моба
+  if dist > (OblastVidimosti) then exit;                  // если моб слишко далеко то ничего не делаем
+  inc (MobsLastIndex);                                             // увеличиваем размер БД
+  MobsObjID[MobsLastIndex]:= id;                                                  // Записываем моба
+  MobsNpcTypeID[MobsLastIndex]:= TypeID;
+  MobsDist[MobsLastIndex]:= dist;
+  MobsXYZ[MobsLastIndex, OX]:= x;
+  MobsXYZ[MobsLastIndex, OY]:= y;
+  MobsXYZ[MobsLastIndex, OZ]:= z;
+  MobsIsAttackable[MobsLastIndex]:= IsAttackable;
+  MobsIsSwipable[MobsLastIndex]:= false;
+  MobsAgression[MobsLastIndex]:= false;
+  MobsUpdated[MobsLastIndex]:= true;
+ end;
+
+procedure UpdateDB (i, x,y,z : integer; agression : boolean);   // Процедура обновляет данные в БД по мобу
+ var
+  dist: integer;
+ begin
+  if (not initmode) then dist:= rastoyanie (x,y,z) else dist := OblastVidimosti;
+  if dist > (OblastVidimosti) then DelDBItem(i) else          // перепроверяем расстояние до моба, если он вышел за границу кача, то удаляем его
+   begin
+    MobsDist[i]:= dist;                                    // записываем данные
+    MobsXYZ[i, OX]:= x;
+    MobsXYZ[i, OY]:= y;
+    MobsXYZ[i, OZ]:= z;
+    if (not MobsAgression[i]) then MobsAgression[i]:= agression;
+    MobsUpdated[i]:= true;
+   end;
+ end;
+
+procedure DelDBItem (i: integer);                              // процедура удалаяет моба из БД
+ begin
+  MobsObjID[i]:= 0;
+  MobsNpcTypeID[i]:= 0;
+  MobsDist[i]:= 0;
+  MobsXYZ[i, OX]:= 0;
+  MobsXYZ[i, OY]:= 0;
+  MobsXYZ[i, OZ]:= 0;
+  MobsAgression[i]:= false;
+  MobsIsAttackable[i]:= false;
+  MobsIsSwipable[i]:= false;
+  MobsUpdated[i]:= false;
+  if i < MobsLastIndex then         // если надо, производим сдвиг данных в массивах
+   begin
+    MobsObjID[i]:= MobsObjID[MobsLastIndex];
+    MobsNpcTypeID[i]:= MobsNpcTypeID[MobsLastIndex];
+    MobsDist[i]:= MobsDist[MobsLastIndex];
+    MobsXYZ[i, OX]:= MobsXYZ[MobsLastIndex, OX];
+    MobsXYZ[i, OY]:= MobsXYZ[MobsLastIndex, OY];
+    MobsXYZ[i, OZ]:= MobsXYZ[MobsLastIndex, OZ];
+    MobsIsAttackable[i]:= MobsIsAttackable[MobsLastIndex];
+    MobsIsSwipable[i]:= MobsIsSwipable[MobsLastIndex];
+    MobsAgression[i]:= MobsAgression[MobsLastIndex];
+    MobsUpdated[i]:= MobsUpdated[MobsLastIndex];
+   end;
+  dec (MobsLastIndex);                                        // уменьшаем размер БД
+ end;
+
+procedure DelDroppedItem (i: integer);                         // процедура удалаяет вещь из БД
+ begin
+  Items_ObjectID[i]:= 0;
+  Items_ItemID[i]:= 0;
+  Items_XYZ[i, OX]:= 0;
+  Items_XYZ[i, OY]:= 0;
+  Items_XYZ[i, OZ]:= 0;
+  if i < ItemsLastIndex then
+   begin
+    Items_ObjectID[i]:= Items_ObjectID[ItemsLastIndex];
+    Items_ItemID[i] :=  Items_ItemID[ItemsLastIndex];
+    Items_XYZ[i, OX]:=  Items_XYZ[ItemsLastIndex, OX];
+    Items_XYZ[i, OY]:=  Items_XYZ[ItemsLastIndex, OY];
+    Items_XYZ[i, OZ]:=  Items_XYZ[ItemsLastIndex, OZ];
+   end;
+  dec (ItemsLastIndex);
+ end;
+
+function CheckItems (id: integer) : integer;                   // функция проверяет наличие заданной вещи в БД
+ var
+  i: integer;
+ begin
+  result:= 0;
+  for i:=1 to ItemsLastIndex do if Items_ObjectID[i] = id then
+   begin
+    result:=i;                                                  // И возвращаем его индекс по БД
+    break;
+   end;
+ end;
+
+function TestPovtor (id: integer) : integer;                   // функция проверяет наличие заданного моба в БД
+ var
+  i: integer;
+ begin
+  result:=0;
+  for i:=1 to MobsLastIndex do if MobsObjID[i] = id then               // Ищем нужный ID в нашей БД
+   begin
+    result:=i;                                                  // И возвращаем его индекс по БД
+    break;
+   end;
+ end;
+
+function TestPovtorLastKilledMobObjID (id: integer) : integer;                   // функция проверяет наличие заданного моба в БД
+ var
+  i: integer;
+ begin
+  result:=0;
+  for i:=1 to MobsLastIndex do if LastKilledMobObjID[i] = id then               // Ищем нужный ID в нашей БД
+   begin
+    result:=i;                                                  // И возвращаем его индекс по БД
+    break;
+   end;
+ end;
+
+function InMobsList (NpcTypeID: integer) : boolean;            // функция проверяет наличие заданного моба в списке на атаку
+ var
+  i: integer;
+ begin
+  result:= false;
+  if (TargetRB = NpcTypeID) then result:= true;
+  for i:=1 to NpcTypeID_List_Count do if NpcTypeID_List[i] = NpcTypeID then result:= true;     // проверяем по списку
+ end;
+
+procedure SendMsg_to_CL(msg:string);                                  // отправка системных сообщений клиенту
+begin
+  buf:=#$4A;
+  WriteD(0);
+  WriteD(10);
+  WriteS('');
+  WriteS(msg);
+  SendToClientEx(NickName);
+end;
+
+procedure OnTimerCheckDB (Sender: TObject);
+ var
+  i: integer;
+ begin
+  i:=0;
+  while i <= MobsLastIndex do
+   begin
+    inc(i);
+    if MobsUpdated[i] then MobsUpdated[i]:=false
+     else
+      begin
+       DelDBItem(i);
+       dec(i);
+      end;
+   end;
+ end;
+
+procedure PrepareDB;
+ var
+  i: integer;
+ begin
+  i:=0;
+  while i <= MobsLastIndex do
+   begin
+    inc(i);
+    if InMobsList(MobsNpcTypeID[i]) then 
+	  begin	
+		MobsIsAttackable[i]:= true;
+		MobsIsSwipable[i]:= false;
+	  end;
+    MobsDist[i]:= rastoyanie (MobsXYZ[i, OX], MobsXYZ[i, OY], MobsXYZ[i, OZ]);
+    if MobsDist[i] >= OblastVidimosti then
+     begin
+      //DelDBItem(i);
+      //dec(i);
+    end;
+   end;
+ end;
+
+function ValidateData : boolean;                                // функция проверки правильности задания всех параметров для начала кача
+ begin
+  if (MyX <> 0) and (MyY <> 0) and (MyZ <> 0) and (MyID <> 0) and (MyHP > 0) and (MyMaxHP > 0) and         // верификация всех данных, чтобы потом в боевом режиме
+     (MyMP > 0) and (MyMaxMP > 0) and 									                                 // не перепроверять все данные по 100 раз
+     (CenterX <> 0) and (CenterY <> 0) and (CenterZ <> 0) and (Radius > 0) and (NpcTypeID_List_Count > 0) then
+      begin
+       PrepareDB;
+       SendMsg_to_CL('All param was fixed and checked!');
+       log.Lines.Add('All param was fixed and checked');
+       result:= true;
+      end
+     else
+      begin
+       SendMsg_to_CL('error the beginning params');
+       log.Lines.Add('error the beginning params');
+       result:= false;
+      end;
+ end;
+
+procedure UserCommands;    // комманды пользователя
+ var
+  i: integer;
+ begin                              // если комманда обработана удачно, то в чат сообщение не попадет, а будет выдано системное сообщение прямо в клиент
+	case (ReadS(2)) of 
+		'enchant':  begin
+			  enchantFlag:= 1;
+			  SendMsg_to_CL('wear the weapon to cath its id');
+			  pck:='';
+			 end; 
+		'en':begin
+			  if (enchantFlag = 3) then enchantFlag:= 4;
+			  pck:='';
+			 end;
+		'put':begin
+			  if (enchantFlag > 1) then
+				begin
+				  buf:=#$12;
+				  WriteD(enchant);
+				  WriteD(2);
+				  WriteD(MyX);
+				  WriteD(MyY);
+				  WriteD(MyZ);
+				  SendToServerEx(NickName);
+				end;
+			  pck:='';
+			 end;
+		'get':begin
+			  if (enchantFlag > 1) then
+				begin
+				  buf:=#$04;
+				  WriteD(enchant);
+				  WriteD(MyX);
+				  WriteD(MyY);
+				  WriteD(MyZ);
+				  SendToServerEx(NickName);
+				end;
+			  pck:='';
+			 end;
+		'equip':begin
+			  if (enchantFlag > 1) then
+				begin
+				  buf:=#$14;
+				  WriteD(enchant);
+				  SendToServerEx(NickName);
+				end;
+			  pck:='';
+			 end;
+		'p':	 begin												  // создание пати
+			  SendMsg_to_CL('create the paty');
+			  baferOutParty:= 0; 
+			  TimerParty.enabled:=true;  
+			  pck:='';
+			 end;
+		'off' :	 begin
+			  SendMsg_to_CL('bafers is going out the party');
+			  pck:='';
+			  buf:=hstr('2B');
+			  if (AssistID1 <> 0) then SendToServerEX(AssistantName1);
+			  if (AssistID2 <> 0) then SendToServerEX(AssistantName2);
+			  baferOutParty:= 1; 
+             end;
+		'noheal' :	 begin
+			  SendMsg_to_CL('the first bafer does not heal');
+			  pck:='';
+			  noHealSEmode:= 1;
+             end;	
+		'heal' :	 begin
+			  SendMsg_to_CL('the first bafer heals');
+			  pck:='';
+			  noHealSEmode:= 0;
+             end;			 
+		'full':	 begin
+			  SendMsg_to_CL('накладывать бафы сопротивления стихий');
+			  pck:='';
+			  full:= 1;
+             end;
+		'bers':	 begin
+			  SendMsg_to_CL('накладывать бафы берсерк');
+			  pck:='';
+			  bers:= 1;
+			 end;
+		'sacred':	 begin
+			  SendMsg_to_CL('накладывать бафы бд sacred');
+			  pck:='';
+			  sacred:= 1;
+			 end;
+		'arrow':	 begin
+			  SendMsg_to_CL('накладывать бафы бд себя отклонение стрел');
+			  pck:='';
+			  arrow:= 1;
+			 end;
+		'go':	  begin
+				SendMsg_to_CL('follow me in single file');
+				pck:='';
+				if (AssistID <> 0) then FollowAttack;	
+				if (AssistID1 <> 0) then FollowAttack1;	
+				if (AssistID2 <> 0) then FollowAttack2;	
+				if (AssistID3 <> 0) then FollowAttack3;	
+				if (MageAssistID <> 0) then MageFollowAttack;	
+				if (MageAssistID1 <> 0) then MageFollowAttack1;	
+				if (MageAssistID2 <> 0) then MageFollowAttack2;	
+				if (MageAssistID3 <> 0) then MageFollowAttack3;	
+			  end;
+		'out': begin
+				SendMsg_to_CL('scutter');
+				pck:='';
+				GoOutAll();
+				TimerGoOut.enabled:= false;
+				end;
+		'goout': begin
+				SendMsg_to_CL('follow me in all directions');
+				pck:='';
+				TimerGoOut.enabled:= true;
+				end;
+		'active': begin
+				SendMsg_to_CL('activate tha active defence');
+				pck:='';
+				activeDefence:= 1;
+				end;
+		'noactive': begin
+				SendMsg_to_CL('disactivate the active defence');
+				pck:='';
+				activeDefence:= 0;
+              end;
+		'ah':  	  begin
+				SendMsg_to_CL('Aqua + Hurricane');
+				pck:='';
+				useMagicSS:=a12;
+				useMagicSH:=a6;
+			  end;
+		'f':  	  begin
+				SendMsg_to_CL('Flame Strike');
+				pck:='';
+				useMagicSS:=a7;
+				useMagicSH:=a7;
+			  end;
+		'a':  	  begin
+				SendMsg_to_CL('Aura Burn');
+				pck:='';
+				useMagicSS:=a8;
+				useMagicSH:=a8;
+			  end;
+		'shadow':  	  begin
+				SendMsg_to_CL('Shadow Spark');
+				pck:='';
+				useMagicSH:=a9;
+			  end;
+		'solar':  	  begin
+				SendMsg_to_CL('Solar Spark');
+				pck:='';
+				useMagicSS:=a13;
+			  end;
+		'nobaf':  begin
+				SendMsg_to_CL('disactivate buffs');
+				pck:='';
+				TimerBafReload.enabled:= false;
+				TimerBafReloadBD.enabled:= false;
+				TimerBaf1.enabled:=false;
+				TimerBaf2.enabled:=false;
+				TimerBaf3.enabled:=false;
+				a1o:= 0; a1w:= 0; a1a1:= 0; a1a2:= 0; a1m:= 0; a1m1:= 0; a1m2:= 0; a1m3:= 0; a2o:= 0; a2w:= 0; a2a1:= 0; a2a2:= 0; a2m:= 0; a2m1:= 0; a2m2:= 0; a2m3:= 0; a3all:=0; bd:=0;
+			  end;
+		'farm': if (catchfood = 0) then //порядок фарма --> farm задать один раз вначале --> k1..c3 golden/crystal
+				  begin
+				    food:= 0;
+					catchfood:= 1;
+					SendMsg_to_CL('Начало захвата id корма. Покормите один раз crystal');
+					pck:=''; 
+				  end; 
+		'nofarm':begin
+				SendMsg_to_CL('Отменить режим корма на ферме');
+				pck:='';
+				farm:= 0;			  
+			  end;
+		'k1': begin
+				SendMsg_to_CL('Kookaburra level 1');
+				pck:='';
+				farm_level:= 1;
+				addMobToDatabase('kookaburra');
+			  end;
+		'k2': begin
+				SendMsg_to_CL('Kookaburra level 2');
+				pck:='';
+				farm_level:= 2;
+				addMobToDatabase('kookaburra');
+			  end;
+		'k3': begin
+				SendMsg_to_CL('Kookaburra level 3');
+				pck:='';
+				farm_level:= 3;
+				addMobToDatabase('kookaburra');
+			  end;
+		'k4': begin
+				SendMsg_to_CL('Kookaburra golden Custom');
+				pck:='';
+				farm_level:= 4;
+				food:= golden_food;
+				addMobToDatabase('kookaburra');
+			  end;
+		'b1': begin
+				SendMsg_to_CL('Buffalo level 1');
+				pck:='';
+				farm_level:= 1;
+				addMobToDatabase('buffalo');
+			  end;
+		'b2': begin
+				SendMsg_to_CL('Buffalo level 2');
+				pck:='';
+				farm_level:= 2;
+				addMobToDatabase('buffalo');
+			  end;
+		'b3': begin
+				SendMsg_to_CL('Buffalo level 3');
+				pck:='';
+				farm_level:= 3;
+				addMobToDatabase('buffalo');
+			  end;
+		'golden': begin
+				SendMsg_to_CL('выбор корма golden');
+				pck:='';
+				food:= golden_food;
+			  end;
+		'crystal': begin
+				SendMsg_to_CL('выбор корма crystal');
+				pck:='';
+				food:= crystal_food;
+			  end;
+		'notarget': begin
+				SendMsg_to_CL('сброс цели');
+				pck:='';
+				TargetID:= 0;
+			  end;
+	end;
+ if InitMode then case (ReadS(2)) of
+		'pos':   if MyX <> 0 then                        // центр кача
+              begin
+               CenterX:= MyX;
+               CenterY:= MyY;
+               CenterZ:= MyZ;
+               CenterFixed:= true;
+               SendMsg_to_CL('point to center');
+               log.Lines.Add('point to center');
+               pck:='';
+              end;
+		'dist':  if (CenterX <> 0) and (MyX <> 0) then                // радиус кача
+              begin
+               CenterFixed:= true;
+               Radius:= rastoyanie (MyX,MyY,MyZ);
+               SendMsg_to_CL('radius to farm');
+               SendMsg_to_CL('R= '+ inttostr(Radius));
+               log.Lines.Add('radius to farm, R = '+ inttostr(Radius));
+               pck:='';
+              end;
+		'reset':  begin                                                // сброс параметров
+              ClearDB;
+              SendMsg_to_CL('base was cleared, enter your param again');
+              log.Lines.Add('base was cleared!');
+              pck:='';
+             end;
+		'b':	 begin													// наложение бафов	
+			  SendMsg_to_CL('activate buffs');
+			  pck:='';
+				if (AssistID1 <> 0) then 
+					begin
+						checkBaf1:=1;								 
+						TimerBaf1.enabled:=true;
+					end;
+				if (AssistID2 <> 0) then
+					begin
+						checkBaf2:=1;
+						TimerBaf2.enabled:=true;
+					end;
+				if (AssistID3 <> 0) then
+					begin
+						checkBaf3:=1;
+						TimerBaf3.enabled:=true;
+					end;
+			  if (rbMode = 0) and (WarriorSpoilCrafterBd = 0) or (WarriorSpoilCrafterBd2 = 0) then selfBaf:= 1; //нужно себя бафнуть когда будет поспокойней вокруг
+			  if (WarriorSpoilCrafterBd = 3) or (WarriorSpoilCrafterBd2 = 3) then selfBaf2:= 1; //нужно себя бафнуть когда будет поспокойней вокруг
+			  TimerBafReload.enabled:=true;
+			  if (WarriorSpoilCrafterBd = 3) or (WarriorSpoilCrafterBd2 = 3) then TimerBafReloadBD.enabled:=true;
+			 end;
+		'1', '2', '3', '4', '5', '6', '7', '8', '9', '10':            // задаем мобов
+              begin
+               if (NpcTypeID_List_Count+1) <> strtoint(ReadS(2)) then
+                begin
+                 SendMsg_to_CL('you have to add mobs from the first 1, 2, 3...'+ inttostr(NpcTypeID_List_Count));
+                 pck:='';
+                 exit;
+                end;
+               NpcTypeID_CurrentMob:= strtoint(ReadS(2));
+               SendMsg_to_CL('add mob № '+ ReadS(2));
+               pck:='';
+               i:= TestPovtor (TargetID);
+               if i > 0 then
+                begin
+                 NpcTypeID_List[NpcTypeID_CurrentMob]:= MobsNpcTypeID[i];
+                 SendMsg_to_CL('Mob ' + inttostr(NpcTypeID_CurrentMob) + ' code: '+inttostr(MobsNpcTypeID[i])+' added into base');
+                 log.Lines.Add('Mob ' + inttostr(NpcTypeID_CurrentMob) + ' code: '+inttostr(MobsNpcTypeID[i])+' added into base');
+                 inc(NpcTypeID_List_Count);
+                 NpcTypeID_CurrentMob:= 0;
+                 TargetID:= 0;
+                end;
+              end;
+		'rb':	  begin
+				rbMode:= 1;
+				i:= TestPovtor (TargetID);
+                if i > 0 then
+				  begin
+					TargetRB:= MobsNpcTypeID[i];
+					TargetRBID:= MobsObjID[i];
+					SendMsg_to_CL('Raid: '+inttostr(TargetRB)+' is added into base');
+					pck:='';
+				  end;
+			  end;
+		'start':  begin                                               // собственно запуск бота
+               pck:='';
+               StartGame;
+              end;
+  end;
+  if (not InitMode) then case (ReadS(2)) of
+   'pause' : begin
+              pck:='';
+              PauseGame;
+             end;
+   'stop'  : begin
+              pck:='';
+              StopGame;
+             end;
+   '1', '2', '3', '4', '5', '6', '7', '8', '9', '10':   // задаем скорость агра	
+			  begin
+			    agrSpeed:= strtoint(ReadS(2));  
+				TimerAgr.interval:= agrSpeed * 1000;
+			    SendMsg_to_CL('agression speed: '+ReadS(2));
+				pck:='';
+			  end;
+  end;
+ end;
+
+procedure PauseGame;
+ begin
+  TimerCombat.enabled:= not(TimerCombat.enabled);
+  if TimerCombat.enabled then
+   begin
+    btnPause.Caption:='Pause';
+	checkPause:= 0;
+    SendMsg_to_CL('AI activated');
+    log.Lines.Add('AI activated');
+   end
+  else
+   begin
+    btnPause.Caption:='Repeat';
+	checkPause:= 1;
+    SendMsg_to_CL('AI disabled');
+    SendMsg_to_CL('Flags: sit:'+IntToStr(sit)+' sit1:'+IntToStr(sit1)+' checkPause:'+IntToStr(checkPause));
+    log.Lines.Add('AI disabled');
+	TargetID:= 0;
+	TargetID2:= 0;
+   end;
+ end;
+
+procedure StartGame;
+ var
+  i: integer;
+ begin
+  i:= 0;
+  if ValidateData and InitMode then
+   begin
+    CenterFixed:= true;
+    SendMsg_to_CL('AI ENABLED');
+    log.Lines.Add('AI ENABLED');
+	checkPause:= 0;
+	sit:=0;
+	sit1:=0;
+	sit2:=0;
+	sit3:=0;
+	fixSit:=0;
+	TargetID:=0;
+	TargetID2:=0;
+	if (TargetRB <> 0) then TargetID2:= TargetRBID;
+	InitMode:= false;
+    TimerCombat.enabled:=true;                      // запускаем таймер
+    btnStart.enabled:= false;
+    btnStop.enabled:= true;
+    btnPause.enabled:= true;
+   end
+  else
+   begin
+    SendMsg_to_CL('please check your params');
+    log.Lines.Add('please check your params');
+   end;
+ end;
+
+procedure StopGame;                     // остановка кача
+ begin
+  TimerCombat.enabled:= false;      //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  InitMode:= true;
+  TimerPickUp.enabled:= false;
+  RBTargetReload.enabled:= false;
+  TargetID:= 0;
+  TargetID2:= 0;
+  SendMsg_to_CL('AI DISABLED');
+  log.Lines.Add('AI DISABLED');
+  btnStart.enabled:= true;
+  btnStop.enabled:= false;
+  btnPause.Caption:= 'Pause';
+  btnPause.enabled:=false;
+  a1o:= 0; a1w:= 0; a1a1:= 0; a1a2:= 0; a1m:= 0; a1m1:= 0; a1m2:= 0; a1m3:= 0; a2o:= 0; a2w:= 0; a2a1:= 0; a2a2:= 0; a2m:= 0; a2m1:= 0; a2m2:= 0; a2m3:= 0; a3all:=0;
+  diepause:= 0; spoilpause:= 0; onlyOne:= 0; onlyOne1:= 0; onlyOne2:= 0; onlyOne3:= 0; bd:=0;
+  sit:= 0; sit1:= 0; sit2:= 0; sit3:= 0; rest:=0;
+  full:= 0;
+  bers:= 0;
+  TargetRB:= 0;
+  rbMode:= 0;
+  selfBaf:=0;
+  selfBaf2:=0;
+  selfBafBD:=0;
+  activeDefence:= 0;
+  noHealSEmode:= 0;
+ end;
+
+ //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function GetMinDistID : integer;     // функция поиска ближайшего моба в БД
+ var
+  i, Dist, MinDist : integer;
+ begin
+  result:= 0;
+  if (AssistID1 <> 0) and (MyHP > 0) and (MyMP < MPlevelProcentRecharge) then ManaFromAssist1(MyID);
+  if (AssistID1 <> 0) and (AssistID <> 0) and (AssistHP > 0) and (AssistMP < AssistMPlevelProcentRecharge) then  ManaFromAssist1(AssistID);
+  if (AssistID2 <> 0) and (MyHP > 0) and (MyHP < HPlevelProcentRecharge) then HealFromAssist2(MyID);
+  if (AssistID2 <> 0) and (AssistID <> 0) and (AssistHP > 0) and (AssistHP < AssistHPlevelProcentRecharge) then HealFromAssist2(AssistID);
+  if (MyHP > 0) and ((agrotest = 0) or (rest = 1)) and ((abs(MyX-CenterX) > 20) or (abs(MyY-CenterY) > 20)) and 
+	((MyHP < HPlevelProcent/2) or (MyMP < MPlevelProcent) or ((AssistID1 <> 0) and (AssistMP1 < AssistMPlevelProcent1/2)) or ((AssistID2 <> 0) and (AssistMP2 < AssistMPlevelProcent2/2))) then 
+	begin
+		MoveToMain(CenterX, CenterY, CenterZ);   // вернуться в центр кача  и ...
+		rest:= 1;
+		exit;
+	end;
+  if (MyHP > 0) and (rest = 1) and (abs(MyX-CenterX) <= 20) and (abs(MyY-CenterY) <= 20) and 
+	((MyHP < HPlevelProcent/2) or (MyMP < MPlevelProcent) or ((AssistID1 <> 0) and (AssistMP1 < AssistMPlevelProcent1/2)) or ((AssistID2 <> 0) and (AssistMP2 < AssistMPlevelProcent2/2))) then 
+	begin
+		rest:= 0;
+		DrinkBottle;		// сесть пополнить здоровье
+		exit;
+	end
+	else rest:= 0;
+  if MobsLastIndex = 0 then exit;
+  MinDist:=RastoyanieToMe(MobsXYZ[1,OX], MobsXYZ[1,OY]);
+  for i:=1 to MobsLastIndex do if (MobsDist[i] <= Radius) and (MobsIsAttackable[i]) then
+   begin
+	if (result = 0) or ((result <> 0) and (TargetRB <> MobsNpcTypeID[i])) then
+      begin
+		Dist:= RastoyanieToMe(MobsXYZ[i,OX], MobsXYZ[i,OY]);
+		if Dist <= MinDist then
+		 begin
+		  Dist:= MinDist;
+		  result:= i;
+		 end;                     // если нашли хоть одного моба или несколько, то возращаем индекс ближайшего
+	  end;	 
+   end;
+ end;
+
+function AgroTest : integer;        // функция проверяет, атакует ли меня кто-нибудь или нет
+ var
+  i: integer;
+ begin
+  result:=0;
+  for i:=1 to MobsLastIndex do if MobsAgression[i] then  // ищем первого попавшегося моба, который нас атакует
+   begin
+    result:= i;                                      // возвращаем его индекс по БД
+    break;
+   end;
+ end;
+
+
+procedure Spoil;          // команда спойла
+ begin  
+        buf:=hstr(b1);
+        SendToServerEx(NickName);              
+end;
+              
+procedure Sweep(i:integer);          // команда свипа
+ begin
+	buf:=#$04; //action
+    WriteD(MobsObjID[i]);
+    WriteD(MyX);
+    WriteD(MyY);
+    WriteD(MyZ);
+    WriteC(1); 
+    SendToServerEx(NickName);	
+    buf:=hstr(b2);
+    SendToServerEx(NickName);
+end;
+
+procedure PowerStrike;          // команда Power атаки
+ begin 
+    buf:=hstr(a2);
+    SendToServerEx(NickName);
+end;
+
+procedure SheldStun;          // команда Shield Stun
+ begin 
+    buf:=hstr(a5);
+    SendToServerEx(NickName);
+end;
+
+procedure Stun;          // команда стана
+ begin 
+    buf:=hstr(a11);
+    SendToServerEx(NickName);
+end;
+
+procedure Majesty;          // баф себя Majesty
+ begin 
+    buf:=hstr(b5);
+    SendToServerEx(NickName);
+end;
+
+procedure ReflectDamage;          // баф себя Reflect Damage
+ begin 
+    buf:=hstr(b6);
+    SendToServerEx(NickName);
+	selfBaf:= 0;
+end;
+
+procedure ReflectArrow;          // баф себя Reflect Damage
+ begin 
+    buf:=hstr(b7);
+    SendToServerEx(NickName);
+	selfBaf2:= 0;
+end;
+
+procedure BafBD;          // баф BD основы
+ begin
+	if (bd = 10) or (bd = 20) or (bd = 30) then exit;
+	TimerBafReloadBD.enabled:= false;
+	if (bd = 0) then
+	 begin
+		buf:=hstr(bd4);
+		SendToServerEx(NickName);
+		buf:=hstr(bd6);
+		SendToServerEx(NickName);
+		bd:= 10;
+		exit;
+	 end;
+	if (bd = 1) then
+	 begin
+		buf:=hstr(bd1);
+		SendToServerEx(NickName);
+		buf:=hstr(bd2);
+		SendToServerEx(NickName);
+		bd:= 20;
+		exit;
+	 end;
+	if (bd = 2)  and (sacred = 1) then
+	 begin
+		buf:=hstr(bd3);
+		SendToServerEx(NickName);
+	 end;
+	bd:=0;
+	selfBafBD:= 0;
+	TimerBafReloadBD.enabled:= true;
+end;
+
+procedure PowerStrike2;          // команда Power атаки
+ begin 
+    buf:=hstr(a2);
+    SendToServerEx(AssistantName);
+end;
+
+procedure SheldStun2;          // команда Shield Stun
+ begin 
+    buf:=hstr(a5);
+    SendToServerEx(AssistantName);
+end;
+
+procedure Stun2;          // команда стана
+ begin 
+    buf:=hstr(a11);
+    SendToServerEx(AssistantName);
+end;
+
+procedure Majesty2;          // баф себя Majesty
+ begin 
+    buf:=hstr(b5);
+    SendToServerEx(AssistantName);
+end;
+
+procedure ReflectDamage2;          // баф себя Reflect Damage
+ begin 
+    //buf:=hstr(b6);
+    //SendToServerEx(AssistantName);  <-----------------------------------------------------------------------------------для ДА включить
+	selfBaf:= 0;
+end;
+
+procedure ReflectArrow2;          // баф себя Reflect Arrow
+ begin 
+    buf:=hstr(b7);
+    SendToServerEx(AssistantName);
+	selfBaf2:= 0;
+end;
+
+procedure BafBD2;          // баф бд
+ begin
+	if (bd = 10) or (bd = 20) or (bd = 30)  then exit;
+	TimerBafReloadBD.enabled:= false;
+	if (bd = 0) then
+	 begin
+		buf:=hstr(bd4);
+		SendToServerEx(AssistantName);
+		buf:=hstr(bd6);
+		SendToServerEx(AssistantName);
+		bd:= 10;
+		exit;
+	 end;
+	if (bd = 1) then
+	 begin
+		buf:=hstr(bd1);
+		SendToServerEx(AssistantName);
+		buf:=hstr(bd2);
+		SendToServerEx(AssistantName);
+		bd:= 20;
+		exit;
+	 end;
+	if (bd = 2) and (sacred = 1) then
+	 begin
+		buf:=hstr(bd3);
+		SendToServerEx(AssistantName);
+	 end;
+	bd:=0;
+	selfBafBD:= 0;
+	TimerBafReloadBD.enabled:= true; 
+end;
+
+procedure AgressionHate;          // команда Agression
+ begin 
+	buf:=#$04; //action
+    WriteD(TargetRB);
+    WriteD(AssistX);
+    WriteD(AssistY);
+    WriteD(AssistZ);
+    WriteC(0); 
+    SendToServerEx(AssistantName);
+    buf:=hstr(a4);
+    SendToServerEx(AssistantName);
+end;
+
+ procedure HealFromAssist1(ID: integer);  // усиленное лечение первым помощником (ше)
+ begin          
+	buf:=#$04; //action
+    WriteD(ID);
+    WriteD(AssistX1);
+    WriteD(AssistY1);
+    WriteD(AssistZ1);
+    WriteC(0); 
+    SendToServerEx(AssistantName1);
+	buf:=hstr(h3);
+	SendToServerEX(AssistantName1);
+end;
+
+ procedure HealFromAssist1soft(ID: integer);  // лечение первым помощником (ше)
+ begin          
+	buf:=#$04; //action
+    WriteD(ID);
+    WriteD(AssistX1);
+    WriteD(AssistY1);
+    WriteD(AssistZ1);
+    WriteC(0); 
+    SendToServerEx(AssistantName1);
+	buf:=hstr(h1);
+	SendToServerEX(AssistantName1);
+end;
+
+
+ procedure HealFromAssist2(ID: integer); // лечение вторым помощником (пп)
+ begin          
+	buf:=#$04; //action
+    WriteD(ID);
+    WriteD(AssistX2);
+    WriteD(AssistY2);
+    WriteD(AssistZ2);
+    WriteC(0); 
+    SendToServerEx(AssistantName2);
+	buf:=hstr(h1);
+	SendToServerEX(AssistantName2);
+end;
+
+ procedure RepairFromAssist1(ID: integer); // удаление парализации первым помощником (ше)
+ begin          
+	buf:=#$04; //action
+    WriteD(ID);
+    WriteD(AssistX1);
+    WriteD(AssistY1);
+    WriteD(AssistZ1);
+    WriteC(0); 
+    SendToServerEx(AssistantName1);
+	buf:=hstr(h5);
+	SendToServerEX(AssistantName1);
+end;
+
+procedure GroupHealFromAssist1;  // групповое лечение первым помощником (ше)
+ var count: integer;
+ begin
+	if (baferOutParty = 1) then exit;
+	count:=0;
+	if (MyHP > 0) and (MyHP < HPlevelProcent) then count:= count+1;	
+	if (AssistID <> 0) and (AssistHP > 0) and (AssistHP < AssistHPlevelProcent) then count:= count+1;	
+	if (AssistID1 <> 0) and (AssistHP1 > 0) and (AssistHP1 < AssistHPlevelProcent1) then count:= count+1;		
+	if (AssistID2 <> 0) and (AssistHP2 > 0) and (AssistHP2 < AssistHPlevelProcent2) then count:= count+1;		
+	if (AssistID3 <> 0) and (AssistHP3 > 0) and (AssistHP3 < AssistHPlevelProcent3) then count:= count+1;		
+	if (MageAssistID <> 0) and (MageAssistHP > 0) and (MageAssistHP < MageAssistHPlevelProcent) then count:= count+1;	
+	if (MageAssistID1 <> 0) and (MageAssistHP1 > 0) and (MageAssistHP1 < MageAssistHPlevelProcent1) then count:= count+1;	
+	if (MageAssistID2 <> 0) and (MageAssistHP2 > 0) and (MageAssistHP2 < MageAssistHPlevelProcent2) then count:= count+1;	
+	if (MageAssistID3 <> 0) and (MageAssistHP3 > 0) and (MageAssistHP3 < MageAssistHPlevelProcent3) then count:= count+1;		
+    if (count > 2) then
+	  begin
+		buf:=hstr(h4);
+		SendToServerEx(AssistantName1);
+	  end;
+end;
+
+ procedure ManaFromAssist1(ID: integer); // заливка маны первым помощником (ше)
+ begin          
+	buf:=#$04; //action
+    WriteD(ID);
+    WriteD(AssistX1);
+    WriteD(AssistY1);
+    WriteD(AssistZ1);
+    WriteC(0); 
+    SendToServerEx(AssistantName1);
+	buf:=hstr(h2);
+	SendToServerEX(AssistantName1);
+end;
+
+procedure PhisicalAttack;          // команда атаки
+ begin 
+    buf:=#$04; //action
+    WriteD(TargetID);
+    WriteD(MyX);
+    WriteD(MyY);
+    WriteD(MyZ);
+    WriteC(0); 
+    SendToServerEx(NickName); 
+end;
+
+procedure PhisicalAttack2;          // команда атаки воином помощником
+ begin 
+	if (TimerGoOut.enabled = true) then
+	  begin
+		TimerGoOut.enabled:= false;
+	  end;
+	buf:=#$04; //action
+    if (TargetID2 <> 0) then WriteD(TargetID2) else WriteD(TargetID); // своя цель имеет более высокий приоритет
+    WriteD(AssistX);
+    WriteD(AssistY);
+    WriteD(AssistZ);
+    WriteC(0); 
+    if (AssistID <> 0) then SendToServerEx(AssistantName);	
+    if (AssistID3 <> 0) then SendToServerEx(AssistantName3);	
+	//if (rbMode = 0) and ((AttackCycle mod 11) = 1) and (WarriorSpoilCrafterBd2 = 0) then SheldStun2;
+	if (rbMode = 1) and not(TimerAgr.enabled) and (WarriorSpoilCrafterBd2 = 0) then
+	  begin
+		AgressionHate;
+		TimerAgr.enabled:= true;
+	  end;
+	if ((AttackCycle mod 11) = 1) and (WarriorSpoilCrafterBd2 = 2) and (polyaxeAssistant = 0) then Stun2;
+	if ((AttackCycle mod 11) = 1) and ((WarriorSpoilCrafterBd2 = 3) or (WarriorSpoilCrafterBd2 = 4) or ((WarriorSpoilCrafterBd2 = 2) and (polyaxeAssistant = 1))) then //поставить PowerStrike2;	пока не с двумя мечами иначе просто код ниже клик на таргет
+	 begin
+		buf:=#$04; //action
+		if (TargetID2 <> 0) then WriteD(TargetID2) else WriteD(TargetID); // своя цель имеет более высокий приоритет
+		WriteD(AssistX);
+		WriteD(AssistY);
+		WriteD(AssistZ);
+		WriteC(0); 
+		if (AssistID <> 0) then SendToServerEx(AssistantName);	
+		if (AssistID3 <> 0) then SendToServerEx(AssistantName3);		
+	 end;
+end;
+
+procedure SpoilAttack(i:integer);          // команда атаки со спойлом
+ begin 
+	if (spoilpause = 0) then
+	  begin
+		buf:=#$04; //action
+		WriteD(TargetID);
+		WriteD(MyX);
+		WriteD(MyY);
+		WriteD(MyZ);
+		WriteC(0);
+		SendToServerEx(NickName);  
+	  end;
+	if (i > 0) and (i <= MobsLastIndex) and (MobsIsAttackable[i] = true) and (MobsIsSwipable[i] = false) then  
+	  begin
+		if (farm = 1) then
+			begin
+				if (farm_level = 4) then CustomKookaburra(i) else // отдельная функция для куриц с кормом Gold на ресурсы с аденой
+				Kookaburra(food, farm_level, i);
+				exit;
+			end;
+		spoilpause:= 1;
+		Spoil; 
+	  end
+	  else spoilpause:= 0;
+end;
+			
+procedure Kookaburra(food,lvl,i: integer);
+ var j: integer;
+ begin
+	if (lvl = 1) then
+		begin
+			if (MobsNpcTypeID[i] = NpcTypeID_List[1]) then
+				begin
+					buf:=#$14;
+					WriteD(food);
+					WriteD(0);
+					SendToServerEx(NickName);
+					exit;
+				end;
+			spoilpause:= 1;
+			Spoil;
+		end;
+	if (lvl = 2) then
+		begin
+		  for j:=1 to 5 do 
+			begin	
+				if (MobsNpcTypeID[i] = NpcTypeID_List[j]) then
+					begin	
+						buf:=#$14;
+						WriteD(food);
+						WriteD(0);
+						SendToServerEx(NickName);
+						exit;
+					end;
+			end;
+		  spoilpause:= 1;
+		  Spoil; 
+		end;
+	if (lvl = 3) then
+		begin
+		  for j:=1 to 9 do 
+			begin	
+				if (MobsNpcTypeID[i] = NpcTypeID_List[j]) then
+					begin	
+						buf:=#$14;
+						WriteD(food);
+						WriteD(0);
+						SendToServerEx(NickName);
+						exit;
+					end;
+			end;
+		  spoilpause:= 1;
+		  Spoil; 
+		end;	
+ end;
+ 
+ procedure CustomKookaburra(i: integer);
+ begin
+	begin
+		if (MobsNpcTypeID[i] = 1001451) or (MobsNpcTypeID[i] = 1001453) or (MobsNpcTypeID[i] = 1001455) or
+			(MobsNpcTypeID[i] = 1001460) or (MobsNpcTypeID[i] = 1001462) then
+			begin
+				buf:=#$14;
+				WriteD(food);
+				WriteD(0);
+				SendToServerEx(NickName);
+				exit;
+			end;
+		spoilpause:= 1;
+		Spoil;
+	end;
+ end;
+ 
+ 
+ 
+procedure PowerAttack;          // команда атаки 
+ begin 
+    buf:=#$04; //action
+    WriteD(TargetID);
+    WriteD(MyX);
+    WriteD(MyY);
+    WriteD(MyZ);
+    WriteC(0);
+    SendToServerEx(NickName);  
+	// if ((AttackCycle mod 11) = 1) and (WarriorSpoilCrafterBd = 0) then SheldStun;
+	if ((AttackCycle mod 11) = 1) and ((WarriorSpoilCrafterBd = 3) or (WarriorSpoilCrafterBd = 4)) then  //поставить PowerStrike;	пока не с двумя мечами иначе просто код ниже клик на таргет
+	 begin
+		buf:=#$04; //action
+		WriteD(TargetID);
+		WriteD(MyX);
+		WriteD(MyY);
+		WriteD(MyZ);
+		WriteC(0);
+		SendToServerEx(NickName);
+	 end;
+end;
+
+procedure StunAttack;          // команда атаки
+ begin 
+    buf:=#$04; //action
+    WriteD(TargetID);
+    WriteD(MyX);
+    WriteD(MyY);
+    WriteD(MyZ);
+    WriteC(0);
+    SendToServerEx(NickName);  
+	if ((AttackCycle mod 11) = 1) and (polyaxe = 0) then Stun else
+	 begin
+		buf:=#$04; //action
+		WriteD(TargetID);
+		WriteD(MyX);
+		WriteD(MyY);
+		WriteD(MyZ);
+		WriteC(0); 
+	 end;
+end;
+
+procedure InitPickUpMode(mode: boolean);
+begin
+ if mode then
+  begin
+   PickUpMode:= true;
+   spoilpause:= 0;
+   TimerCombat.enabled:= false;
+   TimerPickUp.enabled:= true;
+  end
+ else
+  begin
+   PickUpMode:= false;
+   TimerCombat.enabled:= true;
+   TimerPickUp.enabled:= false;
+  end;
+end;
+
+procedure OnTimerPickUp (Sender: TObject);         // таймер поднятия дропа
+ var
+  povtor: integer;
+ begin
+  if (AgroTest > 0) then
+   begin
+    TargetID:= 0;
+    InitPickUpMode(false);
+    exit;
+   end;
+  if (ItemsLastIndex > 0) and (TargetID = 0) then
+   begin
+    TargetID:= Items_ObjectID[ItemsLastIndex];
+    AttackCycle:= 0;
+    PhisicalAttack;
+    exit;
+   end;
+  if (ItemsLastIndex > 0) and (TargetID > 0) then
+   begin
+    inc (AttackCycle);
+    if ((AttackCycle mod 3) = 0) then PhisicalAttack;
+    if AttackCycle > Calculated_PickUpTime then
+     begin
+      Povtor:= CheckItems(TargetID);
+      if Povtor <> 0 then DelDroppedItem(Povtor);
+      TargetID:= 0;
+     end;
+    exit;
+   end;
+  if ItemsLastIndex = 0 then InitPickUpMode(false);
+ end;
+
+procedure OnTimerBafReload(Sender: TObject);
+  begin
+	if (AssistID1 <> 0) then 
+		begin
+			checkBaf1:=1;								 
+			TimerBaf1.enabled:=true;
+		end;
+	if (AssistID2 <> 0) then
+		begin
+			checkBaf2:=1;
+			TimerBaf2.enabled:=true;
+		end;
+	if (AssistID3 <> 0) then
+		begin
+			checkBaf3:=1;
+			TimerBaf3.enabled:=true;
+		end;
+	if (rbMode = 0) and (WarriorSpoilCrafterBd = 0) or (WarriorSpoilCrafterBd2 = 0) then selfBaf:= 1;
+	if (WarriorSpoilCrafterBd = 3) or (WarriorSpoilCrafterBd2 = 3) then selfBaf2:= 1;
+  end;
+  
+procedure OnTimerBafReloadBD(Sender: TObject);
+  begin
+	selfBafBD:= 1;
+  end; 
+  
+procedure OnnewMagicAttack(Sender: TObject);
+  begin
+	newMagicAttack.enabled:= false;
+  end; 
+  
+procedure OnnewMagicAttack1(Sender: TObject);
+  begin
+	newMagicAttack1.enabled:= false;
+  end; 
+  
+procedure OnnewMagicAttack2(Sender: TObject);
+  begin
+	newMagicAttack2.enabled:= false;
+  end; 
+  
+procedure OnnewMagicAttack3(Sender: TObject);
+  begin
+	newMagicAttack3.enabled:= false;
+  end; 
+  
+procedure OnTimerAgr(Sender: TObject);
+  begin
+	TimerAgr.enabled:= false;
+  end;
+    
+procedure OnTimerGoOut(Sender: TObject);
+  begin	
+	GoOutAll();
+  end;
+  
+procedure OnTimerParty(Sender: TObject);
+  begin  
+  if tickParty = 1 then
+   begin
+      buf:=hstr('2B');
+      SendToServerEX(NickName);
+      if (AssistID <> 0) then SendToServerEX(AssistantName);
+      if (AssistID1 <> 0) then SendToServerEX(AssistantName1);
+      if (AssistID2 <> 0) then SendToServerEX(AssistantName2);
+      if (AssistID3 <> 0) then SendToServerEX(AssistantName3);
+      if (MageAssistID <> 0) then SendToServerEX(MageAssistantName);
+      if (MageAssistID1 <> 0) then SendToServerEX(MageAssistantName1);
+      if (MageAssistID2 <> 0) then SendToServerEX(MageAssistantName2);
+      if (MageAssistID3 <> 0) then SendToServerEX(MageAssistantName3);
+   end;
+
+  if (tickParty = 2) and (AssistID <> 0) then
+   begin
+	 buf:=hstr('29');
+	 writeS(AssistantName);
+	 buf:=buf + hstr('00 00 00 00');
+	 SendToServerEX(NickName);
+   end;
+
+  if (tickParty = 3) and (AssistID1 <> 0) then
+   begin
+	 buf:=hstr('29');
+	 writeS(AssistantName1);
+	 buf:=buf + hstr('00 00 00 00');
+	 SendToServerEX(NickName);
+   end;
+
+  if (tickParty = 4) and (AssistID2 <> 0) then
+   begin
+	 buf:=hstr('29');
+	 writeS(AssistantName2);
+	 buf:=buf + hstr('00 00 00 00');
+	SendToServerEX(NickName);
+   end;
+  
+  if (tickParty = 5) and (AssistID3 <> 0) then
+   begin
+	 buf:=hstr('29');
+	 writeS(AssistantName3);
+	 buf:=buf + hstr('00 00 00 00');
+	SendToServerEX(NickName);
+   end;
+   
+  if (tickParty = 6) and (MageAssistID <> 0) then
+   begin
+	 buf:=hstr('29');
+	 writeS(MageAssistantName);
+	 buf:=buf + hstr('00 00 00 00');
+	SendToServerEX(NickName);
+   end;
+
+  if (tickParty = 7) and (MageAssistID1 <> 0) then
+   begin
+	 buf:=hstr('29');
+	 writeS(MageAssistantName1);
+	 buf:=buf + hstr('00 00 00 00');
+	SendToServerEX(NickName);
+   end;
+
+  if (tickParty = 8) and (MageAssistID2 <> 0) then
+   begin
+	 buf:=hstr('29');
+	 writeS(MageAssistantName2);
+	 buf:=buf + hstr('00 00 00 00');
+	SendToServerEX(NickName);
+   end;
+
+  if (tickParty = 9) and (MageAssistID3 <> 0) then
+   begin
+	 buf:=hstr('29');
+	 writeS(MageAssistantName3);
+	 buf:=buf + hstr('00 00 00 00');
+	SendToServerEX(NickName);
+   end;
+
+  tickParty:=tickParty+1;
+
+  if tickParty > 9 then
+   begin
+	 tickParty:=1;
+	 TimerParty.enabled:=false;
+   end;
+
+end;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+procedure OnTimerCombat (Sender: TObject);         // боевой таймер
+ var
+  Agro, MinDistID, i: integer;
+ begin	
+	if (diepause = 1) then exit;
+	{if (MyHP = MyMaxHP) and (MyMP = MyMaxMP) and (TargetID > 0) then		// исправление если не сработал пакет сесть-встать
+		begin
+			if fixSit = 0 then 
+				begin
+					MyXCheck:=MyX;					
+					MyYCheck:=MyY;		
+					fixSit:=1;
+				end
+			else
+				begin
+				  if fixSit < 10 then fixSit:= fixSit+1
+				  else
+				   begin
+					if (MyXCheck = MyX) and (MyYCheck = MyY) then	
+					 begin
+						fixSit:=0;
+						buf:=hstr(b3);
+						SendToServerEx(NickName);						
+					 end;
+				   end;
+				end;
+		end
+	else fixSit:=0;}
+  Agro:= AgroTest;
+  i:= 0;
+  if (TargetID > 0) then 
+	begin
+		i:= TestPovtor(TargetID);
+		if (i > 0) and (MobsIsAttackable[i] = false) then TargetID:= 0;
+		if (rbmode = 1) and (TargetID = TargetRBID) and (RBTargetReload.enabled = false) then RBTargetReload.enabled:= true;
+	end;
+  if ((Agro > 0) and (TargetID = 0)) or ((WarriorSpoilCrafterBd = 1) and (Agro > 0) and (i > 0) and (TargetID > 0) and (spoilpause = 0) and (MobsIsSwipable[global_i] = false)) then                            // если нас кто-то атакует, и не бьем заспойленого моба то выбираем атакующего
+   begin
+    if (TargetID <> MobsObjID[Agro]) and ((rbmode = 0) or ((rbmode = 1) and (TargetRBID <> MobsObjID[Agro]))) then 
+	  begin
+		AttackCycle:= 0;;
+		TargetID:= MobsObjID[Agro];		
+		PhisicalAttack;	// берем вражину в таргет 
+		exit;
+	  end;  
+   end; 
+  if (TargetID > 0)  then           // если в прицеле есть моб, то
+   begin                                  // валим вражину    
+    if (bd = 10) then bd:=1;		// флаг для bd чтоб бафнул после боя
+	if (bd = 20) then bd:=2;
+	if (bd = 30) then bd:=3;
+	if (spoilpause = 0) then PhisicalAttack;
+	i:= TestPovtor(TargetID);
+	if (WarriorSpoilCrafterBd = 0) then PowerAttack;  							                         
+	if (WarriorSpoilCrafterBd = 1) then SpoilAttack(i);
+	if (WarriorSpoilCrafterBd = 2) then StunAttack;
+	if (WarriorSpoilCrafterBd = 3) then PowerAttack;
+	if (WarriorSpoilCrafterBd = 4) then PowerAttack;
+	inc(AttackCycle);
+	if (hitMe > 30) or ((AttackCycle mod 30) = 29) then 
+	  begin	
+		if (rbMode = 0) then MoveToHead(0, 0, 0); // отбежать основой
+		if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(0, 0, 7);  //отбежать помощником-воином
+		hitMe:=0;
+	  end;
+	if ((AttackCycle mod 40) = 38)  and (rbMode = 0) then GoOutAll();		// отбежать всеми
+    if (AttackCycle > Calculated_AttackTime) and (rbMode = 0) then              // если валим моба больше, значит это баг...
+     begin
+      i:= TestPovtor(TargetID);
+      if i > 0 then
+       begin
+        MobsIsAttackable[i]:= false;                  //DelDBItem(i);
+        MobsIsSwipable[i]:= false;     
+        MobsAgression[i]:= false;
+       end;
+      TargetID:= 0;
+	  MoveToHead(0, 0, 0);
+     end;
+	 exit;
+   end;
+	if (rbMode = 0) and (WarriorSpoilCrafterBd = 0) and (selfBaf = 1) then ReflectDamage;
+	if (rbMode = 0) and (WarriorSpoilCrafterBd2 = 0) and (selfBaf = 1) then ReflectDamage2;
+	if (WarriorSpoilCrafterBd = 3) and (selfBaf2 = 1) and (arrow = 1) then ReflectArrow else selfBaf2:= 0;
+	if (WarriorSpoilCrafterBd2 = 3) and (selfBaf2 = 1)  and (arrow = 1) then ReflectArrow2 else selfBaf2:= 0;
+	if (WarriorSpoilCrafterBd = 3) and (selfBafBD = 1) then BafBD;
+	if (WarriorSpoilCrafterBd2 = 3) and (selfBafBD = 1) then BafBD2;
+  if (ItemsLastIndex > 0) and (rbmode = 0) then  // если чего-то валяется на земле, то
+   begin
+    InitPickUpMode(true);   // надо дроп подбирать
+    exit;
+   end;
+  MinDistID:= GetMinDistID;                   // запускаем алгоритм выбора цели
+  if MinDistID > 0 then      // иначе ищем ближайшего
+   begin
+	if (TargetRB = 0) then TargetID2:= 0;
+    TargetID:= MobsObjID[MinDistID];
+    PhisicalAttack;                           // берем вражину в таргет
+    AttackCycle:= 0;
+	GoOutAll();
+	if (AssistID <> 0) and (rbMode = 0) then FollowAttack; 				// тут помощники цепляются двойным кликом к основе
+	if (AssistID1 <> 0) and (rbMode = 0) then FollowAttack1; 	
+	if (AssistID2 <> 0) and (rbMode = 0) then FollowAttack2; 
+	if (AssistID3 <> 0) and (rbMode = 0) then FollowAttack3; 
+	if (MageAssistID <> 0) and (rbMode = 0) then MageFollowAttack; 	// а тут маги
+	if (MageAssistID1 <> 0) and (rbMode = 0) then MageFollowAttack1; 
+	if (MageAssistID2 <> 0) and (rbMode = 0) then MageFollowAttack2; 
+	if (MageAssistID3 <> 0) and (rbMode = 0) then MageFollowAttack3; 
+    exit;
+   end; 
+  if (abs(MyX-CenterX) > 20) and (abs(MyY-CenterY) > 20) then 
+   begin
+	MoveToMain(CenterX, CenterY, CenterZ);
+	exit;
+   end;
+   GoOutAll();
+ end;
+
+procedure OnRBTargetReload (Sender: TObject);         // боевой таймер
+ var
+  i: integer;
+ begin
+ if (MobsLastIndex = 0) or (TargetID <> TargetRBID) then exit;
+  for i:=1 to MobsLastIndex do if (MobsObjID[i] <> TargetRBID) and (MobsDist[i] <= Radius) and (MobsIsAttackable[i]) then
+   begin
+	TargetID:= MobsObjID[i];
+	PhisicalAttack;	
+	AttackCycle:= 0;
+	RBTargetReload.enabled:= false;
+   end;
+ end;
+ 
+procedure GoOutAll();
+  begin
+	if (AssistID1 <> 0) then MoveToHead(0, 0, 1);  // отбежать первым помощником (ше)
+	if (AssistID2 <> 0) then MoveToHead(0, 0, 2);  // отбежать вторым помощником  
+	if (AssistID3 <> 0) then MoveToHead(0, 0, 8);  // отбежать овером  
+	if (MageAssistID <> 0) then MoveToHead(0, 0, 3);   
+	if (MageAssistID1 <> 0) then MoveToHead(0, 0, 4);  
+	if (MageAssistID2 <> 0) then MoveToHead(0, 0, 5); 
+	if (MageAssistID3 <> 0) then MoveToHead(0, 0, 6); 
+	if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(0, 0, 7); 
+  end;
+  
+procedure MoveToMain(TargetX,TargetY,TargetZ:integer);   //Идти в точку с координатами x,y,z
+begin
+  buf:=#$01;                                  //01=MoveBackwardToLocation:d(targetX)d(targetY)d(targetZ)d(originX)d(originY)d(originZ)d(moveByMouse)
+  WriteD(targetx); //куда
+  WriteD(targety);
+  WriteD(targetz);
+  WriteD(MyX); //откуда
+  WriteD(MyY);
+  WriteD(MyZ);
+  WriteD(1); //используем 1-мышь 0-клавиатура
+  SendToServerEx(NickName);
+end;
+
+procedure OnTimerForm (Sender: TObject);           // таймер обновления данных в форме
+ var
+  i: integer;
+ begin
+  textMyID.text:= inttostr(MyID);                      // обновляем данные в окне
+  textX.text:= inttostr(MyX);
+  textY.text:= inttostr(MyY);
+  textZ.text:= inttostr(MyZ);
+  textMyHP.text:= inttostr(MyHP);
+  textMyMaxHP.text:= inttostr(MyMaxHP);
+  textMyMP.text:= inttostr(MyMP);
+  textMyMaxMP.text:= inttostr(MyMaxMP);
+  textCenterX.text:= inttostr(CenterX);
+  textCenterY.text:= inttostr(CenterY);
+  textCenterZ.text:= inttostr(CenterZ);
+  textRadius.text:= inttostr(Radius);
+  textTargetID.text:= inttostr(TargetID);
+  textAttackCycle.text:= inttostr(AttackCycle);
+  textMobsLastIndex.text:= inttostr(MobsLastIndex);
+  textMobsKilled.text:= inttostr(MobsKilled);
+  MobsDBscreen.lines.Clear;
+  for i:=1 to MobsLastIndex do    // выводим БД мобов
+   begin
+    if (TargetID = MobsObjID[i]) and MobsAgression[i] then
+     begin
+      MobsDBscreen.lines.add ('<> '+inttostr(i)+' MobID: '+inttostr(MobsObjID[i])+' TypeID: '+inttostr(MobsNpcTypeID[i])+' distance '+inttostr(MobsDist[i]));
+      continue;
+     end;
+    if TargetID = MobsObjID[i] then
+     begin
+      MobsDBscreen.lines.add ('-> '+inttostr(i)+' MobID: '+inttostr(MobsObjID[i])+' TypeID: '+inttostr(MobsNpcTypeID[i])+' distance '+inttostr(MobsDist[i]));
+      continue;
+     end;
+    if cbFilterRadius.checked then if MobsDist[i] <= Radius then
+     begin
+      MobsDBscreen.lines.add ('-- '+inttostr(i)+' MobID: '+inttostr(MobsObjID[i])+' TypeID: '+inttostr(MobsNpcTypeID[i])+' distance '+inttostr(MobsDist[i]));
+      continue;
+     end;
+    if MobsAgression[i] then
+     begin
+      MobsDBscreen.lines.add ('<- '+inttostr(i)+' MobID: '+inttostr(MobsObjID[i])+' TypeID: '+inttostr(MobsNpcTypeID[i])+' distance '+inttostr(MobsDist[i]));
+      continue;
+     end;
+    if (not cbFilterRadius.checked) then MobsDBscreen.lines.add ('-- '+inttostr(i)+' MobID: '+inttostr(MobsObjID[i])+' TypeID: '+inttostr(MobsNpcTypeID[i])+' distance '+inttostr(MobsDist[i]));
+   end;
+  ItemsDBscreen.lines.Clear;       // выводим БД дропа
+  for i:=1 to ItemsLastIndex do ItemsDBscreen.lines.add ('index in base: '+inttostr(i)+'   objectID: '+inttostr(Items_ObjectID[i])+'   thingID: '+inttostr(Items_ItemID[i]));
+  if MobsLastIndex = 0 then MobsDBscreen.lines.add ('Mobs');
+  if ItemsLastIndex= 0 then ItemsDBscreen.lines.add('Drop');
+ end;
+
+procedure FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action:=caNone;
+end;
+
+procedure CreateLabel (text: string);             // процедура автоматизирует создание текстовых меток в форме
+ var
+  l: TLabel;
+ begin
+  l:= TLabel.Create(panel);
+  l.caption:=text;
+  l.parent:=panel;
+  l.left:=10;
+  l.top:=15+20*frmParamIndex;
+  inc(frmParamIndex);
+ end;
+
+function CreateTextBox (text:string) :TEdit;        // функция автоматизирует создание текстовых полей для вывода данных в форме
+ var
+  e: TEdit;
+ begin
+  e:= TEdit.Create(panel);
+  e.text:=text;
+  e.parent:=panel;
+  e.left:=80;
+  e.top:=10+20*frmParamIndex;
+  e.width:= 95;
+  e.ReadOnly:=true;
+  result:= e;
+ end;
+
+procedure Free; //Вызывается при выключении скрипта
+begin
+ ClearDB;
+ TimerForm.free;
+ TimerBafReload.free;
+ TimerBafReloadBD.free;
+ TimerCombat.free;
+ TimerPickUp.free;
+ TimerCheckDB.free;
+ MobsDBscreen.free;
+ ItemsDBscreen.free;
+ TimerBaf1.Free;
+ TimerBaf2.Free;
+ TimerBaf3.Free;
+ TimerParty.Free;
+ RBTargetReload.Free;
+ log.free;
+ frm.free;
+end;
+
+procedure UserInfo;            // обновление данных о себе
+ var
+  i:word;
+ begin
+  if InitMode then MyID:=ReadD(18);
+  MyX:=ReadD(2);
+  MyY:=ReadD(6);
+  MyZ:=ReadD(10);
+  i:=22;
+  ReadS(i);
+  if interlude then i:=i+48 else i:=i+44;
+  MyMaxHP:=ReadD(i);
+  MyHP:=ReadD(i);
+  MyMaxMP:=ReadD(i);       
+  MyMP:=ReadD(i);
+ end;
+
+procedure StatusUpdate;       // обновление данных о себе
+ var
+  i:integer;
+ begin
+  for i:=0 to ReadD(6)-1 do
+   case pck[i*8+10] of
+    #$09: MyHP:=ReadD(i*8+14);
+    #$0A: MyMaxHP:=ReadD(i*8+14);
+    #$0B: MyMP:=ReadD(i*8+14);
+    #$0C: MyMaxMP:=ReadD(i*8+14);
+   end;
+  if MyMaxHP > 0 then 
+	begin
+		HPlevelProcent:= Round((MyMaxHP/100)*HPLevelMain);
+		MPlevelProcent:= Round((MyMaxMP/100)*MPLevelMain);
+		HPlevelProcentRecharge:= Round((MyMaxHP/100)*HPLevelRecharge);
+		MPlevelProcentRecharge:= Round((MyMaxMP/100)*MPLevelRecharge);
+	end;
+  if ((MyHP = MyMaxHP) and (MyMP = MyMaxMP) and (sit = 1) and (AssistID1 = 0) and (AssistID2 = 0)) 
+	or ((agrotest<>0) and (sit = 1))  then    //если жизни наполнились то встаем
+  begin 
+        buf:=hstr(b3);
+        SendToServerEx(NickName);
+        sit:=0;
+		PauseGame;	
+  end else if (MyHP = MyMaxHP) and (MyMP = MyMaxMP) and (sit = 1) and ((AssistID1 <> 0) or (AssistID2 <> 0)) then AllStandUp.enabled:=true;   
+  if (checkPause = 0) and (sit1 = 1) then    //если основа встала то встаем
+  begin 
+        buf:=hstr(b3);
+        SendToServerEx(AssistantName1);
+        sit1:=0; 
+  end;  
+  if (checkPause = 0) and (sit2 = 1) then    //если основа встала то встаем
+  begin 
+        buf:=hstr(b3);
+        SendToServerEx(AssistantName2);
+        sit2:=0; 
+  end;
+  if (checkPause = 0) and (sit3 = 1) then    //если основа встала то встаем
+  begin 
+        buf:=hstr(b3);
+        SendToServerEx(AssistantName3);
+        sit3:=0; 
+  end;
+ end;
+
+procedure DrinkBottle;          // садимся
+ begin
+  if (sit=0) and (agrotest = 0)   then
+    begin
+        //if ((WarriorSpoilCrafterBd = 0) or (WarriorSpoilCrafterBd = 4)) and (MyMP > Round(MyMaxMP/2)) then buf:= hstr(b4) else buf:=hstr(b3);
+        buf:=hstr(b3);
+        SendToServerEx(NickName);
+        sit:=1;		
+        PauseGame;
+    end;
+ end;
+ 
+ procedure OnAllStandUp(Sender: TObject);
+  begin
+   if (AssistID1 <> 0) and ((AssistMP1 <> AssistMaxMP1) or (AssistHP1 <> AssistMaxHP1)) then exit;
+   if (AssistID2 <> 0) and ((AssistMP2 <> AssistMaxMP2) or (AssistHP2 <> AssistMaxHP2)) then exit;
+   if (AssistID3 <> 0) and ((AssistMP3 <> AssistMaxMP3) or (AssistHP3 <> AssistMaxHP3)) then exit;
+   buf:=hstr(b3);
+   SendToServerEx(NickName);
+   sit:=0;
+   if (sit1 = 1) then
+    begin
+		buf:=hstr(b3);
+		SendToServerEx(AssistantName1);
+		sit1:=0;
+	end;
+   if (sit2 = 1) then
+    begin
+		buf:=hstr(b3);
+		SendToServerEx(AssistantName2);
+		sit2:=0;
+	end;
+   if (sit3 = 1) then
+    begin
+		buf:=hstr(b3);
+		SendToServerEx(AssistantName3);
+		sit3:=0;
+	end;
+   PauseGame;
+   AllStandUp.enabled:=false;
+  end;
+
+procedure MoveToLocation01;
+ var
+  i: integer;
+ begin
+  i:= TestPovtor(ReadD(2));
+  if i > 0 then updateDB(i, ReadD(6), ReadD(10), ReadD(14), false);
+ end;
+
+procedure NpcInfo16;
+ var
+  i: integer;
+ begin
+  i:= TestPovtor(ReadD(2));
+  if i = 0 then AddtoDB (ReadD(2), ReadD(6), ReadD(14), ReadD(18), ReadD(22), InMobsList(ReadD(6)))
+   else UpdateDB(i, ReadD(14), ReadD(18), ReadD(22), false);
+end;
+
+procedure Attack05;
+ var
+  i: integer;
+ begin
+  i:= TestPovtor(ReadD(2));
+  if i = 0 then log.Lines.Add('Глюк, моб не найден, или нас атакует другой игрок!!!')
+   else UpdateDB(i, ReadD(15), ReadD(19), ReadD(23), true);
+   inc(hitMe);  
+ end;
+  
+procedure Die06;
+ var
+  i,j: integer;
+ begin
+  TargetIDprevious:= TargetID;
+  TargetID2previous:= TargetID2;
+  diepause:= 1;
+  i:= TestPovtor(ReadD(2));
+  j:= TestPovtorLastKilledMobObjID(ReadD(2));
+  if (i > 0) and (j = 0) then
+    begin
+	   if (MobsObjID[i] = TargetID) then
+		 begin	 
+		  LastKilledMobObjID[i]:= TargetID;
+		  inc (MobsKilled);               // подводим статистику
+		//  if (WarriorSpoilCrafterBd = 0) and
+		//	((MobsKilled = 1) or ((MobsKilled mod 7) = 0)) then Majesty;     // через каждые 7 мобов бафаем на себя Majesty
+		  MobsIsAttackable[i]:= false;
+		  MobsAgression[i]:= false; 
+		  if (MobsIsSwipable[i] = true) and (ReadD(22) = 1) then Sweep(i);
+		  MobsIsSwipable[i]:= false;
+		  if (TargetID = TargetID2) and (rbMode = 0) then
+			begin
+			 // if (WarriorSpoilCrafterBd2 = 0) and
+			 //	((MobsKilled = 1) or ((MobsKilled mod 7) = 0)) then Majesty2;     // через каждые 7 мобов бафаем на себя Majesty
+			  TargetID2:= 0;
+			end;
+		  TargetID:= 0;					
+		  hitMe:= 0;
+		 end;
+	   if (MobsObjID[i] = TargetID2) and (TargetID <> TargetID2) and (rbMode = 0) then
+		 begin 
+		  LastKilledMobObjID[i]:= TargetID2;
+		  inc (MobsKilled);               // подводим статистику
+		  MobsIsAttackable[i]:= false;
+		  MobsAgression[i]:= false;
+		  if (MobsIsSwipable[i] = true) and (ReadD(22) = 1) then Sweep(i);
+		  MobsIsSwipable[i]:= false;
+		  TargetID2:= 0;				
+		  hitMe:= 0;
+		 end;
+	end;
+	onlyOne:=0;
+	onlyOne1:=0;
+	onlyOne2:=0;
+	onlyOne3:=0;
+	spoilpause:= 0;
+	diepause:= 0;
+ end;
+
+ procedure DeleteObject12;
+ var
+  i,j: integer;
+ begin
+  j:= TestPovtorLastKilledMobObjID(ReadD(2));
+  if (j <> 0) then
+   begin
+    i:= TestPovtor(ReadD(2));
+    if i > 0 then DelDBItem(i);	
+    if (TargetID = LastKilledMobObjID[j]) then TargetID:=0;
+    if (TargetID2 = LastKilledMobObjID[j]) and (rbMode = 0) then TargetID2:=0;
+    LastKilledMobObjID[j]:= 0;
+    exit;
+   end;
+  i:= CheckItems(ReadD(2));
+  if i > 0 then
+   begin
+    if Items_ObjectID[i] = TargetID then TargetID:= 0;
+    DelDroppedItem(i);
+    exit;
+   end;
+  i:= TestPovtor(ReadD(2));  
+  if i > 0 then 
+   begin
+	if (MobsObjID[i] = TargetID) then TargetID:= 0;
+	if (MobsObjID[i] = TargetID2) and (rbMode = 0) then TargetID2:= 0;
+	DelDBItem(i);
+   end;
+ end;
+ 
+ procedure DeleteObject64;
+     var
+        i: integer;
+	 begin
+		i:= TestPovtor(TargetID);
+		if i > 0 then DelDBItem(i);
+		TargetID:=0;	
+		if (rbMode = 0) then TargetID2:=0;	
+	 end;
+
+ //*********************БАФ ШЕ******************************************************************
+	// 2F 2C 04 00 00 00 00 00 00 00  па
+	// 2F 10 04 00 00 00 00 00 00 00  пд
+	// 2F 35 04 00 00 00 00 00 00 00  фокус
+	// 2F B4 04 00 00 00 00 00 00 00  вв
+	// 2F 0B 04 00 00 00 00 00 00 00  ментал
+	// 2F A5 04 00 00 00 00 00 00 00  резист к ветру
+	// 2F D8 04 00 00 00 00 00 00 00  гвиданс-акураси 40+
+	// 2F DA 04 00 00 00 00 00 00 00  деф виспер- сила крита 40+
+	// 2F 36 04 00 00 00 00 00 00 00  кон
+	// 2F 23 04 00 00 00 00 00 00 00  емповер
+	// 2F F4 04 00 00 00 00 00 00 00  вамп
+	// 2F 17 05 00 00 00 00 00 00 00  wild magic +
+	
+procedure OnTimerBaf1(Sender: TObject);
+  begin
+	//баф командира (ШЕ) -------------------------------------------------------------
+	if (RastoyanieToMe(AssistX1, AssistY1) > 200) or (MyHP < HPlevelProcent) or ((AssistID <> 0) and (AssistHP < AssistHPlevelProcent)) then exit;
+	if (a1o < 9) then
+		begin
+		  if (a1o = 0) then bafA1('2F F4 04 00 00 00 00 00 00 00',MyID); //вамп
+		  if (a1o = 1) then bafA1('2F 2C 04 00 00 00 00 00 00 00',MyID); //па
+		  if (a1o = 2) then bafA1('2F 10 04 00 00 00 00 00 00 00',MyID); //пд
+		  if (a1o = 3) then bafA1('2F B4 04 00 00 00 00 00 00 00',MyID); //вв
+		  if (a1o = 4) then bafA1('2F 35 04 00 00 00 00 00 00 00',MyID); //фокус
+		  if (a1o = 5) then bafA1('2F DA 04 00 00 00 00 00 00 00',MyID); //деф виспер- сила крита
+		  if (a1o = 6) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MyID); //ментал
+		  if (a1o = 7) then bafA1('2F D8 04 00 00 00 00 00 00 00',MyID); //гвиданс-акураси
+		  if (a1o = 8) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MyID) else if (a1o = 8) then a1o:= a1o + 1;;  //резист к ветру
+		  a1o:= a1o + 1;
+		  exit;
+		end;	
+	//баф ШЕ (ШЕ) --------------------------------------------------------------
+	if (a1a1 < 6) then
+		begin
+		  if (a1a1 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',AssistID1); //емп
+		  if (a1a1 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',AssistID1); //пд
+		  if (a1a1 = 2) then bafA1('2F B4 04 00 00 00 00 00 00 00',AssistID1); //вв
+		  if (a1a1 = 3) then bafA1('2F 36 04 00 00 00 00 00 00 00',AssistID1); //кон
+		  if (a1a1 = 4) then bafA1('2F 0B 04 00 00 00 00 00 00 00',AssistID1); //ментал
+		  if (a1a1 = 5) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',AssistID1) else if (a1a1 = 5) then a1a1:= a1a1 + 1;;  //резист к ветру
+		  a1a1:= a1a1 + 1;
+		  exit;
+		end;
+	//баф ПП (ШЕ) -----------------------------------------------------
+	if (AssistID2 <> 0) and (a1a2 < 2) then
+		begin
+		  if (a1a2 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',AssistID2);  //емп
+		  if (a1a2 = 1) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',AssistID2) else if (a1a2 = 1) then a1a2:= a1a2 + 1;;  //резист к ветру
+		  a1a2:= a1a2 + 1;
+		  exit;
+		end;
+	//баф воина-помощника (ШЕ) -------------------------------------------------------------
+	if (AssistID <> 0) and (a1w < 9) then
+		begin
+		  if (a1w = 0) then bafA1('2F F4 04 00 00 00 00 00 00 00',AssistID); //вамп
+		  if (a1w = 1) then bafA1('2F 2C 04 00 00 00 00 00 00 00',AssistID); //па
+		  if (a1w = 2) then bafA1('2F 10 04 00 00 00 00 00 00 00',AssistID); //пд
+		  if (a1w = 3) then bafA1('2F B4 04 00 00 00 00 00 00 00',AssistID); //вв
+		  if (a1w = 4) then bafA1('2F 35 04 00 00 00 00 00 00 00',AssistID); //фокус
+		  if (a1w = 5) then bafA1('2F DA 04 00 00 00 00 00 00 00',AssistID); //деф виспер- сила крита
+		  if (a1w = 6) then bafA1('2F 0B 04 00 00 00 00 00 00 00',AssistID); //ментал
+		  if (a1w = 7) then bafA1('2F D8 04 00 00 00 00 00 00 00',AssistID); //гвиданс-акураси
+		  if (a1w = 8) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',AssistID) else if (a1w = 8) then a1w:= a1w + 1;;  //резист к ветру
+		  a1w:= a1w + 1;
+		  exit;
+		end;		
+	//баф 0 мага (ШЕ) --------------------------------------------------------------
+	if (MageAssistID <> 0) and  (a1m < 5) then
+		begin
+		  if (a1m = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID);  //емп
+		  if (a1m = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID); //пд
+		  if (a1m = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID);  //ментал
+		  //if (a1m = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID);  //wild magic
+		  if (a1m = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID) else if (a1m = 4) then a1m:= a1m + 1;;  //резист к ветру
+		  a1m:= a1m + 1;
+		  exit;
+		end;
+	//баф 1 мага (ШЕ) --------------------------------------------------------------
+	if (MageAssistID1 <> 0) and  (a1m1 < 5) then
+		begin
+		  if (a1m1 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID1);  //емп
+		  if (a1m1 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID1); //пд
+		  if (a1m1 = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID1);  //ментал
+		  //if (a1m1 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID1);  //wild magic
+		  if (a1m1 = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID1) else if (a1m1 = 4) then a1m1:= a1m1 + 1;;  //резист к ветру
+		  a1m1:= a1m1 + 1;
+		  exit;
+		end;
+	//баф 2 мага (ШЕ) --------------------------------------------------------------
+	if (MageAssistID2 <> 0) and  (a1m2 < 5) then
+		begin
+		  if (a1m2 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID2);  //емп
+		  if (a1m2 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID2); //пд
+		  if (a1m2 = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID2);  //ментал
+		  //if (a1m2 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID2);  //wild magic
+		  if (a1m2 = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID2) else if (a1m2 = 4) then a1m2:= a1m2 + 1;;  //резист к ветру
+		  a1m2:= a1m2 + 1;
+		  exit;
+		end;
+	//баф 3 мага (ШЕ) --------------------------------------------------------------
+	if (MageAssistID3 <> 0) and  (a1m3 < 5) then
+		begin
+		  if (a1m3 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID3);  //емп
+		  if (a1m3 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID3); //пд
+		  if (a1m3 = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID3);  //ментал
+		  //if (a1m3 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID3);  //wild magic
+		  if (a1m3 = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID3) else if (a1m3 = 4) then a1m3:= a1m3 + 1;;  //резист к ветру
+		  a1m3:= a1m3 + 1;
+		  exit;
+		end;
+	checkBaf1:=0;
+	TimerBaf1.enabled:=false;
+	a1o:= 0;
+	a1w:= 0;
+	a1a1:= 0;
+	a1a2:= 0;
+	a1m:= 0;
+	a1m1:= 0;
+	a1m2:= 0;
+	a1m3:= 0;
+end;
+
+//*********************БАФ ПП******************************************************************
+	// список бафов:
+	// 2F 0B 04 00 00 00 00 00 00 00  ментал
+	// 2F 10 04 00 00 00 00 00 00 00  щит
+	// 2F 2C 04 00 00 00 00 00 00 00  па
+	// 2F 35 04 00 00 00 00 00 00 00  фокус
+	// 2F 36 04 00 00 00 00 00 00 00  кон
+	// 2F 3D 04 00 00 00 00 00 00 00  акумен
+	// 2F A7 04 00 00 00 00 00 00 00  резист к огню 30+
+	// 2F B4 04 00 00 00 00 00 00 00  вв
+	// 2F 26 04 00 00 00 00 00 00 00  берс 35+
+	// 2F 14 04 00 00 00 00 00 00 00  ХП реген 35+
+	// 2F 3E 04 00 00 00 00 00 00 00  хаст 44+
+	// 2F 15 04 00 00 00 00 00 00 00  блесс ХП 44+
+	// 2F 18 04 00 00 00 00 00 00 00  блесс MП 44+
+	// 2F DB 04 00 00 00 00 00 00 00  блесс щит 40+
+	// 2F 0C 04 00 00 00 00 00 00 00  маджик барьер 44+
+	// 2F 13 04 00 00 00 00 00 00 00  святое оружие
+	// 2F 08 04 00 00 00 00 00 00 00  сопротивление кровотечению
+	
+procedure OnTimerBaf2(Sender: TObject);
+  begin
+	//баф командира (ПП) -----------------------------------------------
+	if (RastoyanieToMe(AssistX2, AssistY2) > 200) or (MyHP < HPlevelProcent) or ((AssistID <> 0) and (AssistHP < AssistHPlevelProcent)) then exit;
+	if (a2o < 7) then //11
+		begin
+			if (a2o = 0) then bafA2('2F 15 04 00 00 00 00 00 00 00',MyID); //блес ХП
+			if (a2o = 1) then bafA2('2F 18 04 00 00 00 00 00 00 00',MyID); //блес MП
+			if (a2o = 2) and (WarriorSpoilCrafterBd <> 3) and (WarriorSpoilCrafterBd <> 4) then bafA2('2F DB 04 00 00 00 00 00 00 00',MyID) else if (a2o = 2) then a2o:= a2o + 1;  //блес Щит
+			if (a2o = 3) then bafA2('2F 3E 04 00 00 00 00 00 00 00',MyID); //хаст
+			if (a2o = 4) then bafA2('2F 0C 04 00 00 00 00 00 00 00',MyID); //маджик барьер
+			if (a2o = 5) then bafA2('2F 3D 04 00 00 00 00 00 00 00',MyID); //акумен
+			if (a2o = 6) then bafA2('2F 14 04 00 00 00 00 00 00 00',MyID); //реген ХП
+			//if (a2o = 7) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',MyID) else if (a2o = 7) then a2o:= a2o + 1; //резист к огню
+			//if (a2o = 8) and (sacred = 1) then bafA2('2F 13 04 00 00 00 00 00 00 00',MyID) else if (a2o = 8) then a2o:= a2o + 1; //святое оружие
+			//if (a2o = 9) and (full = 1) then bafA2('2F 08 04 00 00 00 00 00 00 00',MyID) else if (a2o = 9) then a2o:= a2o + 1; //сопротивление кровотечению
+			//if (a2o = 10) and (bers = 1) then bafA2('2F 26 04 00 00 00 00 00 00 00',MyID) else if (a2o = 10) then a2o:= a2o + 1; //берс
+		    a2o:= a2o + 1;
+		    exit;
+		end;
+	//баф ПП (ПП) ---------------------------------------------------------
+	if (a2a2 < 9) then //10
+		begin
+			if (a2a2 = 0) then bafA2('2F 3D 04 00 00 00 00 00 00 00',AssistID2); //акумен
+			if (a2a2 = 1) then bafA2('2F 15 04 00 00 00 00 00 00 00',AssistID2); //блесс ХП
+			if (a2a2 = 2) then bafA2('2F 18 04 00 00 00 00 00 00 00',AssistID2); //блес MП
+			if (a2a2 = 3) then bafA2('2F 0C 04 00 00 00 00 00 00 00',AssistID2); //маджик барьер
+			if (a2a2 = 4) then bafA2('2F 10 04 00 00 00 00 00 00 00',AssistID2); //пд
+			if (a2a2 = 5) then bafA2('2F B4 04 00 00 00 00 00 00 00',AssistID2); //вв
+			if (a2a2 = 6) then bafA2('2F 0B 04 00 00 00 00 00 00 00',AssistID2); //ментал
+			if (a2a2 = 7) then bafA2('2F 36 04 00 00 00 00 00 00 00',AssistID2); //кон
+			if (a2a2 = 8) then bafA2('2F 14 04 00 00 00 00 00 00 00',AssistID2); //реген ХП
+			//if (a2a2 = 9) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',AssistID2) else if (a2a2 = 9) then a2a2:= a2a2 + 1; //резист к огню
+		    a2a2:= a2a2 + 1;
+		    exit;
+		end;
+	//баф ШЕ (ПП) -------------------------------------------------------
+	if (AssistID1 <> 0) and (a2a1 < 5) then
+		begin
+			if (a2a1 = 0) then bafA2('2F 3D 04 00 00 00 00 00 00 00',AssistID1); //акумен
+			if (a2a1 = 1) then bafA2('2F 15 04 00 00 00 00 00 00 00',AssistID1); //блесс ХП
+			if (a2a1 = 2) then bafA2('2F 18 04 00 00 00 00 00 00 00',AssistID1); //блес MП
+			if (a2a1 = 3) then bafA2('2F 0C 04 00 00 00 00 00 00 00',AssistID1); //маджик барьер
+			if (a2a1 = 4) then bafA2('2F 14 04 00 00 00 00 00 00 00',AssistID1); //реген ХП
+			//if (a2a1 = 5) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',AssistID1) else if (a2a1 = 5) then a2a1:= a2a1 + 1; //резист к огню
+		    a2a1:= a2a1 + 1;
+		    exit;
+		end;
+	//баф воина-помощника (ПП) -----------------------------------------------
+	if (AssistID <> 0) and (a2w < 7) then //11
+		begin
+			if (a2w = 0) then bafA2('2F 15 04 00 00 00 00 00 00 00',AssistID); //блес ХП
+			if (a2w = 1) then bafA2('2F 18 04 00 00 00 00 00 00 00',AssistID); //блес MП
+			if (a2w = 2) and (WarriorSpoilCrafterBd2 <> 3) and (WarriorSpoilCrafterBd2 <> 4) then bafA2('2F DB 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 2) then a2w:= a2w + 1; //блес Щит
+			if (a2w = 3) then bafA2('2F 3E 04 00 00 00 00 00 00 00',AssistID); //хаст
+			if (a2w = 4) then bafA2('2F 0C 04 00 00 00 00 00 00 00',AssistID); //маджик барьер
+			if (a2w = 5) then bafA2('2F 3D 04 00 00 00 00 00 00 00',AssistID); //акумен
+			if (a2w = 6) then bafA2('2F 14 04 00 00 00 00 00 00 00',AssistID); //реген ХП
+			//if (a2w = 7) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 7) then a2w:= a2w + 1; //резист к огню
+			//if (a2w = 8) and (sacred = 1) then bafA2('2F 13 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 8) then a2w:= a2w + 1; //святое оружие
+			//if (a2w = 9) and (full = 1) then bafA2('2F 08 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 9) then a2w:= a2w + 1; //сопротивление кровотечению
+			//if (a2w = 10) and (bers = 1) then bafA2('2F 26 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 10) then a2w:= a2w + 1; //берс
+		    a2w:= a2w + 1;
+		    exit;
+		end;
+	//баф 0 мага (ПП) ---------------------------------------------------------
+	if  (MageAssistID <> 0) and  (a2m < 7) then
+		begin
+			if (a2m = 0) then bafA2('2F B4 04 00 00 00 00 00 00 00',MageAssistID); //вв
+			if (a2m = 1) then bafA2('2F 36 04 00 00 00 00 00 00 00',MageAssistID); //кон
+			if (a2m = 2) then bafA2('2F 3D 04 00 00 00 00 00 00 00',MageAssistID); //акумен
+			if (a2m = 3) then bafA2('2F 15 04 00 00 00 00 00 00 00',MageAssistID); //блесс ХП
+			if (a2m = 4) then bafA2('2F 18 04 00 00 00 00 00 00 00',MageAssistID); //блес MП
+			if (a2m = 5) then bafA2('2F 0C 04 00 00 00 00 00 00 00',MageAssistID); //маджик барьер
+			if (a2m = 6) and (full = 1)  then bafA2('2F A7 04 00 00 00 00 00 00 00',MageAssistID) else if (a2m = 6) then a2m:= a2m + 1;  //резист к огню
+		    a2m:= a2m + 1;
+		    exit;
+		end;
+	//баф 1 мага (ПП) ---------------------------------------------------------
+	if  (MageAssistID1 <> 0) and  (a2m1 < 7) then
+		begin
+			if (a2m1 = 0) then bafA2('2F B4 04 00 00 00 00 00 00 00',MageAssistID1); //вв
+			if (a2m1 = 1) then bafA2('2F 36 04 00 00 00 00 00 00 00',MageAssistID1); //кон
+			if (a2m1 = 2) then bafA2('2F 3D 04 00 00 00 00 00 00 00',MageAssistID1); //акумен
+			if (a2m1 = 3) then bafA2('2F 15 04 00 00 00 00 00 00 00',MageAssistID1); //блесс ХП
+			if (a2m1 = 4) then bafA2('2F 18 04 00 00 00 00 00 00 00',MageAssistID1); //блес MП
+			if (a2m1 = 5) then bafA2('2F 0C 04 00 00 00 00 00 00 00',MageAssistID1); //маджик барьер
+			if (a2m1 = 6) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',MageAssistID1) else if (a2m1 = 6) then a2m1:= a2m1 + 1;  //резист к огню
+		    a2m1:= a2m1 + 1;
+		    exit;
+		end;
+	//баф 2 мага (ПП) ---------------------------------------------------------
+	if  (MageAssistID2 <> 0) and  (a2m2 < 7) then
+		begin
+			if (a2m2 = 0) then bafA2('2F B4 04 00 00 00 00 00 00 00',MageAssistID2); //вв
+			if (a2m2 = 1) then bafA2('2F 36 04 00 00 00 00 00 00 00',MageAssistID2); //кон
+			if (a2m2 = 2) then bafA2('2F 3D 04 00 00 00 00 00 00 00',MageAssistID2); //акумен
+			if (a2m2 = 3) then bafA2('2F 15 04 00 00 00 00 00 00 00',MageAssistID2); //блесс ХП
+			if (a2m2 = 4) then bafA2('2F 18 04 00 00 00 00 00 00 00',MageAssistID2); //блес MП
+			if (a2m2 = 5) then bafA2('2F 0C 04 00 00 00 00 00 00 00',MageAssistID2); //маджик барьер
+			if (a2m2 = 6) and (full = 1)  then bafA2('2F A7 04 00 00 00 00 00 00 00',MageAssistID2) else if (a2m2 = 6) then a2m2:= a2m2 + 1;  //резист к огню
+		    a2m2:= a2m2 + 1;
+		    exit;
+		end;
+	//баф 3 мага (ПП) ---------------------------------------------------------
+	if  (MageAssistID3 <> 0) and  (a2m3 < 7) then
+		begin
+			if (a2m3 = 0) then bafA2('2F B4 04 00 00 00 00 00 00 00',MageAssistID3); //вв
+			if (a2m3 = 1) then bafA2('2F 36 04 00 00 00 00 00 00 00',MageAssistID3); //кон
+			if (a2m3 = 2) then bafA2('2F 3D 04 00 00 00 00 00 00 00',MageAssistID3); //акумен
+			if (a2m3 = 3) then bafA2('2F 15 04 00 00 00 00 00 00 00',MageAssistID3); //блесс ХП
+			if (a2m3 = 4) then bafA2('2F 18 04 00 00 00 00 00 00 00',MageAssistID3); //блес MП
+			if (a2m3 = 5) then bafA2('2F 0C 04 00 00 00 00 00 00 00',MageAssistID3); //маджик барьер
+			if (a2m3 = 6) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',MageAssistID3) else if (a2m3 = 6) then a2m3:= a2m3 + 1;  //резист к огню
+		    a2m3:= a2m3 + 1;
+		    exit;
+		end;
+	checkBaf2:=0;
+	TimerBaf2.enabled:=false;
+	a2o:= 0;
+	a2w:= 0;
+	a2a1:= 0;
+	a2a2:= 0;
+	a2m:= 0;
+	a2m1:= 0;
+	a2m2:= 0;
+	a2m3:= 0;
+end;
+
+procedure OnTimerBaf3(Sender: TObject);
+  begin
+	if (RastoyanieToMe(AssistX3, AssistY3) > 200) then exit;
+	if (a3all < 3) then
+	 begin
+		if (a3all = 0) then bafA3('2F EF 03 00 00 00 00 00 00 00'); // chaint of battle (па)
+		if (a3all = 1) then bafA3('2F F1 03 00 00 00 00 00 00 00'); // chaint of shelding (пд)
+		if (a3all = 2) then bafA3('2F EE 03 00 00 00 00 00 00 00'); // chaint of fire (акумен)
+		a3all:= a3all+1;
+		exit;
+	 end;
+	checkBaf3:=0;
+	TimerBaf3.enabled:=false;
+	a3all:=0;
+  end;
+  //############################################################################################ процедуры для помощников
+
+procedure FollowAttack;          // команда прицепиться к основе воином-помощником
+ begin 
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(AssistX);
+    WriteD(AssistY);
+    WriteD(AssistZ);
+    WriteC(0); 
+    SendToServerEx(AssistantName);
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(AssistX);
+    WriteD(AssistY);
+    WriteD(AssistZ);
+    WriteC(0); 
+    SendToServerEx(AssistantName); 
+end;
+
+procedure FollowAttack1;          // команда прицепиться к основе первым помощником
+ begin 
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(AssistX1);
+    WriteD(AssistY1);
+    WriteD(AssistZ1);
+    WriteC(0); 
+    SendToServerEx(AssistantName1);
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(AssistX1);
+    WriteD(AssistY1);
+    WriteD(AssistZ1);
+    WriteC(0); 
+    SendToServerEx(AssistantName1); 
+end;
+
+procedure FollowAttack2;          // команда прицепиться к основе вторым помощником
+ begin 
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(AssistX2);
+    WriteD(AssistY2);
+    WriteD(AssistZ2);
+    WriteC(0); 
+    SendToServerEx(AssistantName2);
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(AssistX2);
+    WriteD(AssistY2);
+    WriteD(AssistZ2);
+    WriteC(0); 
+    SendToServerEx(AssistantName2); 
+end;
+ 
+
+procedure FollowAttack3;          // команда прицепиться к основе овером
+ begin 
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(AssistX3);
+    WriteD(AssistY3);
+    WriteD(AssistZ3);
+    WriteC(0); 
+    SendToServerEx(AssistantName3);
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(AssistX3);
+    WriteD(AssistY3);
+    WriteD(AssistZ3);
+    WriteC(0); 
+    SendToServerEx(AssistantName3); 
+end;
+ 
+procedure AssistUserInfo;                  // обновление данных о воине-помощнике
+ var
+  i:word;
+ begin
+  AssistID:=ReadD(18);
+  AssistX:=ReadD(2);
+  AssistY:=ReadD(6);
+  AssistZ:=ReadD(10);
+  i:=22;
+  ReadS(i);
+  if Interlude then i:=i+48 else i:=i+44;
+  AssistMaxHP:=ReadD(i);
+  AssistHP:=ReadD(i);
+  AssistMaxMP:=ReadD(i);  
+  AssistMP:=ReadD(i);
+ end;
+ 
+procedure AssistUserInfo1;                  // обновление данных о ассистенте 1
+ var
+  i:word;
+ begin
+  AssistID1:=ReadD(18);
+  AssistX1:=ReadD(2);
+  AssistY1:=ReadD(6);
+  AssistZ1:=ReadD(10);
+  i:=22;
+  ReadS(i);
+  if Interlude then i:=i+48 else i:=i+44;
+  AssistMaxHP1:=ReadD(i);
+  AssistHP1:=ReadD(i);
+  AssistMaxMP1:=ReadD(i);  
+  AssistMP1:=ReadD(i);
+ end;
+ 
+procedure AssistUserInfo2;                  // обновление данных о ассистенте 2
+ var
+  i:word;
+ begin
+  AssistID2:=ReadD(18);
+  AssistX2:=ReadD(2);
+  AssistY2:=ReadD(6);
+  AssistZ2:=ReadD(10);
+  i:=22;
+  ReadS(i);
+  if Interlude then i:=i+48 else i:=i+44;
+  AssistMaxHP2:=ReadD(i);
+  AssistHP2:=ReadD(i);
+  AssistMaxMP2:=ReadD(i);  
+  AssistMP2:=ReadD(i);
+ end;
+
+procedure AssistUserInfo3;                  // обновление данных о ассистенте 3
+ var
+  i:word;
+ begin
+  AssistID3:=ReadD(18);
+  AssistX3:=ReadD(2);
+  AssistY3:=ReadD(6);
+  AssistZ3:=ReadD(10);
+  i:=22;
+  ReadS(i);
+  if Interlude then i:=i+48 else i:=i+44;
+  AssistMaxHP3:=ReadD(i);
+  AssistHP3:=ReadD(i);
+  AssistMaxMP3:=ReadD(i);  
+  AssistMP3:=ReadD(i);
+ end;
+
+procedure AssistStatusUpdate;       // обновление данных о воине-помощнике
+ var
+  i:integer;
+ begin
+  for i:=0 to ReadD(6)-1 do
+   case pck[i*8+10] of
+    #$09: AssistHP:=ReadD(i*8+14);
+    #$0A: AssistMaxHP:=ReadD(i*8+14);
+    #$0B: AssistMP:=ReadD(i*8+14);
+    #$0C: AssistMaxMP:=ReadD(i*8+14);
+   end;
+  if AssistMaxHP > 0 then 
+	begin
+		AssistHPlevelProcent:= Round((AssistMaxHP/100)*HPLevel);
+		AssistMPlevelProcent:= Round((AssistMaxMP/100)*MPLevel);
+		AssistHPlevelProcentRecharge:= Round((AssistMaxHP/100)*AssistHPLevelRecharge);
+		AssistMPlevelProcentRecharge:= Round((AssistMaxMP/100)*AssistMPLevelRecharge);
+	end;
+ end;
+
+procedure AssistStatusUpdate1;       // обновление данных о ассистенте 1
+ var
+  i:integer;
+ begin
+  for i:=0 to ReadD(6)-1 do
+   case pck[i*8+10] of
+    #$09: AssistHP1:=ReadD(i*8+14);
+    #$0A: AssistMaxHP1:=ReadD(i*8+14);
+    #$0B: AssistMP1:=ReadD(i*8+14);
+    #$0C: AssistMaxMP1:=ReadD(i*8+14);
+   end;
+  if AssistMaxHP1 > 0 then 
+	begin
+		AssistHPlevelProcent1:= Round((AssistMaxHP1/100)*HPLevel1);
+		AssistMPlevelProcent1:= Round((AssistMaxMP1/100)*MPLevel1);
+	end;
+ end;
+
+procedure AssistStatusUpdate2;       // обновление данных о ассистенте 2
+ var
+  i:integer;
+ begin
+  for i:=0 to ReadD(6)-1 do
+   case pck[i*8+10] of
+    #$09: AssistHP2:=ReadD(i*8+14);
+    #$0A: AssistMaxHP2:=ReadD(i*8+14);
+    #$0B: AssistMP2:=ReadD(i*8+14);
+    #$0C: AssistMaxMP2:=ReadD(i*8+14);
+   end;
+  if AssistMaxHP2 > 0 then 
+	begin
+		AssistHPlevelProcent2:= Round((AssistMaxHP2/100)*HPLevel2);
+		AssistMPlevelProcent2:= Round((AssistMaxMP2/100)*MPLevel2);
+	end;
+ end;
+ 
+procedure AssistStatusUpdate3;       // обновление данных о ассистенте 2
+ var
+  i:integer;
+ begin
+  for i:=0 to ReadD(6)-1 do
+   case pck[i*8+10] of
+    #$09: AssistHP3:=ReadD(i*8+14);
+    #$0A: AssistMaxHP3:=ReadD(i*8+14);
+    #$0B: AssistMP3:=ReadD(i*8+14);
+    #$0C: AssistMaxMP3:=ReadD(i*8+14);
+   end;
+  if AssistMaxHP3 > 0 then 
+	begin
+		AssistHPlevelProcent3:= Round((AssistMaxHP3/100)*HPLevel3);
+		AssistMPlevelProcent3:= Round((AssistMaxMP3/100)*MPLevel3);
+	end;
+ end;
+ 
+procedure MoveTo(targetx,targety,targetz:integer);   //Идти в точку с координатами x,y,z
+begin
+  buf:=#$01;                                  //01=MoveBackwardToLocation:d(targetX)d(targetY)d(targetZ)d(originX)d(originY)d(originZ)d(moveByMouse)
+  WriteD(targetx); //куда
+  WriteD(targety);
+  WriteD(targetz);
+  WriteD(AssistX); //откуда
+  WriteD(AssistY);
+  WriteD(AssistZ);
+  WriteD(1); //используем 1-мышь 0-клавиатура
+  SendToServerEx(AssistantName);
+end;
+
+procedure MoveTo1(targetx,targety,targetz:integer);   //Идти в точку с координатами x,y,z
+begin
+  buf:=#$01;                                  //01=MoveBackwardToLocation:d(targetX)d(targetY)d(targetZ)d(originX)d(originY)d(originZ)d(moveByMouse)
+  WriteD(targetx); //куда
+  WriteD(targety);
+  WriteD(targetz);
+  WriteD(AssistX1); //откуда
+  WriteD(AssistY1);
+  WriteD(AssistZ1);
+  WriteD(1); //используем 1-мышь 0-клавиатура
+  SendToServerEx(AssistantName1);
+end;
+
+procedure MoveTo2(targetx,targety,targetz:integer);   //Идти в точку с координатами x,y,z
+begin
+  buf:=#$01;                                  //01=MoveBackwardToLocation:d(targetX)d(targetY)d(targetZ)d(originX)d(originY)d(originZ)d(moveByMouse)
+  WriteD(targetx); //куда
+  WriteD(targety);
+  WriteD(targetz);
+  WriteD(AssistX2); //откуда
+  WriteD(AssistY2);
+  WriteD(AssistZ2);
+  WriteD(1); //используем 1-мышь 0-клавиатура
+  SendToServerEx(AssistantName2);  
+end;
+
+procedure MoveTo3(targetx,targety,targetz:integer);   //Идти в точку с координатами x,y,z
+begin
+  buf:=#$01;                                  //01=MoveBackwardToLocation:d(targetX)d(targetY)d(targetZ)d(originX)d(originY)d(originZ)d(moveByMouse)
+  WriteD(targetx); //куда
+  WriteD(targety);
+  WriteD(targetz);
+  WriteD(AssistX3); //откуда
+  WriteD(AssistY3);
+  WriteD(AssistZ3);
+  WriteD(1); //используем 1-мышь 0-клавиатура
+  SendToServerEx(AssistantName3);  
+end;
+
+procedure DrinkBottle1;          // садимся
+ begin
+  if (sit1=0) then
+    begin
+        buf:=hstr(b3);
+        SendToServerEx(AssistantName1);
+        sit1:=1;
+    end;
+ end;
+ 
+ procedure DrinkBottle2;          // садимся
+ begin
+  if (sit2=0) then
+    begin
+        buf:=hstr(b3);
+        SendToServerEx(AssistantName2);
+        sit2:=1;	
+    end;
+ end;
+ 
+ procedure DrinkBottle3;          // садимся
+ begin
+  if (sit3=0) then
+    begin
+        buf:=hstr(b3);
+        SendToServerEx(AssistantName3);
+        sit3:=1;	
+    end;
+ end;
+ 
+procedure bafA1(magic: string; ID: integer);
+  begin
+    buf:=#$04; //action
+    WriteD(ID);
+    WriteD(AssistX1);
+    WriteD(AssistY1);
+    WriteD(AssistZ1);
+    WriteC(0);
+    SendToServerEX(AssistantName1);
+    buf:=hstr(magic);
+    SendToServerEX(AssistantName1);
+  end; 
+  
+procedure bafA2(magic: string; ID: integer);
+  begin
+    buf:=#$04; //action
+    WriteD(ID);
+    WriteD(AssistX2);
+    WriteD(AssistY2);
+    WriteD(AssistZ2);
+    WriteC(0);
+    SendToServerEX(AssistantName2);
+    buf:=hstr(magic);
+    SendToServerEX(AssistantName2);
+  end;
+
+  
+procedure bafA3(magic: string);
+  begin
+    buf:=hstr(magic);
+	SendToServerEx(AssistantName3);
+  end;
+
+ 
+
+  //############################################################################################ процедуры для ДД-магов
+
+procedure MageFollowAttack;          // команда прицепиться к основе первым магом
+ begin 
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(MageAssistX);
+    WriteD(MageAssistY);
+    WriteD(MageAssistZ);
+    WriteC(0); 
+    SendToServerEx(MageAssistantName);
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(MageAssistX);
+    WriteD(MageAssistY);
+    WriteD(MageAssistZ);
+    WriteC(0); 
+    SendToServerEx(MageAssistantName); 
+end;
+
+procedure MageFollowAttack1;          // команда прицепиться к основе вторым магом
+ begin 
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(MageAssistX1);
+    WriteD(MageAssistY1);
+    WriteD(MageAssistZ1);
+    WriteC(0); 
+    SendToServerEx(MageAssistantName1);
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(MageAssistX1);
+    WriteD(MageAssistY1);
+    WriteD(MageAssistZ1);
+    WriteC(0); 
+    SendToServerEx(MageAssistantName1); 
+end;
+
+procedure MageFollowAttack2;          // команда прицепиться к основе третьим магом
+ begin 
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(MageAssistX2);
+    WriteD(MageAssistY2);
+    WriteD(MageAssistZ2);
+    WriteC(0); 
+    SendToServerEx(MageAssistantName2);
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(MageAssistX2);
+    WriteD(MageAssistY2);
+    WriteD(MageAssistZ2);
+    WriteC(0); 
+    SendToServerEx(MageAssistantName2); 
+end;
+ 
+procedure MageFollowAttack3;          // команда прицепиться к основе четвертым магом
+ begin 
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(MageAssistX3);
+    WriteD(MageAssistY3);
+    WriteD(MageAssistZ3);
+    WriteC(0); 
+    SendToServerEx(MageAssistantName3);
+    buf:=#$04; //action
+    WriteD(MyID);
+    WriteD(MageAssistX3);
+    WriteD(MageAssistY3);
+    WriteD(MageAssistZ3);
+    WriteC(0); 
+    SendToServerEx(MageAssistantName3); 
+end;
+ 
+procedure MageAssistUserInfo;                  // обновление данных о маге 1
+ var
+  i:word;
+ begin
+  MageAssistID:=ReadD(18);
+  MageAssistX:=ReadD(2);
+  MageAssistY:=ReadD(6);
+  MageAssistZ:=ReadD(10);
+  i:=22;
+  ReadS(i);
+  if Interlude then i:=i+48 else i:=i+44;
+  MageAssistMaxHP:=ReadD(i);
+  MageAssistHP:=ReadD(i);
+  MageAssistMaxMP:=ReadD(i);  
+  MageAssistMP:=ReadD(i);
+ end;
+ 
+procedure MageAssistUserInfo1;                  // обновление данных о маге 2
+ var
+  i:word;
+ begin
+  MageAssistID1:=ReadD(18);
+  MageAssistX1:=ReadD(2);
+  MageAssistY1:=ReadD(6);
+  MageAssistZ1:=ReadD(10);
+  i:=22;
+  ReadS(i);
+  if Interlude then i:=i+48 else i:=i+44;
+  MageAssistMaxHP1:=ReadD(i);
+  MageAssistHP1:=ReadD(i);
+  MageAssistMaxMP1:=ReadD(i);  
+  MageAssistMP1:=ReadD(i);
+ end;
+ 
+ procedure MageAssistUserInfo2;                  // обновление данных о маге 3
+ var
+  i:word;
+ begin
+  MageAssistID2:=ReadD(18);
+  MageAssistX2:=ReadD(2);
+  MageAssistY2:=ReadD(6);
+  MageAssistZ2:=ReadD(10);
+  i:=22;
+  ReadS(i);
+  if Interlude then i:=i+48 else i:=i+44;
+  MageAssistMaxHP2:=ReadD(i);
+  MageAssistHP2:=ReadD(i);
+  MageAssistMaxMP2:=ReadD(i);  
+  MageAssistMP2:=ReadD(i);
+ end;
+ 
+procedure MageAssistUserInfo3;                  // обновление данных о маге 4
+ var
+  i:word;
+ begin
+  MageAssistID3:=ReadD(18);
+  MageAssistX3:=ReadD(2);
+  MageAssistY3:=ReadD(6);
+  MageAssistZ3:=ReadD(10);
+  i:=22;
+  ReadS(i);
+  if Interlude then i:=i+48 else i:=i+44;
+  MageAssistMaxHP3:=ReadD(i);
+  MageAssistHP3:=ReadD(i);
+  MageAssistMaxMP3:=ReadD(i);  
+  MageAssistMP3:=ReadD(i);
+ end;
+
+procedure MageAssistStatusUpdate;       // обновление данных о маге 1
+ var
+  i:integer;
+ begin
+  for i:=0 to ReadD(6)-1 do
+   case pck[i*8+10] of
+    #$09: MageAssistHP:=ReadD(i*8+14);
+    #$0A: MageAssistMaxHP:=ReadD(i*8+14);
+    #$0B: MageAssistMP:=ReadD(i*8+14);
+    #$0C: MageAssistMaxMP:=ReadD(i*8+14);
+   end;
+  if MageAssistMaxHP > 0 then 
+	begin
+		MageAssistHPlevelProcent:= Round((MageAssistMaxHP/100)*MageHPLevel);
+		MageAssistMPlevelProcent:= Round((MageAssistMaxMP/100)*MageMPLevel);
+	end;
+ end;
+ 
+procedure MageAssistStatusUpdate1;       // обновление данных о маге 1
+ var
+  i:integer;
+ begin
+  for i:=0 to ReadD(6)-1 do
+   case pck[i*8+10] of
+    #$09: MageAssistHP1:=ReadD(i*8+14);
+    #$0A: MageAssistMaxHP1:=ReadD(i*8+14);
+    #$0B: MageAssistMP1:=ReadD(i*8+14);
+    #$0C: MageAssistMaxMP1:=ReadD(i*8+14);
+   end;
+  if MageAssistMaxHP1 > 0 then 
+	begin
+		MageAssistHPlevelProcent1:= Round((MageAssistMaxHP1/100)*MageHPLevel1);
+		MageAssistMPlevelProcent1:= Round((MageAssistMaxMP1/100)*MageMPLevel1);
+	end;
+ end;
+ 
+procedure MageAssistStatusUpdate2;       // обновление данных о маге 1
+ var
+  i:integer;
+ begin
+  for i:=0 to ReadD(6)-1 do
+   case pck[i*8+10] of
+    #$09: MageAssistHP2:=ReadD(i*8+14);
+    #$0A: MageAssistMaxHP2:=ReadD(i*8+14);
+    #$0B: MageAssistMP2:=ReadD(i*8+14);
+    #$0C: MageAssistMaxMP2:=ReadD(i*8+14);
+   end;
+  if MageAssistMaxHP2 > 0 then 
+	begin
+		MageAssistHPlevelProcent2:= Round((MageAssistMaxHP2/100)*MageHPLevel2);
+		MageAssistMPlevelProcent2:= Round((MageAssistMaxMP2/100)*MageMPLevel2);
+	end;
+ end;
+
+procedure MageAssistStatusUpdate3;       // обновление данных о маге 1
+ var
+  i:integer;
+ begin
+  for i:=0 to ReadD(6)-1 do
+   case pck[i*8+10] of
+    #$09: MageAssistHP3:=ReadD(i*8+14);
+    #$0A: MageAssistMaxHP3:=ReadD(i*8+14);
+    #$0B: MageAssistMP3:=ReadD(i*8+14);
+    #$0C: MageAssistMaxMP3:=ReadD(i*8+14);
+   end;
+  if MageAssistMaxHP3 > 0 then 
+	begin
+		MageAssistHPlevelProcent3:= Round((MageAssistMaxHP3/100)*MageHPLevel3);
+		MageAssistMPlevelProcent3:= Round((MageAssistMaxMP3/100)*MageMPLevel3);
+	end;
+ end;
+
+ 
+procedure MageMoveTo(TargetX,TargetY,TargetZ:integer);   //Идти в точку с координатами x,y,z
+begin
+  buf:=#$01;                                  //01=MoveBackwardToLocation:d(targetX)d(targetY)d(targetZ)d(originX)d(originY)d(originZ)d(moveByMouse)
+  WriteD(targetx); //куда
+  WriteD(targety);
+  WriteD(targetz);
+  WriteD(MageAssistX); //откуда
+  WriteD(MageAssistY);
+  WriteD(MageAssistZ);
+  WriteD(1); //используем 1-мышь 0-клавиатура
+  SendToServerEx(MageAssistantName);
+end; 
+ 
+procedure MageMoveTo1(TargetX,TargetY,TargetZ:integer);   //Идти в точку с координатами x,y,z
+begin
+  buf:=#$01;                                  //01=MoveBackwardToLocation:d(targetX)d(targetY)d(targetZ)d(originX)d(originY)d(originZ)d(moveByMouse)
+  WriteD(targetx); //куда
+  WriteD(targety);
+  WriteD(targetz);
+  WriteD(MageAssistX1); //откуда
+  WriteD(MageAssistY1);
+  WriteD(MageAssistZ1);
+  WriteD(1); //используем 1-мышь 0-клавиатура
+  SendToServerEx(MageAssistantName1);
+end; 
+ 
+procedure MageMoveTo2(TargetX,TargetY,TargetZ:integer);   //Идти в точку с координатами x,y,z
+begin
+  buf:=#$01;                                  //01=MoveBackwardToLocation:d(targetX)d(targetY)d(targetZ)d(originX)d(originY)d(originZ)d(moveByMouse)
+  WriteD(targetx); //куда
+  WriteD(targety);
+  WriteD(targetz);
+  WriteD(MageAssistX2); //откуда
+  WriteD(MageAssistY2);
+  WriteD(MageAssistZ2);
+  WriteD(1); //используем 1-мышь 0-клавиатура
+  SendToServerEx(MageAssistantName2);
+end; 
+ 
+procedure MageMoveTo3(TargetX,TargetY,TargetZ:integer);   //Идти в точку с координатами x,y,z
+begin
+  buf:=#$01;                                  //01=MoveBackwardToLocation:d(targetX)d(targetY)d(targetZ)d(originX)d(originY)d(originZ)d(moveByMouse)
+  WriteD(targetx); //куда
+  WriteD(targety);
+  WriteD(targetz);
+  WriteD(MageAssistX3); //откуда
+  WriteD(MageAssistY3);
+  WriteD(MageAssistZ3);
+  WriteD(1); //используем 1-мышь 0-клавиатура
+  SendToServerEx(MageAssistantName3);
+end; 
+
+procedure MageDrinkBottle;          // садимся
+ begin
+  if (sit1=0) then
+    begin
+        buf:=hstr(b3);
+        SendToServerEx(AssistantName1);
+        sit1:=1;
+    end;
+ end;
+ 
+
+ procedure MagicAttack;          // команда магической атаки
+ begin 
+	if not(newMagicAttack.enabled) then
+		begin
+			buf:=#$04; //action
+			WriteD(TargetID);
+			WriteD(MageAssistX);
+			WriteD(MageAssistY);
+			WriteD(MageAssistZ);
+			WriteC(0); 
+			SendToServerEx(MageAssistantName);
+			buf:=hstr(useMagicSS); // СХ-useMagicSH СПС-useMagicSS 
+			SendToServerEX(MageAssistantName);
+			newMagicAttack.enabled:= true;
+		end;
+end;
+ 
+
+ procedure MagicAttack1;          // команда магической атаки
+ begin  
+	if not(newMagicAttack1.enabled) then
+		begin
+			buf:=#$04; //action
+			WriteD(TargetID);
+			WriteD(MageAssistX1);
+			WriteD(MageAssistY1);
+			WriteD(MageAssistZ1);
+			WriteC(0); 
+			SendToServerEx(MageAssistantName1);
+			buf:=hstr(useMagicSS);  // СХ-useMagicSH СПС-useMagicSS
+			SendToServerEX(MageAssistantName1);
+			newMagicAttack1.enabled:= true;
+		end;
+end;
+ 
+
+ procedure MagicAttack2;          // команда магической атаки
+ begin  
+	if not(newMagicAttack2.enabled) then
+		begin
+			buf:=#$04; //action
+			WriteD(TargetID);
+			WriteD(MageAssistX2);
+			WriteD(MageAssistY2);
+			WriteD(MageAssistZ2);
+			WriteC(0); 
+			SendToServerEx(MageAssistantName2);
+			buf:=hstr(useMagicSH);  // СХ-useMagicSH СПС-useMagicSS
+			SendToServerEX(MageAssistantName2);
+			newMagicAttack2.enabled:= true;
+		end;
+end;
+ 
+
+ procedure MagicAttack3;          // команда магической атаки
+ begin  
+	if not(newMagicAttack3.enabled) then
+		begin
+			buf:=#$04; //action
+			WriteD(TargetID);
+			WriteD(MageAssistX3);
+			WriteD(MageAssistY3);
+			WriteD(MageAssistZ3);
+			WriteC(0); 
+			SendToServerEx(MageAssistantName3);
+			buf:=hstr(useMagicSH);  // СХ-useMagicSH СПС-useMagicSS
+			SendToServerEX(MageAssistantName3);
+			newMagicAttack3.enabled:= true;
+		end;
+end;
+  
+  //############################################################################################
+ 
+begin
+ if pck = '' then exit;
+ if (ConnectName = NickName) and FromServer then  // разбор пакетов от сервера
+   case pck[1] of
+    #$01: MoveToLocation01; //
+//  #$03: ;                             //   CharInfo:d(X)d(Y)d(Z)-(4)h(ObjectID)s(Name)d(Race)d(Sex)d(ClassID)-(4)i(Head)i(RHand)i(LHand)i(Gloves)i(Chest)i(Legs)i(Feet)i(Back)i(LRHand)i(Hair)d(PvPFlag)d(Carma)d(MSpeed)d(PSpeed)d(PvpFlag)d(Karma)d(RunSpeed)d(WalkSpeed)d(SwimRunSpeed)d(SwimWalkSpeed)d(FlRunSpeed)d(FlWalkSpeed)d(FlyRunSpeed)d(FlyWalkSpeed)f(MovementSpeedMultiplier)f(AttackSpeedMultiplier)f(CollisionRadius)f(CollisionHeight)d(HairStyle)d(HairColor)d(Face)d(AccessLevel)s(Title)d(ClanId)d(ClanCrestId)d(AllyId)d(AllyCrestId)d(SiegeFlags)b(Sitting)b(Running)b(InCombat)b(AlikeDead)b(Invisible)b(MountType)b(PrivateStoreType)
+    #$04: if ReadS(22) = NickName then    //   UserInfo:d(X)d(Y)d(Z)d(Heading)h(ObjectID)s(Name)d(Race)d(Sex)d(ClassID)d(Level)d(Exp)d(STR)d(DEX)d(CON)d(INT)d(WIT)d(MEN)d(MaxHP)d(CurrentHP)d(MaxMP)d(CurrentMP)d(SP)d(CurrentLoad)d(MaxLoad)d(Unknown)d(Under)d(REar)d(LEar)d(Neck)d(RFinger)d(LFinger)d(Head)d(RHand)d(LHand)d(Gloves)d(Chest)d(Legs)d(Feet)d(Back)d(LRHand)d(Hair)i(Under)i(REar)i(LEar)i(Neck)i(RFinger)i(LFinger)i(Head)i(RHand)i(LHand)i(Gloves)i(Chest)i(Legs)i(Feet)i(Back)i(LRHand)i(Hair)d(PAtk)d(PAtkSpd)d(PDef)d(EvasionRate)d(Accuracy)d(CritikalHit)d(MAtk)d(MAtkSpd)d(PAtkSpd)d(MDef)d(PvpFlag)d(Karma)d(RunSpeed)d(WalkSpeed)d(SwimRunSpeed)d(SwimWalkSpeed)d(FlRunSpeed)d(FlWalkSpeed)d(FlyRunSpeed)d(FlyWalkSpeed)f(MovementSpeedMultiplier)f(AttackSpeedMultiplier)f(CollisionRadius)f(CollisionHeight)d(HairStyle)d(HairColor)d(Face)d(AccessLevel)s(Title)d(ClanId)d(ClanCrestId)d(AllyId)d(AllyCrestId)d(IsClanLeader)b(MountType)b(PrivateStoreType)b(DwarvenCraft)d(PkKills)d(PvpKills)b(Cubics)b(Cubics)b(FindPartyMembers)d(AbnormalEffect)b()d(ClanPrivileges)d()d()d()d()d()d()d()b(RecomLeft)b()b(RecomHave)b()
+           begin
+            UserInfo;
+            btnInit.enabled:= false;
+            if MyHP = 0 then             // Проверка не убили ли нас...
+             begin
+              SendMsg_to_CL('We was killed');
+              log.Lines.Add('We was killed');
+              StopGame;
+             end;
+           end;
+	//#$48: if (ReadD(6) <> MyID) and (ReadD(6) <> AssistID1) and (ReadD(6) <> AssistID2) then Attack48; //   48= MagicSkillUse:h(CharID)h(targetID)d(skillID)d(skillLvl)d(hitTime)d(reuseDelay)d(X)d(Y)d(Z)w(count)d(d)d(d)d(d)
+    #$0C: if (enchantFlag > 1) and (enchant = ReadD(6)) then
+           begin
+              SendMsg_to_CL('put the thing');
+           end;
+    #$0D: begin
+			if (enchantFlag > 1) and (enchant = ReadD(6)) then
+				begin
+					SendMsg_to_CL('took the thing');
+				end else
+			if TargetID = ReadD(6) then                                              //   GetItem:d(PlayerID)h(ObjectID)d(X)d(Y)d(Z)
+				begin
+					TargetID:= 0;
+				end;	
+		  end;
+    #$0E: if MyID=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
+           begin
+            StatusUpdate;
+            if MyHP = 0 then                                  // Проверка не убили ли нас...
+             begin
+              SendMsg_to_CL('We was killed');
+              log.Lines.Add('We was killed');
+              StopGame;
+             end;
+           end;
+    #$13: if RestartMode then              // CharacterSelectionInfo
+           begin
+            buf:=#$0D;                     //   CharacterSelected
+            WriteD(CharNumber);
+            buf:= buf + hstr('00 00 00 00 00 00 00 00 00 00 00 00 00 00');
+            SendToServerEx(NickName);
+            RestartMode:= false;
+           end;
+	#$2F: if MyID=ReadD(2) then 
+			begin			
+				if (AssistID1 <> 0) and (sit1=0) and (checkPause = 1) and (checkBaf1 = 0) and
+					(abs(AssistX1-CenterX) > 120) or (abs(AssistY1-CenterY) > 120) then MoveTo1(CenterX+50, CenterY-50, CenterZ);
+				if (AssistID2 <> 0) and (sit2=0) and (checkPause = 1) and (checkBaf2 = 0) and
+					(abs(AssistX2-CenterX) > 120) or (abs(AssistY2-CenterY) > 120) then MoveTo2(CenterX-40, CenterY+40, CenterZ);
+				if (AssistID3 <> 0) and (sit3=0) and (checkPause = 1) and (checkBaf3 = 0) and
+					(abs(AssistX3-CenterX) > 120) or (abs(AssistY3-CenterY) > 120) then MoveTo3(CenterX-60, CenterY+60, CenterZ);
+			end;
+	//-------------обработка баферов через изменения статусов пати
+    #$52:begin	
+			if (AssistID1 <> 0) then
+			  begin
+			    GroupHealFromAssist1;
+				if (AssistHP1 > 0) and (AssistHP1 < AssistHPlevelProcent1) then HealFromAssist1soft(AssistID1);		// подлечить себя
+				
+				if (noHealSEmode = 0) then
+					begin
+						if (MyHP > 0) and (MyHP < HPlevelProcent) then HealFromAssist1(MyID) else	// подлечить основу или ...
+						if (AssistID <> 0) and (AssistHP > 0) and (AssistHP < AssistHPlevelProcent) then HealFromAssist1(AssistID) else //  ... подлечить воина-помощника; 
+						if (AssistID3 <> 0) and (AssistHP3 > 0) and (AssistHP3 < AssistHPlevelProcent3) then HealFromAssist1(AssistID3); //  ... подлечить овера; 				
+					end;
+					
+				if (rbmode = 1) then
+					begin
+						if (MageAssistID <> 0) and (MageAssistMP < MageAssistMPlevelProcent) then ManaFromAssist1(MageAssistID) else
+							if (MageAssistID1 <> 0) and (MageAssistMP1 < MageAssistMPlevelProcent1) then ManaFromAssist1(MageAssistID1) else
+							if (MageAssistID2 <> 0) and (MageAssistMP2 < MageAssistMPlevelProcent2) then ManaFromAssist1(MageAssistID2) else
+							if (MageAssistID3 <> 0) and (MageAssistMP3 < MageAssistMPlevelProcent3) then ManaFromAssist1(MageAssistID3);
+					end;
+				
+				if (MyHP > 0) and (MyMP < MPlevelProcentRecharge) then ManaFromAssist1(MyID) else //залить ману основе или ...
+					if (AssistID <> 0) and (AssistHP > 0) and (AssistMP < AssistMPlevelProcentRecharge) then  ManaFromAssist1(AssistID); // ...залить ману воину-помощнику
+				
+				if (checkPause = 1) and (sit1 = 0) and (checkBaf1 = 0) and (abs(AssistX1-CenterX) <= 120) and (abs(AssistY1-CenterY) <= 120) and // сесть отдохнуть
+				((AssistHP1 < AssistHPlevelProcent1) or (AssistMP1 <  AssistMPlevelProcent1)) then DrinkBottle1;	
+			  end;
+			
+			if (AssistID2 <> 0) then
+			  begin
+				if (AssistHP2 > 0) and (AssistHP2 < AssistHPlevelProcent2) then HealFromAssist2(AssistID2) else		// подлечить себя или ...
+					if (MyHP > 0) and (MyHP < HPlevelProcent) then HealFromAssist2(MyID) else // ...подлечить основу или ...
+					if (AssistID3 <> 0) and (AssistHP3 > 0) and (AssistHP3 < AssistHPlevelProcent3) then HealFromAssist2(AssistID3) else // ...подлечить овера
+					if (AssistID <> 0) and (AssistHP > 0) and (AssistHP < AssistHPlevelProcent) then HealFromAssist2(AssistID); // ...подлечить воина-помощника
+				if (MageAssistID <> 0) and (MageAssistHP > 0) and (MageAssistHP < MageAssistHPlevelProcent) then HealFromAssist2(MageAssistID) else // подлечить магов
+					if (MageAssistID1 <> 0) and (MageAssistHP1 > 0) and (MageAssistHP1 < MageAssistHPlevelProcent1) then HealFromAssist2(MageAssistID1) else // подлечить магов
+					if (MageAssistID2 <> 0) and (MageAssistHP2 > 0) and (MageAssistHP2 < MageAssistHPlevelProcent2) then HealFromAssist2(MageAssistID2) else // подлечить магов
+					if (MageAssistID3 <> 0) and (MageAssistHP3 > 0) and (MageAssistHP3 < MageAssistHPlevelProcent3) then HealFromAssist2(MageAssistID3); // подлечить магов
+				
+				if (checkPause = 1) and (sit2 = 0) and (checkBaf2 = 0) and (abs(AssistX2-CenterX) <= 120) and (abs(AssistY2-CenterY) <= 120) and // сесть отдохнуть
+				((AssistHP2 < AssistHPlevelProcent2) or (AssistMP2 <  AssistMPlevelProcent2)) then DrinkBottle2;	
+			  end;
+		 end;
+	//-------------------------------------------------------------	 
+   {#$48: if (ReadD(10) = 4035) then
+		  begin	
+			SendMsg_to_CL('Отравление');
+		  end else if (ReadD(10) = 4117) then
+		  begin	
+			SendMsg_to_CL('Паралич');
+		  end;}
+    #$64: begin
+			  if (ReadD(2) = 44) and (enchantFlag > 2) then 
+				begin
+					if (enchantFlag = 4) then
+						begin
+						  enchantFlag:= 2;	
+						  buf:=#$1B;  // social
+						  WriteD(3);
+						  SendToServerEx(NickName);	
+						  buf:=#$14; // активировали заточку
+						  WriteD(enchantScroll);
+						  SendToServerEx(NickName);	
+						  buf:=#$1B;  // social
+						  WriteD(3);
+						  SendToServerEx(NickName);	
+						  buf:=#$1B;  // social
+						  WriteD(3);
+						  SendToServerEx(NickName);	
+						  buf:=#$1B;  // social
+						  WriteD(3);
+						  SendToServerEx(NickName);	
+						  buf:=#$1B;  // social
+						  WriteD(3);
+						  SendToServerEx(NickName);	
+						  buf:=#$58; // послали запрос на сервер на заточку
+						  WriteD(enchant);
+						  SendToServerEx(NickName);	
+						  SendMsg_to_CL('please activate the scroll for capture id');
+						end else SendMsg_to_CL('critical strike');
+				end;
+			  if (ReadD(2) = 32) then 
+				begin
+					SendMsg_to_CL('reset the aim and remove from base');
+					DeleteObject64;
+				end;
+			  if (ReadD(2) = 612) then 
+				begin
+					if (TargetID <> 0) then global_i:= TestPovtor(TargetID);
+					if (global_i > 0) and (global_i <= MobsLastIndex) then MobsIsSwipable[global_i]:= true; //прошел ли спойл на моба 
+					spoilpause:= 0;
+				end;
+			  if (ReadD(2) = 110) then 
+				begin	
+					if (ReadS(14) = 'Paralysis') then
+					  begin
+						if (AssistID1 <> 0) then RepairFromAssist1(MyID);
+					  end;
+				end;
+		  end;
+	#$81: if (enchantFlag > 1) then 
+		begin
+			SendMsg_to_CL(inttostr(ReadD(2)));		
+		end;
+   end;
+  if (ConnectName = NickName) and FromClient then   // разбор пакетов от клиента
+   case pck[1] of
+   #$04: if InitMode then TargetID:= ReadD(2);       //  Action:h(ObjectID)d(OriginX)d(OriginY)d(OriginZ)b(ActionID)
+   #$14:begin 
+			if (catchfood = 1) then
+				begin
+				if (food = 0) then 
+					begin
+						crystal_food:= ReadD(2);
+						food:= ReadD(2);
+						SendMsg_to_CL(inttostr(crystal_food));
+						SendMsg_to_CL('Crystal captured. feed with Golden');
+						pck:=''; 
+					end else
+					begin
+						golden_food:= ReadD(2);
+						SendMsg_to_CL(inttostr(golden_food));
+						catchfood:= 0;
+						SendMsg_to_CL('Golden captured. Please initiate the level k1/b1/c1..k3/b3/c3');
+						pck:=''; 
+						farm:= 1;
+						KookaburraCrystalArray:= [1001451, 1001456, 1001457, 1001458, 1001459, 1001464, 1001465, 1001466, 1001467, 1001468, 1001469, //сами кокабуры
+						 1001444, 1001445, 1001446, 1001447, 1001448, 1001449, 1001450, //звери без кормления
+						 1001470, 1001489]; //бык и кугуар        всего 20 мобов	
+						KookaburraGoldenArray:= [1001451, 1001452, 1001453, 1001454, 1001455, 1001460, 1001461, 1001462, 1001463, 1001468, 1001469, //сами кокабуры
+						 1001444, 1001445, 1001446, 1001447, 1001448, 1001449, 1001450, //звери без кормления
+						 1001470, 1001489]; //бык и кугуар        всего 20 мобов		
+						BuffaloCrystalArray:= [1001470, 1001475, 1001476, 1001477, 1001478, 1001483, 1001484, 1001485, 1001486, 1001487, 1001488, //сами быки
+						 1001444, 1001445, 1001446, 1001447, 1001448, 1001449, 1001450, //звери без кормления
+						 1001451, 1001489]; //кокабура и кугуар        всего 20 мобов			
+						BuffaloGoldenArray:= [1001470, 1001471, 1001472, 1001473, 1001474, 1001479, 1001480, 1001481, 1001482, 1001487, 1001488, //сами быки
+						 1001444, 1001445, 1001446, 1001447, 1001448, 1001449, 1001450, //звери без кормления
+						 1001451, 1001489]; //кокабура и кугуар        всего 20 мобов			  
+					end;
+				end;
+			if (enchantFlag = 1) then 
+				begin
+				 enchant:= ReadD(2);
+				 enchantFlag:= 2;
+				 SendMsg_to_CL(inttostr(enchant));
+				 SendMsg_to_CL('Please activate the scroll for capture id');
+				 pck:='';
+				end else
+			if (enchantFlag = 2) then 
+				begin
+				 enchantScroll:= ReadD(2);
+				 enchantFlag:= 3;
+				 SendMsg_to_CL(inttostr(enchantScroll));
+				 SendMsg_to_CL('after a few criticals strike activate with en');
+				 pck:='';
+				end;
+		end;	
+   #$38: UserCommands;              //  Say2:s(Text)d(Type)s(Target)
+   #$48: begin                           //  ValidatePosition:d(X)d(Y)d(Z)d(Heading)d(Data)
+          MyX:= ReadD(2);
+          MyY:= ReadD(6);
+          MyZ:= ReadD(10);
+          if (not CenterFixed) and InitMode then
+           begin
+            CenterX:= MyX;
+            CenterY:= MyY;
+            CenterZ:= MyZ;
+           end;		   
+         end;
+   end;
+   // #$EE=PartySpelled:d(Summon)d(ObjecID)d(EffectCount:For.0003)d(SkillID:Get.Skill)h(Data)d(Duration)
+   //------------------------------------------------------------------------------------------------------------------
+   if ((ConnectName = NickName) or (ConnectName = AssistantName) or (ConnectName = AssistantName3)) and FromServer then  // разбор пакетов от сервера
+  case pck[1] of
+   #$05: if ((ReadD(6) = MyID) or (ReadD(6) = AssistID) or (ReadD(6) = AssistID3)) and (ReadD(2) <> AssistID1) and (ReadD(2) <> AssistID2)  and (ReadD(2) <> AssistID3) and (not InitMode) then Attack05;  //   05= Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)  
+   #$06: Die06;                             //   Die:d(ChaID)
+   #$0C: if (TargetIDprevious = ReadD(2)) or (TargetID2previous = ReadD(2)) then         //   DropItem:h(PlayerID)h(ObjectID)i(ItemID)d(X)d(Y)d(Z)d(Stackable)d(Count)
+           begin
+		    if (CheckItems(ReadD(2)) = 0) then AddDroppedItem(ReadD(6), ReadD(10), ReadD(14), ReadD(18), ReadD(22));
+           end;
+   #$12: DeleteObject12;                             //   DeleteObject:h(ObjectID)
+   #$16: if (ReadD(10)=1) and (pck[121]=#$00) then  NpcInfo16; //   NpcInfo:h(ObjectID)d(NpcTypeID)d(IsAttackable)d(X)d(Y)d(Z)d(Heading)d(Unknown)d(MAtkSpd)d(PAtkSpd)d(RunSpd)d(WalkSpd)d(SwimRunSpd)d(SwimWalkSpd)d(FlRunSpd)d(FlWalkSpd)d(FlyRunSpd)d(FlyWalkSpd)f(ProperMultiplier)f(PAtkSpd)f(CollisionRadius)f(CollisionHeight)d(RHand)d(Unknown)d(LHand)b(Unknown)b(IsRunning)b(IsInCombat)b(IsALikeDead)b(IsSummoned)s(Name)s(Title)
+	
+  end;
+   //############################################################################### блок обработки помощников
+   if (ConnectName = AssistantName) and FromServer then
+  case pck[1] of
+   #$04: if ReadS(22) = AssistantName then AssistUserInfo;
+   #$0E: if AssistID=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
+          begin
+            AssistStatusUpdate;	
+		  end;
+   #$05, #$60: if ((not InitMode) or (activeDefence = 1)) then
+		  begin 
+			if (rbMode = 0) and (MyID = ReadD(2)) and (ReadD(6) <> AssistID) and (ReadD(6) <> AssistID1) and (ReadD(6) <> AssistID2) then PhisicalAttack2;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)	
+		    if (ReadD(6) = MyID) and (ReadD(2) <> AssistID) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) and  (ReadD(2) <> AssistID3) then 
+			  begin	
+				if (TargetID2 = 0) then TargetID2:= ReadD(2); // Если атакуют основу и нет своей цели
+				PhisicalAttack2;
+			  end else		 
+			if (ReadD(6) = AssistID) and (ReadD(2) <> MyID) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) and  (ReadD(2) <> AssistID3) then 
+			  begin	
+				if (TargetID2 = 0) then TargetID2:= ReadD(2); // Если атакуют воина-помощника он сам за себя постоит
+				PhisicalAttack2;
+			  end;
+		  end;
+   #$39: if ReadS(2)= NickName then
+		  begin
+			buf:=hstr('2A 01 00 00 00');
+			sendtoserverex(AssistantName);  //согласиться на пати с основой
+		  end; 
+   {#$52: begin
+			if (checkPause = 1) and (sit2 = 0) and (abs(AssistX2-CenterX) <= 100) and (abs(AssistY2-CenterY) <= 100) and // сесть отдохнуть
+			((AssistHP2 < AssistHPlevelProcent2) or (AssistMP2 <  AssistMPlevelProcent2)) then DrinkBottle2;	
+		  end;}
+    #$64: if (ReadD(2) = 110) then 
+		  begin	
+			if (ReadS(14) = 'Paralysis') then
+			  begin
+				if (AssistID1 <> 0) then RepairFromAssist1(AssistID);
+			  end;
+		  end;
+  end; 
+  
+	if (ConnectName = AssistantName) and FromClient then   // разбор пакетов от клиента
+   case pck[1] of
+   #$48: begin                           //  ValidatePosition:d(X)d(Y)d(Z)d(Heading)d(Data)
+          AssistX:= ReadD(2);
+          AssistY:= ReadD(6);
+          AssistZ:= ReadD(10);          	   
+         end;
+   end;
+   //--------------------------------------------------------------------------------------------------------------
+   if (ConnectName = AssistantName3) and FromServer then
+  case pck[1] of
+   #$04: if ReadS(22) = AssistantName3 then AssistUserInfo3;
+   #$0E: if AssistID3=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
+          begin
+            AssistStatusUpdate3;	
+		  end;
+   #$05, #$60: if ((not InitMode) or (activeDefence = 1)) then
+		  begin 
+			if (MyID = ReadD(2)) and (ReadD(6) <> AssistID) and (ReadD(6) <> AssistID1) and (ReadD(6) <> AssistID2) and (ReadD(6) <> AssistID3) then PhisicalAttack2;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
+			if (ReadD(6) = AssistID3) and (ReadD(2) <> MyID) and (ReadD(2) <> AssistID) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then 
+			  begin	
+				if (TargetID2 = 0) then TargetID2:= ReadD(2); // Если атакуют воина-помощника он сам за себя постоит
+				PhisicalAttack2;
+			  end;
+		  end;
+   #$39: if ReadS(2)= NickName then
+		  begin
+			buf:=hstr('2A 01 00 00 00');
+			sendtoserverex(AssistantName3);  //согласиться на пати с основой
+		  end; 
+   {#$52: begin
+			if (checkPause = 1) and (sit2 = 0) and (abs(AssistX2-CenterX) <= 100) and (abs(AssistY2-CenterY) <= 100) and // сесть отдохнуть
+			((AssistHP2 < AssistHPlevelProcent2) or (AssistMP2 <  AssistMPlevelProcent2)) then DrinkBottle2;	
+		  end;}
+    #$64: if (ReadD(2) = 110) then 
+		  begin	
+			if (ReadS(14) = 'Paralysis') then
+			  begin
+				if (AssistID1 <> 0) then RepairFromAssist1(AssistID3);
+			  end;
+		  end;
+  end; 
+  
+	if (ConnectName = AssistantName3) and FromClient then   // разбор пакетов от клиента
+   case pck[1] of
+   #$48: begin                           //  ValidatePosition:d(X)d(Y)d(Z)d(Heading)d(Data)
+          AssistX3:= ReadD(2);
+          AssistY3:= ReadD(6);
+          AssistZ3:= ReadD(10);          	   
+         end;
+   end;
+   //--------------------------------------------------------------------------------------------------------------
+   if (ConnectName = AssistantName1) and FromServer then
+  case pck[1] of
+   #$04: if ReadS(22) = AssistantName1 then AssistUserInfo1;
+   #$0E: if AssistID1=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
+          begin
+            AssistStatusUpdate1;	
+		  end;
+		  
+   #$05: begin
+			 if (MyID = ReadD(2))  and (not InitMode) then           //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
+				begin
+					if (sit1=0) and (sit=0) then	//	and ((abs(AssistX1-MyX) > 100) or (abs(AssistY1-MyY) > 100))
+						MoveToHead(AssistX1, AssistY1, 1);
+				end;
+			 if (ReadD(6) = AssistID1) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then 
+				begin
+					if (AssistID <> 0) and (rbMode = 0) then
+						begin
+							TargetID2:= ReadD(2); // Если атакуют помощника воин-помощник подписывается
+							PhisicalAttack2;
+							//if (WarriorSpoilCrafterBd2 = 0) then AgressionHate;
+					end
+					else	Attack05; 	// !!! обработка если атакуют помощника основа подписывается  
+					if (AssistHP1 > 0) and (AssistHP1 < AssistHPlevelProcent1) then HealFromAssist1(AssistID1);		// подлечить себя
+				end;
+		 end;
+   #$39: if ReadS(2)= NickName then
+		  begin
+			buf:=hstr('2A 01 00 00 00');
+			sendtoserverex(AssistantName1);  //согласиться на пати с основой
+		  end; 
+  end; 
+  
+	if (ConnectName = AssistantName1) and FromClient then   // разбор пакетов от клиента
+   case pck[1] of
+   #$48: begin                           //  ValidatePosition:d(X)d(Y)d(Z)d(Heading)d(Data)
+          AssistX1:= ReadD(2);
+          AssistY1:= ReadD(6);
+          AssistZ1:= ReadD(10);          	   
+         end;
+   end;
+ //----------------------------------------------------------------------------------------------------------------------  
+   if (ConnectName = AssistantName2) and FromServer then
+  case pck[1] of
+   #$04: if ReadS(22) = AssistantName2 then AssistUserInfo2;
+   #$0E: if AssistID2=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
+          begin
+            AssistStatusUpdate2;	
+		  end;
+		  
+   #$05: begin
+			if (MyID = ReadD(2))  and (not InitMode) then           //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
+				begin
+					if (sit2=0) and (sit=0) then	//	and ((abs(AssistX2-MyX) > 100) or (abs(AssistY2-MyY) > 100))	
+						MoveToHead(AssistX2, AssistY2, 2);			
+				end;
+			if (ReadD(6) = AssistID2) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then // (not InitMode) скрипт уже включен командой start
+				begin
+					if (AssistID <> 0) and (rbMode = 0) then
+						begin
+							TargetID2:= ReadD(2); // Если атакуют помощника воин-помощник подписывается
+							PhisicalAttack2;
+							//if (WarriorSpoilCrafterBd2 = 0) then AgressionHate;
+						end
+						else	Attack05; 	// !!! обработка если атакуют помощника основа подписывается  
+						if  (AssistHP2 > 0) and (AssistHP2 < AssistHPlevelProcent2) then HealFromAssist2(AssistID2);		// подлечить себя
+				end;
+		 end;
+   #$39: if ReadS(2)= NickName then
+		  begin
+			buf:=hstr('2A 01 00 00 00');
+			sendtoserverex(AssistantName2);  //согласиться на пати с основой
+		  end;
+    #$64: if (ReadD(2) = 110) then 
+		  begin	
+			if (ReadS(14) = 'Paralysis') then
+			  begin
+				if (AssistID1 <> 0) then RepairFromAssist1(AssistID2);
+			  end;
+		  end;
+  end; 
+  
+	if (ConnectName = AssistantName2) and FromClient then   // разбор пакетов от клиента
+   case pck[1] of
+   #$48: begin                           //  ValidatePosition:d(X)d(Y)d(Z)d(Heading)d(Data)
+          AssistX2:= ReadD(2);
+          AssistY2:= ReadD(6);
+          AssistZ2:= ReadD(10);          	   
+         end;
+   end;
+
+  //############################################################################### блок обработки магов  
+   if (ConnectName = MageAssistantName) and FromServer then
+  case pck[1] of
+   #$04: if ReadS(22) = MageAssistantName then MageAssistUserInfo;
+   #$0E: if MageAssistID=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
+          begin
+            MageAssistStatusUpdate;	
+		  end;
+   #$05: begin 
+			if (MyID = ReadD(2))  and (not InitMode) then MagicAttack;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
+			if (ReadD(6) = MageAssistID) then // (not InitMode) скрипт уже включен командой start
+				begin
+					if (AssistID <> 0) and (rbMode = 0) then
+						begin
+							TargetID2:= ReadD(2); // Если атакуют мага воин-помощник подписывается
+							PhisicalAttack2;
+							//if (WarriorSpoilCrafterBd2 = 0) then AgressionHate;
+					end
+					else	Attack05; 	// !!! обработка если атакуют мага основа подписывается  
+					if (AssistID1 <> 0) and (MageAssistHP < MageAssistHPlevelProcent) then HealFromAssist1(MageAssistID) // подлечить кем нибудь
+					else if (AssistID2 <> 0) and (MageAssistHP < MageAssistHPlevelProcent) then HealFromAssist2(MageAssistID);
+				end;	
+		 end;
+   #$60 : if (MyID = ReadD(2)) and (not InitMode) and (rbMode = 0) and (onlyOne <> ReadD(6)) then	
+		  begin	
+			onlyOne:= ReadD(6);
+			MageFollowAttack;
+		  end;
+   #$39: if ReadS(2)= NickName then
+		  begin
+			buf:=hstr('2A 01 00 00 00');
+			sendtoserverex(MageAssistantName);  //согласиться на пати с основой
+		  end;
+   {#$52: begin
+			if (checkPause = 1) and (sit2 = 0) and (abs(AssistX2-CenterX) <= 100) and (abs(AssistY2-CenterY) <= 100) and // сесть отдохнуть
+			((AssistHP2 < AssistHPlevelProcent2) or (AssistMP2 <  AssistMPlevelProcent2)) then DrinkBottle2;	
+		  end;}
+    #$64: if (ReadD(2) = 110) then 
+		  begin	
+			if (ReadS(14) = 'Paralysis') then
+			  begin
+				if (AssistID1 <> 0) then RepairFromAssist1(MageAssistID);
+			  end;
+		  end;
+  end; 
+  
+	if (ConnectName = MageAssistantName) and FromClient then   // разбор пакетов от клиента
+   case pck[1] of
+   #$48: begin                           //  ValidatePosition:d(X)d(Y)d(Z)d(Heading)d(Data)
+          MageAssistX:= ReadD(2);
+          MageAssistY:= ReadD(6);
+          MageAssistZ:= ReadD(10);          	   
+         end;
+   end;
+   
+ //----------------------------------------------------------------------------------------------------------------------  
+	if (ConnectName = MageAssistantName1) and FromServer then
+  case pck[1] of
+   #$04: if ReadS(22) = MageAssistantName1 then MageAssistUserInfo1;
+   #$0E: if MageAssistID1=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
+          begin
+            MageAssistStatusUpdate1;	
+		  end;
+   #$05: begin 
+			if (MyID = ReadD(2))  and (not InitMode) then MagicAttack1;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
+			if (ReadD(6) = MageAssistID1) then // (not InitMode) скрипт уже включен командой start
+				begin
+					if (AssistID <> 0) and (rbMode = 0) then
+						begin
+							TargetID2:= ReadD(2); // Если атакуют мага воин-помощник подписывается
+							PhisicalAttack2;
+							//if (WarriorSpoilCrafterBd2 = 0) then AgressionHate;
+					end
+					else	Attack05; 	// !!! обработка если атакуют мага основа подписывается  
+					if (AssistID2 <> 0) and (MageAssistHP1 < MageAssistHPlevelProcent1) then HealFromAssist2(MageAssistID1) // подлечить кем нибудь
+					else if (AssistID1 <> 0) and (MageAssistHP1 < MageAssistHPlevelProcent1) then HealFromAssist1(MageAssistID1);
+				end;
+		 end;
+   #$60 : if (MyID = ReadD(2))  and (not InitMode) and (rbMode = 0) and (onlyOne1 <> ReadD(6)) then	
+		  begin	
+			onlyOne1:= ReadD(6);
+			MageFollowAttack1;
+		  end;
+   #$39: if ReadS(2)= NickName then
+		  begin
+			buf:=hstr('2A 01 00 00 00');
+			sendtoserverex(MageAssistantName1);  //согласиться на пати с основой
+		  end;
+   {#$52: begin
+			if (checkPause = 1) and (sit2 = 0) and (abs(AssistX2-CenterX) <= 100) and (abs(AssistY2-CenterY) <= 100) and // сесть отдохнуть
+			((AssistHP2 < AssistHPlevelProcent2) or (AssistMP2 <  AssistMPlevelProcent2)) then DrinkBottle2;	
+		  end;}
+    #$64: if (ReadD(2) = 110) then 
+		  begin	
+			if (ReadS(14) = 'Paralysis') then
+			  begin
+				if (AssistID1 <> 0) then RepairFromAssist1(MageAssistID1);
+			  end;
+		  end;
+  end; 
+  
+	if (ConnectName = MageAssistantName1) and FromClient then   // разбор пакетов от клиента
+   case pck[1] of
+   #$48: begin                           //  ValidatePosition:d(X)d(Y)d(Z)d(Heading)d(Data)
+          MageAssistX1:= ReadD(2);
+          MageAssistY1:= ReadD(6);
+          MageAssistZ1:= ReadD(10);          	   
+         end;
+   end;
+   
+ //----------------------------------------------------------------------------------------------------------------------  
+	if (ConnectName = MageAssistantName2) and FromServer then
+  case pck[1] of
+   #$04: if ReadS(22) = MageAssistantName2 then MageAssistUserInfo2;
+   #$0E: if MageAssistID2=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
+          begin
+            MageAssistStatusUpdate2;	
+		  end;
+   #$05: begin 
+			if (MyID = ReadD(2))  and (not InitMode) then MagicAttack2;	          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
+			if (ReadD(6) = MageAssistID2) then // (not InitMode) скрипт уже включен командой start
+				begin
+					if (AssistID <> 0) and (rbMode = 0) then
+						begin
+							TargetID2:= ReadD(2); // Если атакуют мага воин-помощник подписывается
+							PhisicalAttack2;
+							//if (WarriorSpoilCrafterBd2 = 0) then AgressionHate;
+					end
+					else	Attack05; 	// !!! обработка если атакуют мага основа подписывается					
+					if (AssistID1 <> 0) and (MageAssistHP2 < MageAssistHPlevelProcent2) then HealFromAssist1(MageAssistID2) // подлечить кем нибудь
+					else if (AssistID2 <> 0) and (MageAssistHP2 < MageAssistHPlevelProcent2) then HealFromAssist2(MageAssistID2);
+				end;
+		  end;
+   #$60 : if (MyID = ReadD(2))  and (not InitMode) and (rbMode = 0) and (onlyOne2 <> ReadD(6)) then	
+		  begin	
+			onlyOne2:= ReadD(6);
+			MageFollowAttack2;
+		  end;
+   #$39: if ReadS(2)= NickName then
+		  begin
+			buf:=hstr('2A 01 00 00 00');
+			sendtoserverex(MageAssistantName2);  //согласиться на пати с основой
+		  end;
+   {#$52: begin
+			if (checkPause = 1) and (sit2 = 0) and (abs(AssistX2-CenterX) <= 100) and (abs(AssistY2-CenterY) <= 100) and // сесть отдохнуть
+			((AssistHP2 < AssistHPlevelProcent2) or (AssistMP2 <  AssistMPlevelProcent2)) then DrinkBottle2;	
+		  end;}
+    #$64: if (ReadD(2) = 110) then 
+		  begin	
+			if (ReadS(14) = 'Paralysis') then
+			  begin
+				if (AssistID1 <> 0) then RepairFromAssist1(MageAssistID2);
+			  end;
+		  end;
+  end; 
+  
+	if (ConnectName = MageAssistantName2) and FromClient then   // разбор пакетов от клиента
+   case pck[1] of
+   #$48: begin                           //  ValidatePosition:d(X)d(Y)d(Z)d(Heading)d(Data)
+          MageAssistX2:= ReadD(2);
+          MageAssistY2:= ReadD(6);
+          MageAssistZ2:= ReadD(10);          	   
+         end;
+   end;
+   
+ //----------------------------------------------------------------------------------------------------------------------  
+	if (ConnectName = MageAssistantName3) and FromServer then
+  case pck[1] of
+   #$04: if ReadS(22) = MageAssistantName3 then MageAssistUserInfo3;
+   #$0E: if MageAssistID3=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
+          begin
+            MageAssistStatusUpdate3;	
+		  end;
+   #$05: begin 
+			if (MyID = ReadD(2))  and (not InitMode) then MagicAttack3;	
+			if (ReadD(6) = MageAssistID3) then // (not InitMode) скрипт уже включен командой start
+				begin
+					if (AssistID <> 0) and (rbMode = 0) then
+						begin
+							TargetID2:= ReadD(2); // Если атакуют мага воин-помощник подписывается
+							PhisicalAttack2;
+							//if (WarriorSpoilCrafterBd2 = 0) then AgressionHate;
+					end
+					else	Attack05; 	// !!! обработка если атакуют мага основа подписывается  
+					if (AssistID2 <> 0) and (MageAssistHP3 < MageAssistHPlevelProcent3) then HealFromAssist2(MageAssistID3) // подлечить кем нибудь
+					else if (AssistID1 <> 0) and (MageAssistHP3 < MageAssistHPlevelProcent3) then HealFromAssist1(MageAssistID3);
+				end; 	// !!! обработка если атакуют мага основа подписывается  
+		 end;
+   #$60 : if (MyID = ReadD(2))  and (not InitMode) and (rbMode = 0) and (onlyOne3 <> ReadD(6)) then	
+		  begin	
+			onlyOne3:= ReadD(6);
+			MageFollowAttack3;
+		  end;
+   #$39: if ReadS(2)= NickName then
+		  begin
+			buf:=hstr('2A 01 00 00 00');
+			sendtoserverex(MageAssistantName3);  //согласиться на пати с основой
+		  end;
+   {#$52: begin
+			if (checkPause = 1) and (sit2 = 0) and (abs(AssistX2-CenterX) <= 100) and (abs(AssistY2-CenterY) <= 100) and // сесть отдохнуть
+			((AssistHP2 < AssistHPlevelProcent2) or (AssistMP2 <  AssistMPlevelProcent2)) then DrinkBottle2;	
+		  end;}
+    #$64: if (ReadD(2) = 110) then 
+		  begin	
+			if (ReadS(14) = 'Paralysis') then
+			  begin
+				if (AssistID1 <> 0) then RepairFromAssist1(MageAssistID3);
+			  end;
+		  end;
+  end; 
+  
+	if (ConnectName = MageAssistantName3) and FromClient then   // разбор пакетов от клиента
+   case pck[1] of
+   #$48: begin                           //  ValidatePosition:d(X)d(Y)d(Z)d(Heading)d(Data)
+          MageAssistX3:= ReadD(2);
+          MageAssistY3:= ReadD(6);
+          MageAssistZ3:= ReadD(10);          	   
+         end;
+   end;
+ //----------------------------------------------------------------------------------------------------------------------  
+
+end.
