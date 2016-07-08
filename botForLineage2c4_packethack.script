@@ -3824,7 +3824,7 @@ begin
   case pck[1] of
    #$05: if ((ReadD(6) = MyID) or (ReadD(6) = AssistID) or (ReadD(6) = AssistID3)) and (ReadD(2) <> AssistID1) and (ReadD(2) <> AssistID2)  and (ReadD(2) <> AssistID3) and (not InitMode) then Attack05;  //   05= Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)  
    #$06: Die06;                             //   Die:d(ChaID)
-   #$0C: if (TargetIDprevious = ReadD(2)) or (TargetID2previous = ReadD(2)) then         //   DropItem:h(PlayerID)h(ObjectID)i(ItemID)d(X)d(Y)d(Z)d(Stackable)d(Count)
+   #$0C: if ((TargetIDprevious = ReadD(2)) or (TargetID2previous = ReadD(2)) or (TargetID = ReadD(2)) or (TargetID2 = ReadD(2))) then         //   DropItem:h(PlayerID)h(ObjectID)i(ItemID)d(X)d(Y)d(Z)d(Stackable)d(Count)
            begin
 		    if (CheckItems(ReadD(2)) = 0) then AddDroppedItem(ReadD(6), ReadD(10), ReadD(14), ReadD(18), ReadD(22));
            end;
