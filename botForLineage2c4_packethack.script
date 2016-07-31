@@ -53,8 +53,8 @@ const
  a7 = '2F 9D 04 00 00 00 00 00 00 00';//атака Flame Strike маг огонь
  a8 = '2F 94 04 00 00 00 00 00 00 00';//атака Aura Burn маг ближняя
  //-------- cх
- a6 = '2F D7 04 00 00 00 00 00 00 00';//атака Hurricane ветер
- //   '2F 9A 04 00 00 00 00 00 00 00';//атака Twister ветер
+ // a6 = '2F D7 04 00 00 00 00 00 00 00';//атака Hurricane ветер
+ a6 = '2F 9A 04 00 00 00 00 00 00 00';//атака Twister ветер
  a9 = '2F F2 04 00 00 00 00 00 00 00';//атака Shadow Spark темная
  a14 = '2F F3 04 00 00 00 00 00 00 00';//атака Shadow Flare темная
  //--------
@@ -79,46 +79,42 @@ const
  bd5 = '2F 11 01 00 00 00 00 00 00 00'; // dance of mystic
  bd6 = '2F 13 01 00 00 00 00 00 00 00'; // dance of fury
  
- WarriorSpoilCrafterBd = 1;      // 0 - warrior; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр ####### Выставить кто будет основой NickName 
- //NickName = 'Pontiff';          		//0 Твой ник в игре Dark Avenger
- //NickName  = 'Dragon';          		//0 Твой ник в игре Temple Knight
- NickName = 'Frodo';         //1 Твой ник в игре Спойлер
+ WarriorSpoilCrafterBd = 1;      // 0 - warrior; 1 - spoil; 2 - крафтер; 3 - бд; 4-TX ####### Выставить кто будет основой NickName 
+ //NickName = 'Pontiff';          		//4 Твой ник в игре Dark Avenger
+ //NickName  = 'Roronoa';          		//0 Твой ник в игре TX
+ NickName = 'Jinbe';         //1 Твой ник в игре Спойлер
  //NickName = 'Dis';         				//1 Твой ник в игре Спойлер
- //NickName = 'Zevs';          		//2 Твой ник в игре Крафтер
- //NickName = 'Demon';          		//3 Твой ник в игре Blade Dancer
- //NickName = 'Incubus';          		//4 Твой ник в игре Destroyer
+ //NickName = 'Jimbei';          		//2 Твой ник в игре Крафтер
+ //NickName = 'Roronoa';          		//3 Твой ник в игре Blade Dancer
  
- WarriorSpoilCrafterBd2 = 2;      // 0 - DA; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
+ WarriorSpoilCrafterBd2 = 2;      // 0 - Paladin; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
  //AssistantName = '';					  // если помощников не будет
- //AssistantName = '-Pastor';          		//0 Помощник Dark Avenger
- //AssistantName = 'Schwarzenegger';        //1 Помощник  Спойлер
- AssistantName = 'Zevs';          	//2 Помощник  Крафтер
+ //AssistantName = 'Pontiff';          		//0 Помощник Paladin
+ //AssistantName = 'Nefertari';        //1 Помощник  Спойлер
+ AssistantName = 'Jimbei';          	//2 Помощник  Крафтер
  //AssistantName = 'Demon';          		//3 Помощник Blade Dancer
  //AssistantName  = 'Incubus';          	//4 Твой ник в игре Destroyer
- //AssistantName  = '-Dragon';          		//3 Твой ник
  
  AssistantName3  = '';//Terror';          		// Твой ник в игре Over
  
- //AssistantName1 = '';  
- //AssistantName2 = ''; 
- AssistantName1 = 'Boa';     // Ник ше
- AssistantName2 = 'Nico';     // Ник пп
+ AssistantName1 = '';  
+ AssistantName2 = ''; 
+ //AssistantName1 = 'Boa';     // Ник ше
+ //AssistantName2 = 'Nico';     // Ник пп
  //AssistantName1 = 'Pixie';    // Ник ee
- //AssistantName2 = 'Pontiff';    // Ник биш
+ //AssistantName2 = '';    // Ник биш
  
- MageAssistantName = ''; //'Inquisitor';			// ДД-маги
- MageAssistantName1 = ''; //Executioner';			// ДД-маги
- MageAssistantName2 = ''; //'Gorgona';			// ДД-маги
- MageAssistantName3 = ''; //'Sirena';
- //MageAssistantName2 = 'Devil';
- //MageAssistantName3 = 'Demonessa';
+ MageAssistantName = ''; // 'Executioner'; //'Executioner';			// ДД-маги
+ MageAssistantName1 = ''; // 'DarkDevil'; //DarkDevil';			// ДД-маги
+ MageAssistantName2 = ''; // 'Demonessa'; //'Demonessa';			// ДД-маги
+ MageAssistantName3 = ''; // 'DarkSirena'; //'DarkSirena';
  
  polyaxe = 1; // гном крафтер-основа пользуется 0 - топор, 1 - копье
  polyaxeAssistant = 1; // гном крафтер-помощник пользуется 0 - топор, 1 - копье
  
  Interlude = false;                 // C4 -false , C6 - true;
  CharNumber = 0;                    // если больше одного перса на аккаунте, то задаем его порядковый номер, нумерация начинается с нуля.
- Radius_Kacha = 1000;                 // Радиус кача, если 0 - то задавать вручную через клиента (изменять от 100 до 9999). Проверил на практике, что максимум не более 2000.
+ Radius_Kacha = 2500;                 // Радиус кача, если 0 - то задавать вручную через клиента (изменять от 100 до 9999). Проверил на практике, что максимум не более 2000.
  
  //############################################################################
 //---------------------------------------------------------------------------------------
@@ -178,7 +174,7 @@ const
  NpcTypeID20= 0;
 //########################################################################################
  NpcTypeID_List_Razmer = 20;       // Размер списка мобов (не трогать!)
- OX = 1; OY = 2; OZ= 3;            //  Служебные константы
+ OX = 1; OY = 2; OZ = 3; mobID=1; cursor=2;            //  Служебные константы
  maximumItems = 500;               // Размер базы мобов и дропа.
  OblastVidimosti = 500000;         //  (не трогать!!!) Область видимости объектов (изменять от 1000 до 500000).
 
@@ -194,6 +190,7 @@ var
 //-------------------------------------- БД  --------------------------------------------------
  MobsObjID   : array [1..maximumItems] of integer;        // ID моба
  LastKilledMobObjID   : array [1..maximumItems] of integer;        // ID убитого моба
+ LastMobObjID   : array [1..10, 1..2] of integer;        // ID последних атакованных ботами мобов
  MobsNpcTypeID : array [1..maximumItems] of integer;      // Тип моба
  MobsDist : array [1..maximumItems] of integer;           // Расстояние от центра кача до моба
  MobsXYZ  : array [1..maximumItems, 1..3] of integer;     // Координаты
@@ -220,7 +217,6 @@ var
  ItemsLastIndex: integer;
 
  TargetID, TargetID2: integer;                  // Текущая цель, приоритетная цель для помощника, последний убитый моб
- TargetIDprevious, TargetID2previous: integer;   // цели убитые последними
  
  MobsKilled : integer;                                    //   счетчик убитых мобов
  idprov:boolean;
@@ -471,6 +467,12 @@ procedure Init; //Вызывается при включении скрипта
     MobsAgression[i]:= false;
     MobsUpdated[i]:=false;
    end;
+  for i:=1 to 10 do                                // Очищаем базу
+   begin
+    LastMobObjID[i, mobID]:= 0;
+    LastMobObjID[i, cursor]:= 0;
+   end;
+  LastMobObjID[1, cursor]:= 1;
   TimerCombat:=TTimer.Create(nil);           // создаем таймеры
   TimerCombat.OnTimer:=@OnTimerCombat;
   TimerCombat.enabled:=false;
@@ -681,8 +683,6 @@ procedure ClearDB;                          // Очистка БД
   ItemsLastIndex:= 0;                       // Очищаем переменные
   TargetID:= 0;
   TargetID2:= 0;
-  TargetIDprevious:= 0;
-  TargetID2previous:= 0;
   MobsKilled:= 0;
   CenterX:= 0;
   CenterY:= 0;
@@ -785,36 +785,36 @@ function RastoyanieToMe(NpcX, NpcY : integer) : integer; // вычисление
   if summa = 0 then result:= 0 else result:= Round(sqrt(summa));  // обход возможной ошибки, если моб стоит прямо в центре кача
 end;
 
-procedure MoveToHead (x,y,i: integer);     // Процедура чтобы подбежать близко к основе принимает коородинаты помощника
+procedure MoveToHead (x,y,i,xt,yt,zt: integer);     // Процедура чтобы подбежать близко к основе принимает коородинаты помощника (кто бежит, i, к кому бежит)
  var
   goX,goY: integer;
  begin	
-	if (MyX > x) then goX:= MyX - 100;
-	if (MyX <= x) then goX:= MyX + 100;
-	if (MyY > y) then goY:= MyY - 100;
-	if (MyY <= y) then goY:= MyY + 100;
-	if ((MyX > x) and (MyY > y)) or ((MyX <= x) and (MyY <= y)) then
+	if (xt > x) then goX:= xt - 100;
+	if (xt <= x) then goX:= xt + 100;
+	if (yt > y) then goY:= yt - 100;
+	if (yt <= y) then goY:= yt + 100;
+	if ((xt > x) and (yt > y)) or ((xt <= x) and (yt <= y)) then
 	  begin
-		if i=0 then MoveToMain(goX, goY, MyZ);	
-		if i=1 then MoveTo1(goX+40, goY-40, MyZ);	
-		if i=2 then MoveTo2(goX-40, goY+40, MyZ);	
-		if i=3 then MageMoveTo(goX-60, goY+40, MyZ);	
-		if i=4 then MageMoveTo1(goX+60, goY-40, MyZ);	
-		if i=5 then MageMoveTo2(goX+40, goY-60, MyZ);	
-		if i=6 then MageMoveTo3(goX-40, goY+60, MyZ);	
-		if i=7 then MoveTo(goX-60, goY+60, MyZ);	
-		if i=8 then MoveTo3(goX+60, goY-60, MyZ);	
+		if i=0 then MoveToMain(goX, goY, zt);	
+		if i=1 then MoveTo1(goX+40, goY-40, zt);	
+		if i=2 then MoveTo2(goX-40, goY+40, zt);	
+		if i=3 then MageMoveTo(goX-60, goY+40, zt);	
+		if i=4 then MageMoveTo1(goX+60, goY-40, zt);	
+		if i=5 then MageMoveTo2(goX+40, goY-60, zt);	
+		if i=6 then MageMoveTo3(goX-40, goY+60, zt);	
+		if i=7 then MoveTo(goX-60, goY+60, zt);	
+		if i=8 then MoveTo3(goX+60, goY-60, zt);	
 	  end else
 	  begin
-		if i=0 then MoveToMain(goX, goY, MyZ);	
-		if i=1 then MoveTo1(goX+40, goY+40, MyZ);	
-		if i=2 then MoveTo2(goX-40, goY-40, MyZ);	
-		if i=3 then MageMoveTo(goX-60, goY-40, MyZ);	
-		if i=4 then MageMoveTo1(goX+60, goY+40, MyZ);	
-		if i=5 then MageMoveTo2(goX+40, goY+60, MyZ);	
-		if i=6 then MageMoveTo3(goX-40, goY-60, MyZ);	
-		if i=7 then MoveTo(goX-60, goY-60, MyZ);		  
-		if i=8 then MoveTo3(goX+60, goY+60, MyZ);		  
+		if i=0 then MoveToMain(goX, goY, zt);	
+		if i=1 then MoveTo1(goX+40, goY+40, zt);	
+		if i=2 then MoveTo2(goX-40, goY-40, zt);	
+		if i=3 then MageMoveTo(goX-60, goY-40, zt);	
+		if i=4 then MageMoveTo1(goX+60, goY+40, zt);	
+		if i=5 then MageMoveTo2(goX+40, goY+60, zt);	
+		if i=6 then MageMoveTo3(goX-40, goY-60, zt);	
+		if i=7 then MoveTo(goX-60, goY-60, zt);		  
+		if i=8 then MoveTo3(goX+60, goY+60, zt);		  
 	  end;
  end;
 
@@ -944,6 +944,31 @@ function TestPovtorLastKilledMobObjID (id: integer) : integer;                  
     result:=i;                                                  // И возвращаем его индекс по БД
     break;
    end;
+ end;
+ 
+function TestPovtorLastMobObjID (id: integer) : integer;                   // функция проверяет наличие заданного моба в БД
+ var
+  i: integer;
+ begin
+  result:=0;
+  for i:=1 to 10 do if LastMobObjID[i, mobID] = id then               // Ищем нужный ID в нашей БД
+   begin
+    result:=i;                                                  // И возвращаем его индекс по БД
+    break;
+   end;
+ end;
+ 
+procedure addLastMobObjID (id: integer);
+ var
+  i: integer;
+ begin
+	for i:=1 to 10 do if LastMobObjID[i, mobID] = id then exit;         
+	for i:=1 to 10 do if LastMobObjID[i, cursor] = 1 then
+		begin
+			LastMobObjID[i, mobID]:= id;
+			LastMobObjID[i, cursor]:= 0;
+			if i = 10 then LastMobObjID[1, cursor]:= 1 else LastMobObjID[i+1, cursor]:= 1;
+		end;
  end;
 
 function InMobsList (NpcTypeID: integer) : boolean;            // функция проверяет наличие заданного моба в списке на атаку
@@ -1130,7 +1155,7 @@ procedure UserCommands;    // комманды пользователя
 		'out': begin
 				SendMsg_to_CL('scutter');
 				pck:='';
-				GoOutAll();
+				GoOutAll(0,0,MyX,MyY,MyZ,0);
 				TimerGoOut.enabled:= false;
 				end;
 		'goout': begin
@@ -1190,11 +1215,11 @@ procedure UserCommands;    // комманды пользователя
 				  begin
 				    food:= 0;
 					catchfood:= 1;
-					SendMsg_to_CL('Начало захвата id корма. Покормите один раз crystal');
+					SendMsg_to_CL('The beginning of capture feed. Please feed crystal');
 					pck:=''; 
 				  end; 
 		'nofarm':begin
-				SendMsg_to_CL('Отменить режим корма на ферме');
+				SendMsg_to_CL('Disable ferm farming');
 				pck:='';
 				farm:= 0;			  
 			  end;
@@ -1242,12 +1267,12 @@ procedure UserCommands;    // комманды пользователя
 				addMobToDatabase('buffalo');
 			  end;
 		'golden': begin
-				SendMsg_to_CL('выбор корма golden');
+				SendMsg_to_CL('chose golden');
 				pck:='';
 				food:= golden_food;
 			  end;
 		'crystal': begin
-				SendMsg_to_CL('выбор корма crystal');
+				SendMsg_to_CL('chose crystal');
 				pck:='';
 				food:= crystal_food;
 			  end;
@@ -1255,6 +1280,7 @@ procedure UserCommands;    // комманды пользователя
 				SendMsg_to_CL('сброс цели');
 				pck:='';
 				TargetID:= 0;
+				TargetID2:= 0;
 			  end;
 	end;
  if InitMode then case (ReadS(2)) of
@@ -2042,7 +2068,7 @@ procedure OnTimerAgr(Sender: TObject);
     
 procedure OnTimerGoOut(Sender: TObject);
   begin	
-	GoOutAll();
+	GoOutAll(0,0,MyX,MyY,MyZ,0);
   end;
   
 procedure OnTimerParty(Sender: TObject);
@@ -2187,8 +2213,15 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
     if (bd = 10) then bd:=1;		// флаг для bd чтоб бафнул после боя
 	if (bd = 20) then bd:=2;
 	if (bd = 30) then bd:=3;
-	if (spoilpause = 0) then PhisicalAttack;
 	i:= TestPovtor(TargetID);
+	addLastMobObjID(TargetID);
+	addLastMobObjID(TargetID2);
+	if (hitMe = 0) then
+		begin
+			GoOutAll(MyX,MyY,MobsXYZ[i, OX], MobsXYZ[i, OY], MobsXYZ[i, OZ],1);
+			if (abs(MyX - MobsXYZ[i, OX]) >= 160) or (abs(MyY - MobsXYZ[i, OY]) >= 160) then exit else hitMe:= 1;
+		end;
+	if (spoilpause = 0) then PhisicalAttack;
 	if (WarriorSpoilCrafterBd = 0) then PowerAttack;  							                         
 	if (WarriorSpoilCrafterBd = 1) then SpoilAttack(i);
 	if (WarriorSpoilCrafterBd = 2) then StunAttack;
@@ -2197,11 +2230,11 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
 	inc(AttackCycle);
 	if (hitMe > 30) or ((AttackCycle mod 30) = 29) then 
 	  begin	
-		if (rbMode = 0) then MoveToHead(0, 0, 0); // отбежать основой
-		if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(0, 0, 7);  //отбежать помощником-воином
+		if (rbMode = 0) then MoveToHead(MyX, MyY, 0, MyX, MyY, MyZ); // отбежать основой
+		if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(AssistX, AssistY, 7, MyX, MyY, MyZ);  //отбежать помощником-воином
 		hitMe:=0;
 	  end;
-	if ((AttackCycle mod 40) = 38)  and (rbMode = 0) then GoOutAll();		// отбежать всеми
+	if ((AttackCycle mod 40) = 38)  and (rbMode = 0) then GoOutAll(0,0,MyX,MyY,MyZ,0);		// отбежать всеми
     if (AttackCycle > Calculated_AttackTime) and (rbMode = 0) then              // если валим моба больше, значит это баг...
      begin
       i:= TestPovtor(TargetID);
@@ -2212,7 +2245,7 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
         MobsAgression[i]:= false;
        end;
       TargetID:= 0;
-	  MoveToHead(0, 0, 0);
+	  MoveToHead(MyX, MyY, 0, MyX, MyY, MyZ);
      end;
 	 exit;
    end;
@@ -2234,7 +2267,7 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
     TargetID:= MobsObjID[MinDistID];
     PhisicalAttack;                           // берем вражину в таргет
     AttackCycle:= 0;
-	GoOutAll();
+	GoOutAll(0,0,MyX,MyY,MyZ,0);
 	if (AssistID <> 0) and (rbMode = 0) then FollowAttack; 				// тут помощники цепляются двойным кликом к основе
 	if (AssistID1 <> 0) and (rbMode = 0) then FollowAttack1; 	
 	if (AssistID2 <> 0) and (rbMode = 0) then FollowAttack2; 
@@ -2250,7 +2283,7 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
 	MoveToMain(CenterX, CenterY, CenterZ);
 	exit;
    end;
-   GoOutAll();
+   GoOutAll(0,0,MyX,MyY,MyZ,0);
  end;
 
 procedure OnRBTargetReload (Sender: TObject);         // боевой таймер
@@ -2267,16 +2300,17 @@ procedure OnRBTargetReload (Sender: TObject);         // боевой тайме
    end;
  end;
  
-procedure GoOutAll();
+procedure GoOutAll(X,Y,xt,yt,zt,main:integer);
   begin
-	if (AssistID1 <> 0) then MoveToHead(0, 0, 1);  // отбежать первым помощником (ше)
-	if (AssistID2 <> 0) then MoveToHead(0, 0, 2);  // отбежать вторым помощником  
-	if (AssistID3 <> 0) then MoveToHead(0, 0, 8);  // отбежать овером  
-	if (MageAssistID <> 0) then MoveToHead(0, 0, 3);   
-	if (MageAssistID1 <> 0) then MoveToHead(0, 0, 4);  
-	if (MageAssistID2 <> 0) then MoveToHead(0, 0, 5); 
-	if (MageAssistID3 <> 0) then MoveToHead(0, 0, 6); 
-	if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(0, 0, 7); 
+	if (main = 1) then MoveToHead(X, Y, 0, xt, yt, zt); // основой бежать к цели
+	if (AssistID1 <> 0) then MoveToHead(X, Y, 1, xt, yt, zt);  // отбежать первым помощником (ше)
+	if (AssistID2 <> 0) then MoveToHead(X, Y, 2, xt, yt, zt);  // отбежать вторым помощником  
+	if (AssistID3 <> 0) then MoveToHead(X, Y, 8, xt, yt, zt);  // отбежать овером  
+	if (MageAssistID <> 0) then MoveToHead(X, Y, 3, xt, yt, zt);   
+	if (MageAssistID1 <> 0) then MoveToHead(X, Y, 4, xt, yt, zt);  
+	if (MageAssistID2 <> 0) then MoveToHead(X, Y, 5, xt, yt, zt); 
+	if (MageAssistID3 <> 0) then MoveToHead(X, Y, 6, xt, yt, zt); 
+	if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(X, Y, 7, xt, yt, zt); 
   end;
   
 procedure MoveToMain(TargetX,TargetY,TargetZ:integer);   //Идти в точку с координатами x,y,z
@@ -2530,8 +2564,6 @@ procedure Die06;
  var
   i,j: integer;
  begin
-  TargetIDprevious:= TargetID;
-  TargetID2previous:= TargetID2;
   diepause:= 1;
   i:= TestPovtor(ReadD(2));
   j:= TestPovtorLastKilledMobObjID(ReadD(2));
@@ -2684,46 +2716,46 @@ procedure OnTimerBaf1(Sender: TObject);
 		  exit;
 		end;		
 	//баф 0 мага (ШЕ) --------------------------------------------------------------
-	if (MageAssistID <> 0) and  (a1m < 5) then
+	if (MageAssistID <> 0) and  (a1m < 4) then
 		begin
 		  if (a1m = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID);  //емп
 		  if (a1m = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID); //пд
 		  if (a1m = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID);  //ментал
 		  //if (a1m = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID);  //wild magic
-		  if (a1m = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID) else if (a1m = 4) then a1m:= a1m + 1;;  //резист к ветру
+		  if (a1m = 3) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID) else if (a1m = 4) then a1m:= a1m + 1;;  //резист к ветру
 		  a1m:= a1m + 1;
 		  exit;
 		end;
 	//баф 1 мага (ШЕ) --------------------------------------------------------------
-	if (MageAssistID1 <> 0) and  (a1m1 < 5) then
+	if (MageAssistID1 <> 0) and  (a1m1 < 4) then
 		begin
 		  if (a1m1 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID1);  //емп
 		  if (a1m1 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID1); //пд
 		  if (a1m1 = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID1);  //ментал
 		  //if (a1m1 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID1);  //wild magic
-		  if (a1m1 = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID1) else if (a1m1 = 4) then a1m1:= a1m1 + 1;;  //резист к ветру
+		  if (a1m1 = 3) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID1) else if (a1m1 = 4) then a1m1:= a1m1 + 1;;  //резист к ветру
 		  a1m1:= a1m1 + 1;
 		  exit;
 		end;
 	//баф 2 мага (ШЕ) --------------------------------------------------------------
-	if (MageAssistID2 <> 0) and  (a1m2 < 5) then
+	if (MageAssistID2 <> 0) and  (a1m2 < 4) then
 		begin
 		  if (a1m2 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID2);  //емп
 		  if (a1m2 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID2); //пд
 		  if (a1m2 = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID2);  //ментал
 		  //if (a1m2 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID2);  //wild magic
-		  if (a1m2 = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID2) else if (a1m2 = 4) then a1m2:= a1m2 + 1;;  //резист к ветру
+		  if (a1m2 = 3) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID2) else if (a1m2 = 4) then a1m2:= a1m2 + 1;;  //резист к ветру
 		  a1m2:= a1m2 + 1;
 		  exit;
 		end;
 	//баф 3 мага (ШЕ) --------------------------------------------------------------
-	if (MageAssistID3 <> 0) and  (a1m3 < 5) then
+	if (MageAssistID3 <> 0) and  (a1m3 < 4) then
 		begin
 		  if (a1m3 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID3);  //емп
 		  if (a1m3 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID3); //пд
 		  if (a1m3 = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID3);  //ментал
 		  //if (a1m3 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID3);  //wild magic
-		  if (a1m3 = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID3) else if (a1m3 = 4) then a1m3:= a1m3 + 1;;  //резист к ветру
+		  if (a1m3 = 3) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID3) else if (a1m3 = 4) then a1m3:= a1m3 + 1;;  //резист к ветру
 		  a1m3:= a1m3 + 1;
 		  exit;
 		end;
@@ -3526,7 +3558,7 @@ procedure MageDrinkBottle;          // садимся
 			WriteD(MageAssistZ);
 			WriteC(0); 
 			SendToServerEx(MageAssistantName);
-			buf:=hstr(useMagicSS); // СХ-useMagicSH СПС-useMagicSS 
+			buf:=hstr(useMagicSH); // СХ-useMagicSH СПС-useMagicSS 
 			SendToServerEX(MageAssistantName);
 			newMagicAttack.enabled:= true;
 		end;
@@ -3544,7 +3576,7 @@ end;
 			WriteD(MageAssistZ1);
 			WriteC(0); 
 			SendToServerEx(MageAssistantName1);
-			buf:=hstr(useMagicSS);  // СХ-useMagicSH СПС-useMagicSS
+			buf:=hstr(useMagicSH);  // СХ-useMagicSH СПС-useMagicSS
 			SendToServerEX(MageAssistantName1);
 			newMagicAttack1.enabled:= true;
 		end;
@@ -3824,9 +3856,9 @@ begin
   case pck[1] of
    #$05: if ((ReadD(6) = MyID) or (ReadD(6) = AssistID) or (ReadD(6) = AssistID3)) and (ReadD(2) <> AssistID1) and (ReadD(2) <> AssistID2)  and (ReadD(2) <> AssistID3) and (not InitMode) then Attack05;  //   05= Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)  
    #$06: Die06;                             //   Die:d(ChaID)
-   #$0C: if ((TargetIDprevious = ReadD(2)) or (TargetID2previous = ReadD(2)) or (TargetID = ReadD(2)) or (TargetID2 = ReadD(2))) then         //   DropItem:h(PlayerID)h(ObjectID)i(ItemID)d(X)d(Y)d(Z)d(Stackable)d(Count)
+   #$0C: if (TestPovtorLastMobObjID(ReadD(2)) > 0) then         //   DropItem:h(PlayerID)h(ObjectID)i(ItemID)d(X)d(Y)d(Z)d(Stackable)d(Count)
            begin
-		    if (CheckItems(ReadD(2)) = 0) then AddDroppedItem(ReadD(6), ReadD(10), ReadD(14), ReadD(18), ReadD(22));
+		    if (CheckItems(ReadD(6)) = 0) then AddDroppedItem(ReadD(6), ReadD(10), ReadD(14), ReadD(18), ReadD(22));
            end;
    #$12: DeleteObject12;                             //   DeleteObject:h(ObjectID)
    #$16: if (ReadD(10)=1) and (pck[121]=#$00) then  NpcInfo16; //   NpcInfo:h(ObjectID)d(NpcTypeID)d(IsAttackable)d(X)d(Y)d(Z)d(Heading)d(Unknown)d(MAtkSpd)d(PAtkSpd)d(RunSpd)d(WalkSpd)d(SwimRunSpd)d(SwimWalkSpd)d(FlRunSpd)d(FlWalkSpd)d(FlyRunSpd)d(FlyWalkSpd)f(ProperMultiplier)f(PAtkSpd)f(CollisionRadius)f(CollisionHeight)d(RHand)d(Unknown)d(LHand)b(Unknown)b(IsRunning)b(IsInCombat)b(IsALikeDead)b(IsSummoned)s(Name)s(Title)
@@ -3936,7 +3968,7 @@ begin
 			 if (MyID = ReadD(2))  and (not InitMode) then           //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
 				begin
 					if (sit1=0) and (sit=0) then	//	and ((abs(AssistX1-MyX) > 100) or (abs(AssistY1-MyY) > 100))
-						MoveToHead(AssistX1, AssistY1, 1);
+						MoveToHead(AssistX1, AssistY1, 1, MyX, MyY, MyZ);
 				end;
 			 if (ReadD(6) = AssistID1) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then 
 				begin
@@ -3978,7 +4010,7 @@ begin
 			if (MyID = ReadD(2))  and (not InitMode) then           //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
 				begin
 					if (sit2=0) and (sit=0) then	//	and ((abs(AssistX2-MyX) > 100) or (abs(AssistY2-MyY) > 100))	
-						MoveToHead(AssistX2, AssistY2, 2);			
+						MoveToHead(AssistX2, AssistY2, 2, MyX, MyY, MyZ);			
 				end;
 			if (ReadD(6) = AssistID2) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then // (not InitMode) скрипт уже включен командой start
 				begin
