@@ -86,6 +86,7 @@ const
  //NickName = 'Dis';         				//1 Твой ник в игре Спойлер
  //NickName = 'Jimbei';          		//2 Твой ник в игре Крафтер
  //NickName = 'Roronoa';          		//3 Твой ник в игре Blade Dancer
+ //NickName = 'Shanks';
  
  WarriorSpoilCrafterBd2 = 2;      // 0 - Paladin; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
  //AssistantName = '';					  // если помощников не будет
@@ -108,6 +109,8 @@ const
  MageAssistantName1 = ''; // 'DarkDevil'; //DarkDevil';			// ДД-маги
  MageAssistantName2 = ''; // 'Demonessa'; //'Demonessa';			// ДД-маги
  MageAssistantName3 = ''; // 'DarkSirena'; //'DarkSirena';
+ //MageAssistantName = 'Nefertari';    
+ //MageAssistantName = 'Nojiko';    
  
  polyaxe = 1; // гном крафтер-основа пользуется 0 - топор, 1 - копье
  polyaxeAssistant = 1; // гном крафтер-помощник пользуется 0 - топор, 1 - копье
@@ -174,7 +177,7 @@ const
  NpcTypeID20= 0;
 //########################################################################################
  NpcTypeID_List_Razmer = 20;       // Размер списка мобов (не трогать!)
- OX = 1; OY = 2; OZ = 3; mobID=1; cursor=2;            //  Служебные константы
+ OX = 1; OY = 2; OZ = 3; mobID = 1; cursor = 2;            //  Служебные константы
  maximumItems = 500;               // Размер базы мобов и дропа.
  OblastVidimosti = 500000;         //  (не трогать!!!) Область видимости объектов (изменять от 1000 до 500000).
 
@@ -323,7 +326,7 @@ procedure Init; //Вызывается при включении скрипта
   crystal_food:=0; // id пищи на ферме могут меняться - отлавливать через команду farm
   golden_food:=0;
   useMagicSS:= a12;   // по умолчанию атака водой
-  useMagicSH:= a6;   // по умолчанию атака ветром
+  useMagicSH:= a1;   // по умолчанию атака ветром
   agrSpeed:= 5;	   // частота агра на рейд-босса по умолчанию 5
   rbMode:= 0;
   sacred:= 0; //баф бд sacred отключен
@@ -968,6 +971,7 @@ procedure addLastMobObjID (id: integer);
 			LastMobObjID[i, mobID]:= id;
 			LastMobObjID[i, cursor]:= 0;
 			if i = 10 then LastMobObjID[1, cursor]:= 1 else LastMobObjID[i+1, cursor]:= 1;
+			exit;
 		end;
  end;
 
@@ -2216,7 +2220,7 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
 	i:= TestPovtor(TargetID);
 	addLastMobObjID(TargetID);
 	addLastMobObjID(TargetID2);
-	if (hitMe = 0) then
+	if (hitMe = 0) and (ItemsLastIndex = 0) and (rbmode = 0) then
 		begin
 			GoOutAll(MyX,MyY,MobsXYZ[i, OX], MobsXYZ[i, OY], MobsXYZ[i, OZ],1);
 			if (abs(MyX - MobsXYZ[i, OX]) >= 160) or (abs(MyY - MobsXYZ[i, OY]) >= 160) then exit else hitMe:= 1;
@@ -2268,14 +2272,14 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
     PhisicalAttack;                           // берем вражину в таргет
     AttackCycle:= 0;
 	GoOutAll(0,0,MyX,MyY,MyZ,0);
-	if (AssistID <> 0) and (rbMode = 0) then FollowAttack; 				// тут помощники цепляются двойным кликом к основе
-	if (AssistID1 <> 0) and (rbMode = 0) then FollowAttack1; 	
-	if (AssistID2 <> 0) and (rbMode = 0) then FollowAttack2; 
-	if (AssistID3 <> 0) and (rbMode = 0) then FollowAttack3; 
-	if (MageAssistID <> 0) and (rbMode = 0) then MageFollowAttack; 	// а тут маги
-	if (MageAssistID1 <> 0) and (rbMode = 0) then MageFollowAttack1; 
-	if (MageAssistID2 <> 0) and (rbMode = 0) then MageFollowAttack2; 
-	if (MageAssistID3 <> 0) and (rbMode = 0) then MageFollowAttack3; 
+	//if (AssistID <> 0) and (rbMode = 0) then FollowAttack; 				// тут помощники цепляются двойным кликом к основе
+	//if (AssistID1 <> 0) and (rbMode = 0) then FollowAttack1; 	
+	//if (AssistID2 <> 0) and (rbMode = 0) then FollowAttack2; 
+	//if (AssistID3 <> 0) and (rbMode = 0) then FollowAttack3; 
+	//if (MageAssistID <> 0) and (rbMode = 0) then MageFollowAttack; 	// а тут маги
+	//if (MageAssistID1 <> 0) and (rbMode = 0) then MageFollowAttack1; 
+	//if (MageAssistID2 <> 0) and (rbMode = 0) then MageFollowAttack2; 
+	//if (MageAssistID3 <> 0) and (rbMode = 0) then MageFollowAttack3; 
     exit;
    end; 
   if (abs(MyX-CenterX) > 20) and (abs(MyY-CenterY) > 20) then 
@@ -4073,7 +4077,7 @@ begin
    #$60 : if (MyID = ReadD(2)) and (not InitMode) and (rbMode = 0) and (onlyOne <> ReadD(6)) then	
 		  begin	
 			onlyOne:= ReadD(6);
-			MageFollowAttack;
+			//MageFollowAttack;
 		  end;
    #$39: if ReadS(2)= NickName then
 		  begin
@@ -4128,7 +4132,7 @@ begin
    #$60 : if (MyID = ReadD(2))  and (not InitMode) and (rbMode = 0) and (onlyOne1 <> ReadD(6)) then	
 		  begin	
 			onlyOne1:= ReadD(6);
-			MageFollowAttack1;
+			//MageFollowAttack1;
 		  end;
    #$39: if ReadS(2)= NickName then
 		  begin
@@ -4183,7 +4187,7 @@ begin
    #$60 : if (MyID = ReadD(2))  and (not InitMode) and (rbMode = 0) and (onlyOne2 <> ReadD(6)) then	
 		  begin	
 			onlyOne2:= ReadD(6);
-			MageFollowAttack2;
+			//MageFollowAttack2;
 		  end;
    #$39: if ReadS(2)= NickName then
 		  begin
@@ -4238,7 +4242,7 @@ begin
    #$60 : if (MyID = ReadD(2))  and (not InitMode) and (rbMode = 0) and (onlyOne3 <> ReadD(6)) then	
 		  begin	
 			onlyOne3:= ReadD(6);
-			MageFollowAttack3;
+			//MageFollowAttack3;
 		  end;
    #$39: if ReadS(2)= NickName then
 		  begin
