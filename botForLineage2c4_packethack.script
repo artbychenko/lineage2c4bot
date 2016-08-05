@@ -79,22 +79,23 @@ const
  bd5 = '2F 11 01 00 00 00 00 00 00 00'; // dance of mystic
  bd6 = '2F 13 01 00 00 00 00 00 00 00'; // dance of fury
  
- WarriorSpoilCrafterBd = 1;      // 0 - warrior; 1 - spoil; 2 - крафтер; 3 - бд; 4-TX ####### Выставить кто будет основой NickName 
+ WarriorSpoilCrafterBd = 2;      // 0 - warrior; 1 - spoil; 2 - крафтер; 3 - бд; 4-TX ####### Выставить кто будет основой NickName 
  //NickName = 'Pontiff';          		//4 Твой ник в игре Dark Avenger
  //NickName  = 'Roronoa';          		//0 Твой ник в игре TX
- NickName = 'Jinbe';         //1 Твой ник в игре Спойлер
+ //NickName = 'Jinbe';         //1 Твой ник в игре Спойлер
  //NickName = 'Dis';         				//1 Твой ник в игре Спойлер
  //NickName = 'Jimbei';          		//2 Твой ник в игре Крафтер
  //NickName = 'Roronoa';          		//3 Твой ник в игре Blade Dancer
- //NickName = 'Shanks';
+ NickName = 'Shanks';
  
- WarriorSpoilCrafterBd2 = 2;      // 0 - Paladin; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
- //AssistantName = '';					  // если помощников не будет
+ WarriorSpoilCrafterBd2 = 6;      // 0 - Paladin; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
+ AssistantName = '';					  // если помощников не будет
  //AssistantName = 'Pontiff';          		//0 Помощник Paladin
  //AssistantName = 'Nefertari';        //1 Помощник  Спойлер
- AssistantName = 'Jimbei';          	//2 Помощник  Крафтер
+ //AssistantName = 'Jimbei';          	//2 Помощник  Крафтер
  //AssistantName = 'Demon';          		//3 Помощник Blade Dancer
  //AssistantName  = 'Incubus';          	//4 Твой ник в игре Destroyer
+ //AssistantName  = 'Roronoa';
  
  AssistantName3  = '';//Terror';          		// Твой ник в игре Over
  
@@ -105,12 +106,12 @@ const
  //AssistantName1 = 'Pixie';    // Ник ee
  //AssistantName2 = '';    // Ник биш
  
- MageAssistantName = ''; // 'Executioner'; //'Executioner';			// ДД-маги
+ //MageAssistantName = ''; // 'Executioner'; //'Executioner';			// ДД-маги
  MageAssistantName1 = ''; // 'DarkDevil'; //DarkDevil';			// ДД-маги
  MageAssistantName2 = ''; // 'Demonessa'; //'Demonessa';			// ДД-маги
  MageAssistantName3 = ''; // 'DarkSirena'; //'DarkSirena';
  //MageAssistantName = 'Nefertari';    
- //MageAssistantName = 'Nojiko';    
+ MageAssistantName = 'Nojiko';    
  
  polyaxe = 1; // гном крафтер-основа пользуется 0 - топор, 1 - копье
  polyaxeAssistant = 1; // гном крафтер-помощник пользуется 0 - топор, 1 - копье
@@ -788,36 +789,74 @@ function RastoyanieToMe(NpcX, NpcY : integer) : integer; // вычисление
   if summa = 0 then result:= 0 else result:= Round(sqrt(summa));  // обход возможной ошибки, если моб стоит прямо в центре кача
 end;
 
-procedure MoveToHead (x,y,i,xt,yt,zt: integer);     // Процедура чтобы подбежать близко к основе принимает коородинаты помощника (кто бежит, i, к кому бежит)
+procedure MoveToHead (x,y,i,xt,yt,zt: integer; closer: string);     // Процедура чтобы подбежать близко к основе принимает коородинаты помощника (кто бежит, i, к кому бежит)
  var
-  goX,goY: integer;
+  goX,goY,goXWarrior,goYWarrior,dist,distWarrior: integer;
  begin	
-	if (xt > x) then goX:= xt - 100;
-	if (xt <= x) then goX:= xt + 100;
-	if (yt > y) then goY:= yt - 100;
-	if (yt <= y) then goY:= yt + 100;
+	case (closer) of 
+		'default':  
+			begin
+				dist:= 100;
+				distWarrior:= 100;
+			end;
+		'center':
+			begin
+				dist:= 0;
+				distWarrior:= 0;
+			end;
+		'near':
+			begin
+				dist:= 100;
+				distWarrior:= 20;
+			end;
+		'far':
+			begin
+				dist:= 200;
+				distWarrior:= 20;
+			end;
+	end;		
+	if (xt > x) then 
+		begin
+			goX:= xt - dist;
+			goXWarrior:= xt - distWarrior;
+		end
+	else if (xt <= x) then 
+		begin
+			goX:= xt + dist;
+			goXWarrior:= xt + distWarrior;
+		end;	
+	if (yt > y) then 
+		begin
+			goY:= yt - dist;
+			goYWarrior:= yt - distWarrior;
+		end	
+	else if (yt <= y) then 
+		begin
+			goY:= yt + dist;
+			goYWarrior:= yt + distWarrior;
+		end;
 	if ((xt > x) and (yt > y)) or ((xt <= x) and (yt <= y)) then
 	  begin
-		if i=0 then MoveToMain(goX, goY, zt);	
+		if i=0 then MoveToMain(goXWarrior, goYWarrior, zt);	//warrior
 		if i=1 then MoveTo1(goX+40, goY-40, zt);	
 		if i=2 then MoveTo2(goX-40, goY+40, zt);	
 		if i=3 then MageMoveTo(goX-60, goY+40, zt);	
 		if i=4 then MageMoveTo1(goX+60, goY-40, zt);	
 		if i=5 then MageMoveTo2(goX+40, goY-60, zt);	
 		if i=6 then MageMoveTo3(goX-40, goY+60, zt);	
-		if i=7 then MoveTo(goX-60, goY+60, zt);	
-		if i=8 then MoveTo3(goX+60, goY-60, zt);	
+		if i=7 then MoveTo(goXWarrior-60, goYWarrior+60, zt);	//warrior
+		if i=8 then MoveTo3(goXWarrior+60, goYWarrior-60, zt); //warrior	
 	  end else
 	  begin
-		if i=0 then MoveToMain(goX, goY, zt);	
+		if i=0 then MoveToMain(goXWarrior, goYWarrior, zt);	
 		if i=1 then MoveTo1(goX+40, goY+40, zt);	
 		if i=2 then MoveTo2(goX-40, goY-40, zt);	
 		if i=3 then MageMoveTo(goX-60, goY-40, zt);	
 		if i=4 then MageMoveTo1(goX+60, goY+40, zt);	
 		if i=5 then MageMoveTo2(goX+40, goY+60, zt);	
 		if i=6 then MageMoveTo3(goX-40, goY-60, zt);	
-		if i=7 then MoveTo(goX-60, goY-60, zt);		  
-		if i=8 then MoveTo3(goX+60, goY+60, zt);		  
+		if i=7 then MoveTo(goXWarrior-60, goYWarrior-60, zt);		  
+		if i=8 then MoveTo3(goXWarrior+60, goYWarrior+60, zt);		  
 	  end;
  end;
 
@@ -1159,7 +1198,7 @@ procedure UserCommands;    // комманды пользователя
 		'out': begin
 				SendMsg_to_CL('scutter');
 				pck:='';
-				GoOutAll(0,0,MyX,MyY,MyZ,0);
+				GoOutAll(0,0,MyX,MyY,MyZ,0,'default');
 				TimerGoOut.enabled:= false;
 				end;
 		'goout': begin
@@ -1488,7 +1527,7 @@ function GetMinDistID : integer;     // функция поиска ближай
   if (MyHP > 0) and ((agrotest = 0) or (rest = 1)) and ((abs(MyX-CenterX) > 20) or (abs(MyY-CenterY) > 20)) and 
 	((MyHP < HPlevelProcent/2) or (MyMP < MPlevelProcent) or ((AssistID1 <> 0) and (AssistMP1 < AssistMPlevelProcent1/2)) or ((AssistID2 <> 0) and (AssistMP2 < AssistMPlevelProcent2/2))) then 
 	begin
-		MoveToMain(CenterX, CenterY, CenterZ);   // вернуться в центр кача  и ...
+		GoOutAll(MyX, MyY, CenterX, CenterY, CenterZ, 1, 'center'); // вернуться в центр кача  и ...
 		rest:= 1;
 		exit;
 	end;
@@ -1502,14 +1541,15 @@ function GetMinDistID : integer;     // функция поиска ближай
 	else rest:= 0;
   if MobsLastIndex = 0 then exit;
   MinDist:=RastoyanieToMe(MobsXYZ[1,OX], MobsXYZ[1,OY]);
+  result:= 1;
   for i:=1 to MobsLastIndex do if (MobsDist[i] <= Radius) and (MobsIsAttackable[i]) then
    begin
-	if (result = 0) or ((result <> 0) and (TargetRB <> MobsNpcTypeID[i])) then
+	if (TargetRB <> MobsNpcTypeID[i]) then
       begin
 		Dist:= RastoyanieToMe(MobsXYZ[i,OX], MobsXYZ[i,OY]);
 		if Dist <= MinDist then
 		 begin
-		  Dist:= MinDist;
+		  MinDist:= Dist;
 		  result:= i;
 		 end;                     // если нашли хоть одного моба или несколько, то возращаем индекс ближайшего
 	  end;	 
@@ -2072,7 +2112,7 @@ procedure OnTimerAgr(Sender: TObject);
     
 procedure OnTimerGoOut(Sender: TObject);
   begin	
-	GoOutAll(0,0,MyX,MyY,MyZ,0);
+	GoOutAll(0,0,MyX,MyY,MyZ,0,'default');
   end;
   
 procedure OnTimerParty(Sender: TObject);
@@ -2222,7 +2262,7 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
 	addLastMobObjID(TargetID2);
 	if (hitMe = 0) and (ItemsLastIndex = 0) and (rbmode = 0) then
 		begin
-			GoOutAll(MyX,MyY,MobsXYZ[i, OX], MobsXYZ[i, OY], MobsXYZ[i, OZ],1);
+			GoOutAll(MyX,MyY,MobsXYZ[i, OX], MobsXYZ[i, OY], MobsXYZ[i, OZ],1,'near');
 			if (abs(MyX - MobsXYZ[i, OX]) >= 160) or (abs(MyY - MobsXYZ[i, OY]) >= 160) then exit else hitMe:= 1;
 		end;
 	if (spoilpause = 0) then PhisicalAttack;
@@ -2234,11 +2274,11 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
 	inc(AttackCycle);
 	if (hitMe > 30) or ((AttackCycle mod 30) = 29) then 
 	  begin	
-		if (rbMode = 0) then MoveToHead(MyX, MyY, 0, MyX, MyY, MyZ); // отбежать основой
-		if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(AssistX, AssistY, 7, MyX, MyY, MyZ);  //отбежать помощником-воином
+		if (rbMode = 0) then MoveToHead(MyX, MyY, 0, MyX, MyY, MyZ, 'default'); // отбежать основой
+		if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(AssistX, AssistY, 7, MyX, MyY, MyZ, 'default');  //отбежать помощником-воином
 		hitMe:=0;
 	  end;
-	if ((AttackCycle mod 40) = 38)  and (rbMode = 0) then GoOutAll(0,0,MyX,MyY,MyZ,0);		// отбежать всеми
+	if ((AttackCycle mod 40) = 38)  and (rbMode = 0) then GoOutAll(0,0,MyX,MyY,MyZ,0,'default');		// отбежать всеми
     if (AttackCycle > Calculated_AttackTime) and (rbMode = 0) then              // если валим моба больше, значит это баг...
      begin
       i:= TestPovtor(TargetID);
@@ -2249,7 +2289,7 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
         MobsAgression[i]:= false;
        end;
       TargetID:= 0;
-	  MoveToHead(MyX, MyY, 0, MyX, MyY, MyZ);
+	  MoveToHead(MyX, MyY, 0, MyX, MyY, MyZ, 'default');
      end;
 	 exit;
    end;
@@ -2271,23 +2311,16 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
     TargetID:= MobsObjID[MinDistID];
     PhisicalAttack;                           // берем вражину в таргет
     AttackCycle:= 0;
-	GoOutAll(0,0,MyX,MyY,MyZ,0);
-	//if (AssistID <> 0) and (rbMode = 0) then FollowAttack; 				// тут помощники цепляются двойным кликом к основе
-	//if (AssistID1 <> 0) and (rbMode = 0) then FollowAttack1; 	
-	//if (AssistID2 <> 0) and (rbMode = 0) then FollowAttack2; 
-	//if (AssistID3 <> 0) and (rbMode = 0) then FollowAttack3; 
-	//if (MageAssistID <> 0) and (rbMode = 0) then MageFollowAttack; 	// а тут маги
-	//if (MageAssistID1 <> 0) and (rbMode = 0) then MageFollowAttack1; 
-	//if (MageAssistID2 <> 0) and (rbMode = 0) then MageFollowAttack2; 
-	//if (MageAssistID3 <> 0) and (rbMode = 0) then MageFollowAttack3; 
+	GoOutAll(0,0,MyX,MyY,MyZ,0,'default');
     exit;
    end; 
   if (abs(MyX-CenterX) > 20) and (abs(MyY-CenterY) > 20) then 
    begin
-	MoveToMain(CenterX, CenterY, CenterZ);
+	GoOutAll(MyX,MyY,CenterX,CenterY,CenterZ,1,'center');
 	exit;
    end;
-   GoOutAll(0,0,MyX,MyY,MyZ,0);
+	SendMsg_to_CL('three check');
+   GoOutAll(0,0,MyX,MyY,MyZ,0,'center');
  end;
 
 procedure OnRBTargetReload (Sender: TObject);         // боевой таймер
@@ -2304,17 +2337,17 @@ procedure OnRBTargetReload (Sender: TObject);         // боевой тайме
    end;
  end;
  
-procedure GoOutAll(X,Y,xt,yt,zt,main:integer);
+procedure GoOutAll(X,Y,xt,yt,zt,main:integer;closer:string);
   begin
-	if (main = 1) then MoveToHead(X, Y, 0, xt, yt, zt); // основой бежать к цели
-	if (AssistID1 <> 0) then MoveToHead(X, Y, 1, xt, yt, zt);  // отбежать первым помощником (ше)
-	if (AssistID2 <> 0) then MoveToHead(X, Y, 2, xt, yt, zt);  // отбежать вторым помощником  
-	if (AssistID3 <> 0) then MoveToHead(X, Y, 8, xt, yt, zt);  // отбежать овером  
-	if (MageAssistID <> 0) then MoveToHead(X, Y, 3, xt, yt, zt);   
-	if (MageAssistID1 <> 0) then MoveToHead(X, Y, 4, xt, yt, zt);  
-	if (MageAssistID2 <> 0) then MoveToHead(X, Y, 5, xt, yt, zt); 
-	if (MageAssistID3 <> 0) then MoveToHead(X, Y, 6, xt, yt, zt); 
-	if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(X, Y, 7, xt, yt, zt); 
+	if (main = 1) then MoveToHead(X, Y, 0, xt, yt, zt, closer); // основой бежать к цели
+	if (AssistID1 <> 0) then MoveToHead(X, Y, 1, xt, yt, zt, closer);  // отбежать первым помощником (ше)
+	if (AssistID2 <> 0) then MoveToHead(X, Y, 2, xt, yt, zt, closer);  // отбежать вторым помощником  
+	if (AssistID3 <> 0) then MoveToHead(X, Y, 8, xt, yt, zt, closer);  // отбежать овером  
+	if (MageAssistID <> 0) then MoveToHead(X, Y, 3, xt, yt, zt, closer);   
+	if (MageAssistID1 <> 0) then MoveToHead(X, Y, 4, xt, yt, zt, closer);  
+	if (MageAssistID2 <> 0) then MoveToHead(X, Y, 5, xt, yt, zt, closer); 
+	if (MageAssistID3 <> 0) then MoveToHead(X, Y, 6, xt, yt, zt, closer); 
+	if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(X, Y, 7, xt, yt, zt, closer); 
   end;
   
 procedure MoveToMain(TargetX,TargetY,TargetZ:integer);   //Идти в точку с координатами x,y,z
@@ -3972,7 +4005,7 @@ begin
 			 if (MyID = ReadD(2))  and (not InitMode) then           //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
 				begin
 					if (sit1=0) and (sit=0) then	//	and ((abs(AssistX1-MyX) > 100) or (abs(AssistY1-MyY) > 100))
-						MoveToHead(AssistX1, AssistY1, 1, MyX, MyY, MyZ);
+						MoveToHead(AssistX1, AssistY1, 1, MyX, MyY, MyZ, 'default');
 				end;
 			 if (ReadD(6) = AssistID1) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then 
 				begin
@@ -4014,7 +4047,7 @@ begin
 			if (MyID = ReadD(2))  and (not InitMode) then           //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
 				begin
 					if (sit2=0) and (sit=0) then	//	and ((abs(AssistX2-MyX) > 100) or (abs(AssistY2-MyY) > 100))	
-						MoveToHead(AssistX2, AssistY2, 2, MyX, MyY, MyZ);			
+						MoveToHead(AssistX2, AssistY2, 2, MyX, MyY, MyZ, 'default');			
 				end;
 			if (ReadD(6) = AssistID2) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then // (not InitMode) скрипт уже включен командой start
 				begin
