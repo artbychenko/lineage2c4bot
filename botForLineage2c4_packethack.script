@@ -88,21 +88,21 @@ const
  //NickName = 'Roronoa';          		//3 Твой ник в игре Blade Dancer
  //NickName = 'Shanks';
  
- WarriorSpoilCrafterBd2 = 2;      // 0 - Paladin; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
- //AssistantName = '';					  // если помощников не будет
+ WarriorSpoilCrafterBd2 = 6;      // 0 - Paladin; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
+ AssistantName = '';					  // если помощников не будет
  //AssistantName = 'Pontiff';          		//0 Помощник Paladin
  //AssistantName = 'Nefertari';        //1 Помощник  Спойлер
- AssistantName = 'Jimbei';          	//2 Помощник  Крафтер
+ //AssistantName = 'Jimbei';          	//2 Помощник  Крафтер
  //AssistantName = 'Demon';          		//3 Помощник Blade Dancer
  //AssistantName  = 'Incubus';          	//4 Твой ник в игре Destroyer
  //AssistantName  = 'Roronoa';
  
  AssistantName3  = '';//Terror';          		// Твой ник в игре Over
  
- //AssistantName1 = '';  
- //AssistantName2 = ''; 
- AssistantName1 = 'Nefertari';       // Ник ше
- AssistantName2 = 'Nojiko';     // Ник пп
+ AssistantName1 = '';  
+ AssistantName2 = ''; 
+ //AssistantName1 = 'Nefertari';       // Ник ше
+ //AssistantName2 = 'Nojiko';     // Ник пп
  //AssistantName1 = 'Pixie';    // Ник ee
  //AssistantName2 = '';    // Ник биш
  
@@ -186,6 +186,7 @@ var
  onlyOne, onlyOne1, onlyOne2, onlyOne3, global_i, activeDefence: integer; // onlyOne переменные чтоб цепляться магами к основе только один раз при move to pain
  InitMode, RestartMode, PickUpMode : boolean;
  farm, food, farm_level: integer;
+ suicide, readysuicide, readymove, westX, westY, westZ, TargetIDwest, northX, northY, northZ, TargetIDnorth: integer;
  noHealSEmode: integer; // 0- первый ассистент лечит воинов 1- не лечит
  useMagicSS: string;  // задавать атаку магам
  useMagicSH: string;  // задавать атаку магам
@@ -296,7 +297,7 @@ var
  textAttackCycle, textMobsLastIndex, textMobsKilled: TEdit;
  cbFilterRadius : TCheckBox; l1: Tlabel;
 //----------------------------------------------------------
- TimerForm, TimerParty, TimerCombat, TimerPickUp, TimerCheckDB, TimerBaf1, TimerBaf2, TimerBaf3, TimerBafReload, TimerBafReloadBD, 
+ TimerForm, TimerParty, TimerCombat, TimerPickUp, TimerCheckDB, TimerBaf1, TimerBaf2, TimerBaf3, TimerBafReload, TimerBafReloadBD, TimerSuicide,
  AllStandUp, newMagicAttack, newMagicAttack1, newMagicAttack2, newMagicAttack3, TimerAgr, TimerGoOut, RBTargetReload : TTimer;              // таймеры
  tickParty, time1, time2: integer;
  Calculated_AttackTime, Calculated_PickUpTime : integer;
@@ -451,6 +452,9 @@ procedure Init; //Вызывается при включении скрипта
   global_i:= 1;
   farm_level:= 1;
   enchantFlag:= 0;
+  suicide:= 0;
+  readysuicide:= 0;
+  readymove:= 0;
   //----------------------------------------------------------  
   InitMode:= true;
   RestartMode:= false;
@@ -479,6 +483,10 @@ procedure Init; //Вызывается при включении скрипта
   TimerCombat.OnTimer:=@OnTimerCombat;
   TimerCombat.enabled:=false;
   TimerCombat.interval:= TimerCombat_Interval;
+  TimerSuicide:=TTimer.Create(nil);
+  TimerSuicide.OnTimer:=@OnTimerSuicide;
+  TimerSuicide.enabled:=false;
+  TimerSuicide.interval:= TimerCombat_Interval;
   newMagicAttack:=TTimer.Create(nil);		// блокирующий таймер на перезарядку магического скила
   newMagicAttack.OnTimer:=@OnnewMagicAttack; 
   newMagicAttack.enabled:=false; //
@@ -1323,6 +1331,26 @@ procedure UserCommands;    // комманды пользователя
 				TargetID:= 0;
 				TargetID2:= 0;
 			  end;
+		'gludio': begin
+				SendMsg_to_CL('gludio suicide');
+				pck:='';
+				suicide:= 1;
+				westX:= -16506;
+				westY:= 124161;
+				westZ:= -3122;
+				TargetIDwest:= 1209031883;
+				northX:= -14567;
+				northY:= 121175;
+				northZ:= -2994;
+				TargetIDnorth:= 1209031881;
+				TimerSuicide.enabled:= true;
+			  end;
+		'stopgludio': begin
+				SendMsg_to_CL('gludio suicide stopped');
+				pck:='';
+				suicide:= 0;
+				TimerSuicide.enabled:= false;
+			  end;
 	end;
  if InitMode then case (ReadS(2)) of
 		'pos':   if MyX <> 0 then                        // центр кача
@@ -1826,6 +1854,17 @@ end;
 	SendToServerEX(AssistantName1);
 end;
 
+procedure suicideAttack;          // команда атаки
+ begin 
+    buf:=#$0A; //action
+    WriteD(TargetID);
+    WriteD(MyX);
+    WriteD(MyY);
+    WriteD(MyZ);
+    WriteC(0); 
+    SendToServerEx(NickName); 
+end;
+
 procedure PhisicalAttack;          // команда атаки
  begin 
     buf:=#$04; //action
@@ -2202,6 +2241,45 @@ procedure OnTimerParty(Sender: TObject);
    end;
 
 end;
+
+procedure OnTimerSuicide (Sender: TObject);         // боевой таймер
+	var distWest, distNorth: integer;
+ begin
+	if (readymove = 0) then
+		begin
+			distWest:= RastoyanieToMe(westX,westY);
+			distNorth:= RastoyanieToMe(northX,northY);
+			readymove:= 1;
+			if distWest < distNorth then
+				begin
+					TargetID:= TargetIDwest;
+					
+				end else
+				begin
+					TargetID:= TargetIDNorth;
+				end;
+		end;
+	if (readysuicide = 0) and (TargetID = TargetIDwest) and ((abs(MyX - westX) >= 50) or (abs(MyY - westY) >= 50)) then
+		begin
+			MoveToMain(westX, westY, westZ);
+			exit;
+		end;
+	if (readysuicide = 0) and (TargetID = TargetIDnorth) and ((abs(MyX - northX) >= 50) or (abs(MyY - northY) >= 50)) then
+		begin
+			MoveToMain(northX, northY, northZ);
+			exit;
+		end;
+	readysuicide:= 1;
+	suicideAttack;
+ end;
+ 
+procedure moveToTown;
+ begin
+	buf:=#$6D; //action
+    WriteD(0);
+    SendToServerEx(NickName);   
+end;
+ 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 procedure OnTimerCombat (Sender: TObject);         // боевой таймер
@@ -3646,7 +3724,7 @@ begin
              begin
               SendMsg_to_CL('We was killed');
               log.Lines.Add('We was killed');
-              StopGame;
+              if suicide = 0 then StopGame;
              end;
            end;
 	//#$48: if (ReadD(6) <> MyID) and (ReadD(6) <> AssistID1) and (ReadD(6) <> AssistID2) then Attack48; //   48= MagicSkillUse:h(CharID)h(targetID)d(skillID)d(skillLvl)d(hitTime)d(reuseDelay)d(X)d(Y)d(Z)w(count)d(d)d(d)d(d)
@@ -3664,6 +3742,11 @@ begin
 					TargetID:= 0;
 				end;	
 		  end;
+    #$07: if (suicide=1) and (MyID=ReadD(2)) then
+				begin
+					SendMsg_to_CL('continue suicide attack');
+					TimerSuicide.enabled:=true;
+				end;
     #$0E: if MyID=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
            begin
             StatusUpdate;
@@ -3671,7 +3754,13 @@ begin
              begin
               SendMsg_to_CL('We was killed');
               log.Lines.Add('We was killed');
-              StopGame;
+              if suicide = 0 then StopGame else
+				begin
+					TimerSuicide.enabled:=false;
+					readysuicide:= 0;
+					readymove:= 0;
+					moveToTown;
+				end;
              end;
            end;
     #$13: if RestartMode then              // CharacterSelectionInfo
