@@ -81,28 +81,28 @@ const
  
  WarriorSpoilCrafterBd = 1;      // 0 - warrior; 1 - spoil; 2 - крафтер; 3 - бд; 4-TX ####### Выставить кто будет основой NickName 
  //NickName = 'Pontiff';          		//4 Твой ник в игре Dark Avenger
- //NickName  = 'Roronoa';          		//0 Твой ник в игре TX
  NickName = 'Jinbe';         //1 Твой ник в игре Спойлер
  //NickName = 'Dis';         				//1 Твой ник в игре Спойлер
  //NickName = 'Jimbei';          		//2 Твой ник в игре Крафтер
  //NickName = 'Roronoa';          		//3 Твой ник в игре Blade Dancer
  //NickName = 'Shanks';
+ //NickName = 'Mansherry';
  
- WarriorSpoilCrafterBd2 = 6;      // 0 - Paladin; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
- AssistantName = '';					  // если помощников не будет
+ WarriorSpoilCrafterBd2 = 2;      // 0 - Paladin; 1 - spoil; 2 - крафтер; 3 - бд; 4-дестр; 5-oвер; 6 - нет  ####### Выставить воина который будет помогать 
+ //AssistantName = '';					  // если помощников не будет
  //AssistantName = 'Pontiff';          		//0 Помощник Paladin
  //AssistantName = 'Nefertari';        //1 Помощник  Спойлер
- //AssistantName = 'Jimbei';          	//2 Помощник  Крафтер
+ AssistantName = 'Jimbei';          	//2 Помощник  Крафтер
  //AssistantName = 'Demon';          		//3 Помощник Blade Dancer
  //AssistantName  = 'Incubus';          	//4 Твой ник в игре Destroyer
  //AssistantName  = 'Roronoa';
  
  AssistantName3  = '';//Terror';          		// Твой ник в игре Over
  
- AssistantName1 = '';  
- AssistantName2 = ''; 
- //AssistantName1 = 'Nefertari';       // Ник ше
- //AssistantName2 = 'Nojiko';     // Ник пп
+ //AssistantName1 = '';  
+ //AssistantName2 = ''; 
+ AssistantName1 = 'Nefertari';       // Ник ше
+ AssistantName2 = 'Nojiko';     // Ник пп
  //AssistantName1 = 'Pixie';    // Ник ee
  //AssistantName2 = '';    // Ник биш
  
@@ -116,7 +116,7 @@ const
  
  Interlude = false;                 // C4 -false , C6 - true;
  CharNumber = 0;                    // если больше одного перса на аккаунте, то задаем его порядковый номер, нумерация начинается с нуля.
- Radius_Kacha = 2500;                 // Радиус кача, если 0 - то задавать вручную через клиента (изменять от 100 до 9999). Проверил на практике, что максимум не более 2000.
+ Radius_Kacha = 3000;                 // Радиус кача, если 0 - то задавать вручную через клиента (изменять от 100 до 9999)
  
  //############################################################################
 //---------------------------------------------------------------------------------------
@@ -186,7 +186,7 @@ var
  onlyOne, onlyOne1, onlyOne2, onlyOne3, global_i, activeDefence: integer; // onlyOne переменные чтоб цепляться магами к основе только один раз при move to pain
  InitMode, RestartMode, PickUpMode : boolean;
  farm, food, farm_level: integer;
- suicide, readysuicide, readymove, westX, westY, westZ, TargetIDwest, northX, northY, northZ, TargetIDnorth: integer;
+ suicide, readysuicide, readymove, westX, westY, westZ, TargetIDwest, northX, northY, northZ, TargetIDnorth, eastX, eastY, eastZ, TargetIDeast, southX, southY, southZ, TargetIDsouth: integer;
  noHealSEmode: integer; // 0- первый ассистент лечит воинов 1- не лечит
  useMagicSS: string;  // задавать атаку магам
  useMagicSH: string;  // задавать атаку магам
@@ -297,7 +297,7 @@ var
  textAttackCycle, textMobsLastIndex, textMobsKilled: TEdit;
  cbFilterRadius : TCheckBox; l1: Tlabel;
 //----------------------------------------------------------
- TimerForm, TimerParty, TimerCombat, TimerPickUp, TimerCheckDB, TimerBaf1, TimerBaf2, TimerBaf3, TimerBafReload, TimerBafReloadBD, TimerSuicide,
+ TimerForm, TimerParty, TimerCombat, TimerPickUp, TimerCheckDB, TimerBaf1, TimerBaf2, TimerBaf3, TimerBafReload, TimerBafReloadBD, TimerSuicide, TimerMoveToTown,
  AllStandUp, newMagicAttack, newMagicAttack1, newMagicAttack2, newMagicAttack3, TimerAgr, TimerGoOut, RBTargetReload : TTimer;              // таймеры
  tickParty, time1, time2: integer;
  Calculated_AttackTime, Calculated_PickUpTime : integer;
@@ -305,6 +305,10 @@ var
  rbMode: integer;											// режим охоты на рейд-босса
  agrSpeed: integer;											// частота агра на рейд-босса задается в игре
  TargetRB, TargetRBID: integer;											//тип и ID рейд-босса
+ AgationID1: integer;	
+ AgationID2: integer;	
+ AgationID3: integer;	
+ AgationID4: integer;	
  crystal_food: integer;
  golden_food: integer;
  catchfood: integer;
@@ -331,6 +335,10 @@ procedure Init; //Вызывается при включении скрипта
   rbMode:= 0;
   sacred:= 0; //баф бд sacred отключен
   arrow:= 0; //баф себя бд отклонение стрел отключен
+  AgationID1:= 0;
+  AgationID2:= 0;
+  AgationID3:= 0;
+  AgationID4:= 0;
   TargetRB:= 0;
   TargetRBID:= 0;
   activeDefence:= 0;   // активная защита помощником: 0 - выключить, 1 - включить(защищает баферов без включения боевого таймера)
@@ -487,6 +495,10 @@ procedure Init; //Вызывается при включении скрипта
   TimerSuicide.OnTimer:=@OnTimerSuicide;
   TimerSuicide.enabled:=false;
   TimerSuicide.interval:= TimerCombat_Interval;
+  TimerMoveToTown:=TTimer.Create(nil);
+  TimerMoveToTown.OnTimer:=@OnTimerMoveToTown;
+  TimerMoveToTown.enabled:=false;
+  TimerMoveToTown.interval:= TimerCombat_Interval;
   newMagicAttack:=TTimer.Create(nil);		// блокирующий таймер на перезарядку магического скила
   newMagicAttack.OnTimer:=@OnnewMagicAttack; 
   newMagicAttack.enabled:=false; //
@@ -1335,14 +1347,22 @@ procedure UserCommands;    // комманды пользователя
 				SendMsg_to_CL('gludio suicide');
 				pck:='';
 				suicide:= 1;
-				westX:= -16506;
-				westY:= 124161;
+				westX:= -16235;
+				westY:= 124261;
 				westZ:= -3122;
-				TargetIDwest:= 1209031883;
+				TargetIDwest:= AgationID1;
 				northX:= -14567;
 				northY:= 121175;
 				northZ:= -2994;
-				TargetIDnorth:= 1209031881;
+				TargetIDnorth:= AgationID2;
+				eastX:= -12060;
+				eastY:= 123641;
+				eastZ:= -3099;
+				TargetIDeast:= AgationID3;
+				southX:= -14168;
+				southY:= 126418;
+				southZ:= -3151;
+				TargetIDsouth:= AgationID4;
 				TimerSuicide.enabled:= true;
 			  end;
 		'stopgludio': begin
@@ -1350,6 +1370,9 @@ procedure UserCommands;    // комманды пользователя
 				pck:='';
 				suicide:= 0;
 				TimerSuicide.enabled:= false;
+				TimerMoveToTown.enabled:= false;
+				readymove:= 0;
+				readysuicide:= 0;
 			  end;
 	end;
  if InitMode then case (ReadS(2)) of
@@ -1434,6 +1457,26 @@ procedure UserCommands;    // комманды пользователя
 					pck:='';
 				  end;
 			  end;
+		'agation1':	  begin
+				AgationID1:= TargetID;
+				SendMsg_to_CL('Agation1: '+inttostr(AgationID1)+' is added into base');
+				pck:='';
+		  end;
+		'agation2':begin
+				AgationID2:= TargetID;
+				SendMsg_to_CL('Agation2: '+inttostr(AgationID2)+' is added into base');
+				pck:='';
+		  end;
+		'agation3':	  begin
+				AgationID3:= TargetID;
+				SendMsg_to_CL('Agation3: '+inttostr(AgationID3)+' is added into base');
+				pck:='';
+		  end;
+		'agation4':begin
+				AgationID4:= TargetID;
+				SendMsg_to_CL('Agation4: '+inttostr(AgationID4)+' is added into base');
+				pck:='';
+		  end;
 		'start':  begin                                               // собственно запуск бота
                pck:='';
                StartGame;
@@ -1565,8 +1608,9 @@ function GetMinDistID : integer;     // функция поиска ближай
 		exit;
 	end
 	else rest:= 0;
+	
   if MobsLastIndex = 0 then exit;
-  MinDist:=RastoyanieToMe(MobsXYZ[1,OX], MobsXYZ[1,OY]);
+  MinDist:= 1000000;
   result:= 0;
   for i:=1 to MobsLastIndex do if (MobsDist[i] <= Radius) and (MobsIsAttackable[i]) then
    begin
@@ -2242,22 +2286,35 @@ procedure OnTimerParty(Sender: TObject);
 
 end;
 
-procedure OnTimerSuicide (Sender: TObject);         // боевой таймер
-	var distWest, distNorth: integer;
+procedure OnTimerSuicide (Sender: TObject);
+	var distWest, distNorth, distEast, distSouth, dist: integer;
  begin
 	if (readymove = 0) then
 		begin
 			distWest:= RastoyanieToMe(westX,westY);
 			distNorth:= RastoyanieToMe(northX,northY);
+			distEast:= RastoyanieToMe(eastX,eastY);
+			distSouth:= RastoyanieToMe(southX,southY);
 			readymove:= 1;
-			if distWest < distNorth then
+			if distWest < distNorth then 
 				begin
+					dist:= distWest;
 					TargetID:= TargetIDwest;
-					
-				end else
+				end else 
 				begin
-					TargetID:= TargetIDNorth;
-				end;
+					dist:= distNorth;
+					TargetID:= TargetIDnorth;
+				end;	
+			if distEast < dist then 
+				begin
+					dist:= distEast;
+					TargetID:= TargetIDeast;
+				end;	
+			if distSouth < dist then 
+				begin
+					dist:= distSouth;
+					TargetID:= TargetIDsouth;
+				end;	
 		end;
 	if (readysuicide = 0) and (TargetID = TargetIDwest) and ((abs(MyX - westX) >= 50) or (abs(MyY - westY) >= 50)) then
 		begin
@@ -2269,8 +2326,28 @@ procedure OnTimerSuicide (Sender: TObject);         // боевой таймер
 			MoveToMain(northX, northY, northZ);
 			exit;
 		end;
+	if (readysuicide = 0) and (TargetID = TargetIDsouth) and ((abs(MyX - southX) >= 50) or (abs(MyY - southY) >= 50)) then
+		begin
+			MoveToMain(southX, southY, southZ);
+			exit;
+		end;
+	if (readysuicide = 0) and (TargetID = TargetIDeast) and ((abs(MyX - eastX) >= 50) or (abs(MyY - eastY) >= 50)) then
+		begin
+			MoveToMain(eastX, eastY, eastZ);
+			exit;
+		end;
 	readysuicide:= 1;
 	suicideAttack;
+ end;
+ 
+procedure OnTimerMoveToTown (Sender: TObject);
+ begin
+	if (readymove = 1) then
+		begin
+			readymove:=0;
+			exit;
+		end;
+	moveToTown();
  end;
  
 procedure moveToTown;
@@ -2364,16 +2441,14 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
     TargetID:= MobsObjID[MinDistID];
     PhisicalAttack;                           // берем вражину в таргет
     AttackCycle:= 0;
-	GoOutAll(0,0,MyX,MyY,MyZ,0,'default');
     exit;
    end; 
-  if (abs(MyX-CenterX) > 20) and (abs(MyY-CenterY) > 20) then 
+  if (abs(MyX-CenterX) > 1000) or (abs(MyY-CenterY) > 1000) then 
    begin
 	GoOutAll(MyX,MyY,CenterX,CenterY,CenterZ,1,'center');
 	exit;
    end;
-	SendMsg_to_CL('three check');
-   GoOutAll(0,0,MyX,MyY,MyZ,0,'center');
+   // GoOutAll(0,0,MyX,MyY,MyZ,0,'center');
  end;
 
 procedure OnRBTargetReload (Sender: TObject);         // боевой таймер
@@ -2755,18 +2830,18 @@ procedure Die06;
 procedure OnTimerBaf1(Sender: TObject);
   begin
 	//баф командира (ШЕ) -------------------------------------------------------------
-	if (RastoyanieToMe(AssistX1, AssistY1) > 200) or (MyHP < HPlevelProcent) or ((AssistID <> 0) and (AssistHP < AssistHPlevelProcent)) then exit;
-	if (a1o < 6) then
+	if (RastoyanieToMe(AssistX1, AssistY1) > 200) or (MyHP < HPlevelProcent) or ((AssistID <> 0) and (AssistHP < AssistHPlevelProcent)) or (sit1 = 1) then exit;
+	if (a1o < 9) then
 		begin
 		  if (a1o = 0) then bafA1('2F F4 04 00 00 00 00 00 00 00',MyID); //вамп
 		  if (a1o = 1) then bafA1('2F 2C 04 00 00 00 00 00 00 00',MyID); //па
 		  if (a1o = 2) then bafA1('2F 10 04 00 00 00 00 00 00 00',MyID); //пд
 		  if (a1o = 3) then bafA1('2F B4 04 00 00 00 00 00 00 00',MyID); //вв
 		  if (a1o = 4) then bafA1('2F 35 04 00 00 00 00 00 00 00',MyID); //фокус
-		 // if (a1o = 5) then bafA1('2F DA 04 00 00 00 00 00 00 00',MyID); //деф виспер- сила крита
-		  if (a1o = 5) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MyID); //ментал
-		 // if (a1o = 7) then bafA1('2F D8 04 00 00 00 00 00 00 00',MyID); //гвиданс-акураси
-		 // if (a1o = 8) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MyID) else if (a1o = 8) then a1o:= a1o + 1;;  //резист к ветру
+		  if (a1o = 5) then bafA1('2F DA 04 00 00 00 00 00 00 00',MyID); //деф виспер- сила крита
+		  if (a1o = 6) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MyID); //ментал
+		  if (a1o = 7) then bafA1('2F D8 04 00 00 00 00 00 00 00',MyID); //гвиданс-акураси
+		  if (a1o = 8) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MyID) else if (a1o = 8) then a1o:= a1o + 1;;  //резист к ветру
 		  a1o:= a1o + 1;
 		  exit;
 		end;	
@@ -2791,61 +2866,61 @@ procedure OnTimerBaf1(Sender: TObject);
 		  exit;
 		end;
 	//баф воина-помощника (ШЕ) -------------------------------------------------------------
-	if (AssistID <> 0) and (a1w < 6) then
+	if (AssistID <> 0) and (a1w < 9) then
 		begin
 		  if (a1w = 0) then bafA1('2F F4 04 00 00 00 00 00 00 00',AssistID); //вамп
 		  if (a1w = 1) then bafA1('2F 2C 04 00 00 00 00 00 00 00',AssistID); //па
 		  if (a1w = 2) then bafA1('2F 10 04 00 00 00 00 00 00 00',AssistID); //пд
 		  if (a1w = 3) then bafA1('2F B4 04 00 00 00 00 00 00 00',AssistID); //вв
 		  if (a1w = 4) then bafA1('2F 35 04 00 00 00 00 00 00 00',AssistID); //фокус
-		  //if (a1w = 5) then bafA1('2F DA 04 00 00 00 00 00 00 00',AssistID); //деф виспер- сила крита
-		  if (a1w = 5) then bafA1('2F 0B 04 00 00 00 00 00 00 00',AssistID); //ментал
-		  //if (a1w = 7) then bafA1('2F D8 04 00 00 00 00 00 00 00',AssistID); //гвиданс-акураси
-		  //if (a1w = 8) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',AssistID) else if (a1w = 8) then a1w:= a1w + 1;;  //резист к ветру
+		  if (a1w = 5) then bafA1('2F DA 04 00 00 00 00 00 00 00',AssistID); //деф виспер- сила крита
+		  if (a1w = 6) then bafA1('2F 0B 04 00 00 00 00 00 00 00',AssistID); //ментал
+		  if (a1w = 7) then bafA1('2F D8 04 00 00 00 00 00 00 00',AssistID); //гвиданс-акураси
+		  if (a1w = 8) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',AssistID) else if (a1w = 8) then a1w:= a1w + 1;;  //резист к ветру
 		  a1w:= a1w + 1;
 		  exit;
 		end;		
 	//баф 0 мага (ШЕ) --------------------------------------------------------------
-	if (MageAssistID <> 0) and  (a1m < 4) then
+	if (MageAssistID <> 0) and  (a1m < 5) then
 		begin
 		  if (a1m = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID);  //емп
 		  if (a1m = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID); //пд
 		  if (a1m = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID);  //ментал
-		  //if (a1m = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID);  //wild magic
-		  if (a1m = 3) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID) else if (a1m = 4) then a1m:= a1m + 1;;  //резист к ветру
+		  if (a1m = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID);  //wild magic
+		  if (a1m = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID) else if (a1m = 4) then a1m:= a1m + 1;;  //резист к ветру
 		  a1m:= a1m + 1;
 		  exit;
 		end;
 	//баф 1 мага (ШЕ) --------------------------------------------------------------
-	if (MageAssistID1 <> 0) and  (a1m1 < 4) then
+	if (MageAssistID1 <> 0) and  (a1m1 < 5) then
 		begin
 		  if (a1m1 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID1);  //емп
 		  if (a1m1 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID1); //пд
 		  if (a1m1 = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID1);  //ментал
-		  //if (a1m1 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID1);  //wild magic
-		  if (a1m1 = 3) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID1) else if (a1m1 = 4) then a1m1:= a1m1 + 1;;  //резист к ветру
+		  if (a1m1 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID1);  //wild magic
+		  if (a1m1 = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID1) else if (a1m1 = 4) then a1m1:= a1m1 + 1;;  //резист к ветру
 		  a1m1:= a1m1 + 1;
 		  exit;
 		end;
 	//баф 2 мага (ШЕ) --------------------------------------------------------------
-	if (MageAssistID2 <> 0) and  (a1m2 < 4) then
+	if (MageAssistID2 <> 0) and  (a1m2 < 5) then
 		begin
 		  if (a1m2 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID2);  //емп
 		  if (a1m2 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID2); //пд
 		  if (a1m2 = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID2);  //ментал
-		  //if (a1m2 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID2);  //wild magic
-		  if (a1m2 = 3) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID2) else if (a1m2 = 4) then a1m2:= a1m2 + 1;;  //резист к ветру
+		  if (a1m2 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID2);  //wild magic
+		  if (a1m2 = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID2) else if (a1m2 = 4) then a1m2:= a1m2 + 1;;  //резист к ветру
 		  a1m2:= a1m2 + 1;
 		  exit;
 		end;
 	//баф 3 мага (ШЕ) --------------------------------------------------------------
-	if (MageAssistID3 <> 0) and  (a1m3 < 4) then
+	if (MageAssistID3 <> 0) and  (a1m3 < 5) then
 		begin
 		  if (a1m3 = 0) then bafA1('2F 23 04 00 00 00 00 00 00 00',MageAssistID3);  //емп
 		  if (a1m3 = 1) then bafA1('2F 10 04 00 00 00 00 00 00 00',MageAssistID3); //пд
 		  if (a1m3 = 2) then bafA1('2F 0B 04 00 00 00 00 00 00 00',MageAssistID3);  //ментал
-		  //if (a1m3 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID3);  //wild magic
-		  if (a1m3 = 3) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID3) else if (a1m3 = 4) then a1m3:= a1m3 + 1;;  //резист к ветру
+		  if (a1m3 = 3) then bafA1('2F 17 05 00 00 00 00 00 00 00',MageAssistID3);  //wild magic
+		  if (a1m3 = 4) and (full = 1) then bafA1('2F A5 04 00 00 00 00 00 00 00',MageAssistID3) else if (a1m3 = 4) then a1m3:= a1m3 + 1;;  //резист к ветру
 		  a1m3:= a1m3 + 1;
 		  exit;
 		end;
@@ -2884,65 +2959,65 @@ end;
 procedure OnTimerBaf2(Sender: TObject);
   begin
 	//баф командира (ПП) -----------------------------------------------
-	if (RastoyanieToMe(AssistX2, AssistY2) > 200) or (MyHP < HPlevelProcent) or ((AssistID <> 0) and (AssistHP < AssistHPlevelProcent)) then exit;
-	if (a2o < 1) then //11
+	if (RastoyanieToMe(AssistX2, AssistY2) > 200) or (MyHP < HPlevelProcent) or ((AssistID <> 0) and (AssistHP < AssistHPlevelProcent)) or (sit2 = 1) then exit;
+	if (a2o < 11) then
 		begin
-			//if (a2o = 0) then bafA2('2F 15 04 00 00 00 00 00 00 00',MyID); //блес ХП
-			//if (a2o = 1) then bafA2('2F 18 04 00 00 00 00 00 00 00',MyID); //блес MП
-			//if (a2o = 2) and (WarriorSpoilCrafterBd <> 3) and (WarriorSpoilCrafterBd <> 4) then bafA2('2F DB 04 00 00 00 00 00 00 00',MyID) else if (a2o = 2) then a2o:= a2o + 1;  //блес Щит
-			//if (a2o = 3) then bafA2('2F 3E 04 00 00 00 00 00 00 00',MyID); //хаст
-			//if (a2o = 4) then bafA2('2F 0C 04 00 00 00 00 00 00 00',MyID); //маджик барьер
-			if (a2o = 0) then bafA2('2F 3D 04 00 00 00 00 00 00 00',MyID); //акумен
-			//if (a2o = 6) then bafA2('2F 14 04 00 00 00 00 00 00 00',MyID); //реген ХП
-			//if (a2o = 7) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',MyID) else if (a2o = 7) then a2o:= a2o + 1; //резист к огню
-			//if (a2o = 8) and (sacred = 1) then bafA2('2F 13 04 00 00 00 00 00 00 00',MyID) else if (a2o = 8) then a2o:= a2o + 1; //святое оружие
-			//if (a2o = 9) and (full = 1) then bafA2('2F 08 04 00 00 00 00 00 00 00',MyID) else if (a2o = 9) then a2o:= a2o + 1; //сопротивление кровотечению
-			//if (a2o = 10) and (bers = 1) then bafA2('2F 26 04 00 00 00 00 00 00 00',MyID) else if (a2o = 10) then a2o:= a2o + 1; //берс
+			if (a2o = 0) then bafA2('2F 15 04 00 00 00 00 00 00 00',MyID); //блес ХП
+			if (a2o = 1) then bafA2('2F 18 04 00 00 00 00 00 00 00',MyID); //блес MП
+			if (a2o = 2) and (WarriorSpoilCrafterBd <> 3) and (WarriorSpoilCrafterBd <> 4) then bafA2('2F DB 04 00 00 00 00 00 00 00',MyID) else if (a2o = 2) then a2o:= a2o + 1;  //блес Щит
+			if (a2o = 3) then bafA2('2F 3E 04 00 00 00 00 00 00 00',MyID); //хаст
+			if (a2o = 4) then bafA2('2F 0C 04 00 00 00 00 00 00 00',MyID); //маджик барьер
+			if (a2o = 5) then bafA2('2F 3D 04 00 00 00 00 00 00 00',MyID); //акумен
+			if (a2o = 6) then bafA2('2F 14 04 00 00 00 00 00 00 00',MyID); //реген ХП
+			if (a2o = 7) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',MyID) else if (a2o = 7) then a2o:= a2o + 1; //резист к огню
+			if (a2o = 8) and (sacred = 1) then bafA2('2F 13 04 00 00 00 00 00 00 00',MyID) else if (a2o = 8) then a2o:= a2o + 1; //святое оружие
+			if (a2o = 9) and (full = 1) then bafA2('2F 08 04 00 00 00 00 00 00 00',MyID) else if (a2o = 9) then a2o:= a2o + 1; //сопротивление кровотечению
+			if (a2o = 10) and (bers = 1) then bafA2('2F 26 04 00 00 00 00 00 00 00',MyID) else if (a2o = 10) then a2o:= a2o + 1; //берс
 		    a2o:= a2o + 1;
 		    exit;
 		end;
 	//баф ПП (ПП) ---------------------------------------------------------
-	if (a2a2 < 4) then //10
+	if (a2a2 < 10) then
 		begin
-			//if (a2a2 = 0) then bafA2('2F 3D 04 00 00 00 00 00 00 00',AssistID2); //акумен
-			//if (a2a2 = 1) then bafA2('2F 15 04 00 00 00 00 00 00 00',AssistID2); //блесс ХП
-			//if (a2a2 = 2) then bafA2('2F 18 04 00 00 00 00 00 00 00',AssistID2); //блес MП
-			//if (a2a2 = 3) then bafA2('2F 0C 04 00 00 00 00 00 00 00',AssistID2); //маджик барьер
-			if (a2a2 = 0) then bafA2('2F 10 04 00 00 00 00 00 00 00',AssistID2); //пд
-			if (a2a2 = 1) then bafA2('2F B4 04 00 00 00 00 00 00 00',AssistID2); //вв
-			if (a2a2 = 2) then bafA2('2F 0B 04 00 00 00 00 00 00 00',AssistID2); //ментал
-			if (a2a2 = 3) then bafA2('2F 36 04 00 00 00 00 00 00 00',AssistID2); //кон
-			//if (a2a2 = 8) then bafA2('2F 14 04 00 00 00 00 00 00 00',AssistID2); //реген ХП
-			//if (a2a2 = 9) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',AssistID2) else if (a2a2 = 9) then a2a2:= a2a2 + 1; //резист к огню
+			if (a2a2 = 0) then bafA2('2F 3D 04 00 00 00 00 00 00 00',AssistID2); //акумен
+			if (a2a2 = 1) then bafA2('2F 15 04 00 00 00 00 00 00 00',AssistID2); //блесс ХП
+			if (a2a2 = 2) then bafA2('2F 18 04 00 00 00 00 00 00 00',AssistID2); //блес MП
+			if (a2a2 = 3) then bafA2('2F 0C 04 00 00 00 00 00 00 00',AssistID2); //маджик барьер
+			if (a2a2 = 4) then bafA2('2F 10 04 00 00 00 00 00 00 00',AssistID2); //пд
+			if (a2a2 = 5) then bafA2('2F B4 04 00 00 00 00 00 00 00',AssistID2); //вв
+			if (a2a2 = 6) then bafA2('2F 0B 04 00 00 00 00 00 00 00',AssistID2); //ментал
+			if (a2a2 = 7) then bafA2('2F 36 04 00 00 00 00 00 00 00',AssistID2); //кон
+			if (a2a2 = 8) then bafA2('2F 14 04 00 00 00 00 00 00 00',AssistID2); //реген ХП
+			if (a2a2 = 9) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',AssistID2) else if (a2a2 = 9) then a2a2:= a2a2 + 1; //резист к огню
 		    a2a2:= a2a2 + 1;
 		    exit;
 		end;
 	//баф ШЕ (ПП) -------------------------------------------------------
-	if (AssistID1 <> 0) and (a2a1 < 1) then
+	if (AssistID1 <> 0) and (a2a1 < 6) then
 		begin
 			if (a2a1 = 0) then bafA2('2F 3D 04 00 00 00 00 00 00 00',AssistID1); //акумен
-			//if (a2a1 = 1) then bafA2('2F 15 04 00 00 00 00 00 00 00',AssistID1); //блесс ХП
-			//if (a2a1 = 2) then bafA2('2F 18 04 00 00 00 00 00 00 00',AssistID1); //блес MП
-			//if (a2a1 = 3) then bafA2('2F 0C 04 00 00 00 00 00 00 00',AssistID1); //маджик барьер
-			//if (a2a1 = 4) then bafA2('2F 14 04 00 00 00 00 00 00 00',AssistID1); //реген ХП
-			//if (a2a1 = 5) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',AssistID1) else if (a2a1 = 5) then a2a1:= a2a1 + 1; //резист к огню
+			if (a2a1 = 1) then bafA2('2F 15 04 00 00 00 00 00 00 00',AssistID1); //блесс ХП
+			if (a2a1 = 2) then bafA2('2F 18 04 00 00 00 00 00 00 00',AssistID1); //блес MП
+			if (a2a1 = 3) then bafA2('2F 0C 04 00 00 00 00 00 00 00',AssistID1); //маджик барьер
+			if (a2a1 = 4) then bafA2('2F 14 04 00 00 00 00 00 00 00',AssistID1); //реген ХП
+			if (a2a1 = 5) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',AssistID1) else if (a2a1 = 5) then a2a1:= a2a1 + 1; //резист к огню
 		    a2a1:= a2a1 + 1;
 		    exit;
 		end;
 	//баф воина-помощника (ПП) -----------------------------------------------
-	if (AssistID <> 0) and (a2w < 1) then //11
+	if (AssistID <> 0) and (a2w < 11) then
 		begin
-			//if (a2w = 0) then bafA2('2F 15 04 00 00 00 00 00 00 00',AssistID); //блес ХП
-			//if (a2w = 1) then bafA2('2F 18 04 00 00 00 00 00 00 00',AssistID); //блес MП
-			//if (a2w = 2) and (WarriorSpoilCrafterBd2 <> 3) and (WarriorSpoilCrafterBd2 <> 4) then bafA2('2F DB 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 2) then a2w:= a2w + 1; //блес Щит
-			//if (a2w = 3) then bafA2('2F 3E 04 00 00 00 00 00 00 00',AssistID); //хаст
-			//if (a2w = 4) then bafA2('2F 0C 04 00 00 00 00 00 00 00',AssistID); //маджик барьер
-			if (a2w = 0) then bafA2('2F 3D 04 00 00 00 00 00 00 00',AssistID); //акумен
-			//if (a2w = 6) then bafA2('2F 14 04 00 00 00 00 00 00 00',AssistID); //реген ХП
-			//if (a2w = 7) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 7) then a2w:= a2w + 1; //резист к огню
-			//if (a2w = 8) and (sacred = 1) then bafA2('2F 13 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 8) then a2w:= a2w + 1; //святое оружие
-			//if (a2w = 9) and (full = 1) then bafA2('2F 08 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 9) then a2w:= a2w + 1; //сопротивление кровотечению
-			//if (a2w = 10) and (bers = 1) then bafA2('2F 26 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 10) then a2w:= a2w + 1; //берс
+			if (a2w = 0) then bafA2('2F 15 04 00 00 00 00 00 00 00',AssistID); //блес ХП
+			if (a2w = 1) then bafA2('2F 18 04 00 00 00 00 00 00 00',AssistID); //блес MП
+			if (a2w = 2) and (WarriorSpoilCrafterBd2 <> 3) and (WarriorSpoilCrafterBd2 <> 4) then bafA2('2F DB 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 2) then a2w:= a2w + 1; //блес Щит
+			if (a2w = 3) then bafA2('2F 3E 04 00 00 00 00 00 00 00',AssistID); //хаст
+			if (a2w = 4) then bafA2('2F 0C 04 00 00 00 00 00 00 00',AssistID); //маджик барьер
+			if (a2w = 5) then bafA2('2F 3D 04 00 00 00 00 00 00 00',AssistID); //акумен
+			if (a2w = 6) then bafA2('2F 14 04 00 00 00 00 00 00 00',AssistID); //реген ХП
+			if (a2w = 7) and (full = 1) then bafA2('2F A7 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 7) then a2w:= a2w + 1; //резист к огню
+			if (a2w = 8) and (sacred = 1) then bafA2('2F 13 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 8) then a2w:= a2w + 1; //святое оружие
+			if (a2w = 9) and (full = 1) then bafA2('2F 08 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 9) then a2w:= a2w + 1; //сопротивление кровотечению
+			if (a2w = 10) and (bers = 1) then bafA2('2F 26 04 00 00 00 00 00 00 00',AssistID) else if (a2w = 10) then a2w:= a2w + 1; //берс
 		    a2w:= a2w + 1;
 		    exit;
 		end;
@@ -3746,6 +3821,7 @@ begin
 				begin
 					SendMsg_to_CL('continue suicide attack');
 					TimerSuicide.enabled:=true;
+					TimerMoveToTown.enabled:=false;
 				end;
     #$0E: if MyID=ReadD(2) then     //   StatusUpdate:h(ObjectID)d(Attributes)
            begin
@@ -3758,8 +3834,7 @@ begin
 				begin
 					TimerSuicide.enabled:=false;
 					readysuicide:= 0;
-					readymove:= 0;
-					moveToTown;
+					TimerMoveToTown.enabled:=true;
 				end;
              end;
            end;
@@ -3955,7 +4030,7 @@ begin
    //------------------------------------------------------------------------------------------------------------------
    if ((ConnectName = NickName) or (ConnectName = AssistantName) or (ConnectName = AssistantName3)) and FromServer then  // разбор пакетов от сервера
   case pck[1] of
-   #$05: if ((ReadD(6) = MyID) or (ReadD(6) = AssistID) or (ReadD(6) = AssistID3)) and (ReadD(2) <> AssistID1) and (ReadD(2) <> AssistID2)  and (ReadD(2) <> AssistID3) and (not InitMode) then Attack05;  //   05= Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)  
+   #$05: if ((ReadD(6) = MyID) or (ReadD(6) = AssistID) or (ReadD(6) = AssistID3)) and (ReadD(2) <> AssistID1) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) and (ReadD(2) <> AssistID2)  and (ReadD(2) <> AssistID3) and (not InitMode) then Attack05;  //   05= Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)  
    #$06: Die06;                             //   Die:d(ChaID)
    #$0C: if (TestPovtorLastMobObjID(ReadD(2)) > 0) then         //   DropItem:h(PlayerID)h(ObjectID)i(ItemID)d(X)d(Y)d(Z)d(Stackable)d(Count)
            begin
@@ -3975,13 +4050,13 @@ begin
 		  end;
    #$05, #$60: if ((not InitMode) or (activeDefence = 1)) then
 		  begin 
-			if (rbMode = 0) and (MyID = ReadD(2)) and (ReadD(6) <> AssistID) and (ReadD(6) <> AssistID1) and (ReadD(6) <> AssistID2) then PhisicalAttack2;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)	
-		    if (ReadD(6) = MyID) and (ReadD(2) <> AssistID) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) and  (ReadD(2) <> AssistID3) then 
+			if (rbMode = 0) and (MyID = ReadD(2)) and (ReadD(6) <> AssistID) and (ReadD(6) <> AssistID1) and (ReadD(6) <> AssistID2) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then PhisicalAttack2;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)	
+		    if (ReadD(6) = MyID) and (ReadD(2) <> AssistID) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) and  (ReadD(2) <> AssistID3) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then 
 			  begin	
 				if (TargetID2 = 0) then TargetID2:= ReadD(2); // Если атакуют основу и нет своей цели
 				PhisicalAttack2;
 			  end else		 
-			if (ReadD(6) = AssistID) and (ReadD(2) <> MyID) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) and  (ReadD(2) <> AssistID3) then 
+			if (ReadD(6) = AssistID) and (ReadD(2) <> MyID) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) and  (ReadD(2) <> AssistID3) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then 
 			  begin	
 				if (TargetID2 = 0) then TargetID2:= ReadD(2); // Если атакуют воина-помощника он сам за себя постоит
 				PhisicalAttack2;
@@ -4023,8 +4098,8 @@ begin
 		  end;
    #$05, #$60: if ((not InitMode) or (activeDefence = 1)) then
 		  begin 
-			if (MyID = ReadD(2)) and (ReadD(6) <> AssistID) and (ReadD(6) <> AssistID1) and (ReadD(6) <> AssistID2) and (ReadD(6) <> AssistID3) then PhisicalAttack2;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
-			if (ReadD(6) = AssistID3) and (ReadD(2) <> MyID) and (ReadD(2) <> AssistID) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then 
+			if (MyID = ReadD(2)) and (ReadD(6) <> AssistID) and (ReadD(6) <> AssistID1) and (ReadD(6) <> AssistID2) and (ReadD(6) <> AssistID3) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then PhisicalAttack2;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
+			if (ReadD(6) = AssistID3) and (ReadD(2) <> MyID) and (ReadD(2) <> AssistID) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then 
 			  begin	
 				if (TargetID2 = 0) then TargetID2:= ReadD(2); // Если атакуют воина-помощника он сам за себя постоит
 				PhisicalAttack2;
@@ -4071,7 +4146,7 @@ begin
 					if (sit1=0) and (sit=0) then	//	and ((abs(AssistX1-MyX) > 100) or (abs(AssistY1-MyY) > 100))
 						MoveToHead(AssistX1, AssistY1, 1, MyX, MyY, MyZ, 'default');
 				end;
-			 if (ReadD(6) = AssistID1) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then 
+			 if (ReadD(6) = AssistID1) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2)  and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4)then 
 				begin
 					if (AssistID <> 0) and (rbMode = 0) then
 						begin
@@ -4113,7 +4188,7 @@ begin
 					if (sit2=0) and (sit=0) then	//	and ((abs(AssistX2-MyX) > 100) or (abs(AssistY2-MyY) > 100))	
 						MoveToHead(AssistX2, AssistY2, 2, MyX, MyY, MyZ, 'default');			
 				end;
-			if (ReadD(6) = AssistID2) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) then // (not InitMode) скрипт уже включен командой start
+			if (ReadD(6) = AssistID2) and (ReadD(2) <> AssistID1) and  (ReadD(2) <> AssistID2) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then // (not InitMode) скрипт уже включен командой start
 				begin
 					if (AssistID <> 0) and (rbMode = 0) then
 						begin
@@ -4158,7 +4233,7 @@ begin
 		  end;
    #$05: begin 
 			if (MyID = ReadD(2))  and (not InitMode) then MagicAttack;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
-			if (ReadD(6) = MageAssistID) then // (not InitMode) скрипт уже включен командой start
+			if (ReadD(6) = MageAssistID) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then // (not InitMode) скрипт уже включен командой start
 				begin
 					if (AssistID <> 0) and (rbMode = 0) then
 						begin
@@ -4213,7 +4288,7 @@ begin
 		  end;
    #$05: begin 
 			if (MyID = ReadD(2))  and (not InitMode) then MagicAttack1;          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
-			if (ReadD(6) = MageAssistID1) then // (not InitMode) скрипт уже включен командой start
+			if (ReadD(6) = MageAssistID1) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then // (not InitMode) скрипт уже включен командой start
 				begin
 					if (AssistID <> 0) and (rbMode = 0) then
 						begin
@@ -4268,7 +4343,7 @@ begin
 		  end;
    #$05: begin 
 			if (MyID = ReadD(2))  and (not InitMode) then MagicAttack2;	          //Attack:d(AttackerID)d(TargetID)d(Damage)b(Flags)d(X)d(Y)d(Z)h(Hits)			 
-			if (ReadD(6) = MageAssistID2) then // (not InitMode) скрипт уже включен командой start
+			if (ReadD(6) = MageAssistID2) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then // (not InitMode) скрипт уже включен командой start
 				begin
 					if (AssistID <> 0) and (rbMode = 0) then
 						begin
@@ -4323,7 +4398,7 @@ begin
 		  end;
    #$05: begin 
 			if (MyID = ReadD(2))  and (not InitMode) then MagicAttack3;	
-			if (ReadD(6) = MageAssistID3) then // (not InitMode) скрипт уже включен командой start
+			if (ReadD(6) = MageAssistID3) and (ReadD(2) <> AgationID1) and (ReadD(2) <> AgationID2) and (ReadD(2) <> AgationID3) and (ReadD(2) <> AgationID4) then // (not InitMode) скрипт уже включен командой start
 				begin
 					if (AssistID <> 0) and (rbMode = 0) then
 						begin
