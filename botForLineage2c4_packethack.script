@@ -82,8 +82,9 @@ const
  WarriorSpoilCrafterBd = 1;      // 0 - warrior; 1 - spoil; 2 - крафтер; 3 - бд; 4-TX ####### Выставить кто будет основой NickName 
  //NickName = 'Pontiff';          		//4 Твой ник в игре Dark Avenger
  NickName = 'Jinbe';         //1 Твой ник в игре Спойлер
+ //NickName = 'Jimbei';         //1 Твой ник в игре Спойлер
  //NickName = 'Dis';         				//1 Твой ник в игре Спойлер
- //NickName = 'Jimbei';          		//2 Твой ник в игре Крафтер
+ //NickName = 'Jimbey';          		//2 Твой ник в игре Крафтер
  //NickName = 'Roronoa';          		//3 Твой ник в игре Blade Dancer
  //NickName = 'Shanks';
  //NickName = 'Mansherry';
@@ -92,31 +93,31 @@ const
  //AssistantName = '';					  // если помощников не будет
  //AssistantName = 'Pontiff';          		//0 Помощник Paladin
  //AssistantName = 'Nefertari';        //1 Помощник  Спойлер
- AssistantName = 'Jimbei';          	//2 Помощник  Крафтер
+ AssistantName = 'Dis';          	//2 Помощник  Крафтер
  //AssistantName = 'Demon';          		//3 Помощник Blade Dancer
  //AssistantName  = 'Incubus';          	//4 Твой ник в игре Destroyer
  //AssistantName  = 'Roronoa';
  
  AssistantName3  = '';//Terror';          		// Твой ник в игре Over
  
- //AssistantName1 = '';  
- //AssistantName2 = ''; 
- AssistantName1 = 'Nefertari';       // Ник ше
- AssistantName2 = 'Nojiko';     // Ник пп
+ AssistantName1 = '';  
+ AssistantName2 = ''; 
+ //AssistantName1 = 'Nefertari';       // Ник ше
+ //AssistantName2 = 'Nojiko';     // Ник пп
  //AssistantName1 = 'Pixie';    // Ник ee
  //AssistantName2 = '';    // Ник биш
  
- MageAssistantName = ''; // 'Executioner'; //'Executioner';			// ДД-маги
- MageAssistantName1 = ''; // 'DarkDevil'; //DarkDevil';			// ДД-маги
+ MageAssistantName = 'Nefertari'; // 'Executioner'; //'Executioner';			// ДД-маги
+ MageAssistantName1 = '';//'Nojiko'; // 'DarkDevil'; //DarkDevil';			// ДД-маги
  MageAssistantName2 = ''; // 'Demonessa'; //'Demonessa';			// ДД-маги
  MageAssistantName3 = ''; // 'DarkSirena'; //'DarkSirena';
  
  polyaxe = 1; // гном крафтер-основа пользуется 0 - топор, 1 - копье
  polyaxeAssistant = 1; // гном крафтер-помощник пользуется 0 - топор, 1 - копье
  
- Interlude = false;                 // C4 -false , C6 - true;
+ Interlude = true;                 // C4 -false , C6 - true;
  CharNumber = 0;                    // если больше одного перса на аккаунте, то задаем его порядковый номер, нумерация начинается с нуля.
- Radius_Kacha = 3000;                 // Радиус кача, если 0 - то задавать вручную через клиента (изменять от 100 до 9999)
+ Radius_Kacha = 4500;                 // Радиус кача, если 0 - то задавать вручную через клиента (изменять от 100 до 9999)
  
  //############################################################################
 //---------------------------------------------------------------------------------------
@@ -1653,8 +1654,11 @@ procedure Sweep(i:integer);          // команда свипа
     WriteD(MyY);
     WriteD(MyZ);
     WriteC(1); 
-    SendToServerEx(NickName);	
+    SendToServerEx(NickName);
+	delay(100);
     buf:=hstr(b2);
+    SendToServerEx(NickName);
+	delay(50);
     SendToServerEx(NickName);
 end;
 
@@ -2111,8 +2115,13 @@ end;
 procedure OnTimerPickUp (Sender: TObject);         // таймер поднятия дропа
  var
   povtor: integer;
- begin
-  if (AgroTest > 0) then
+ begin	
+  if (diepause = 1)then
+   begin
+    InitPickUpMode(false);
+    exit;
+   end;
+  if (AgroTest > 0)then
    begin
     TargetID:= 0;
     InitPickUpMode(false);
@@ -2393,7 +2402,35 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
 	if (hitMe = 0) and (ItemsLastIndex = 0) and (rbmode = 0) then
 		begin
 			GoOutAll(MyX,MyY,MobsXYZ[i, OX], MobsXYZ[i, OY], MobsXYZ[i, OZ],1,'near');
-			if (abs(MyX - MobsXYZ[i, OX]) >= 100) or (abs(MyY - MobsXYZ[i, OY]) >= 100) then exit else hitMe:= 1;
+			if (abs(MyX - MobsXYZ[i, OX]) >= 200) or (abs(MyY - MobsXYZ[i, OY]) >= 200) then 
+				begin
+					inc(AttackCycle);
+					if ((AttackCycle mod 30) = 29) then 
+					  begin	
+						if (rbMode = 0) then MoveToHead(MyX, MyY, 0, MyX, MyY, MyZ, 'default'); // отбежать основой
+						if (AssistID <> 0)  and (rbMode = 0) then MoveToHead(AssistX, AssistY, 7, MyX, MyY, MyZ, 'default');  //отбежать помощником-воином
+						hitMe:=0;
+					  end;
+					if ((AttackCycle mod 40) = 38) then GoOutAll(0,0,MyX,MyY,MyZ,0,'default');		// отбежать всеми
+					if (AttackCycle > Calculated_AttackTime) then              // если бежим к мобу больше ...
+					  begin
+					  i:= TestPovtor(TargetID);
+					  if i > 0 then
+					   begin
+						MobsIsAttackable[i]:= false;                  //DelDBItem(i);
+						MobsIsSwipable[i]:= false;     
+						MobsAgression[i]:= false;
+					   end;
+					   TargetID:= 0;
+					   MoveToHead(MyX, MyY, 0, MyX, MyY, MyZ, 'default');
+					 end;
+					exit; 
+				end	
+			else
+				begin
+					AttackCycle:= 0;
+					hitMe:= 1;
+				end;	
 		end;
 	if (spoilpause = 0) then PhisicalAttack;
 	if (WarriorSpoilCrafterBd = 0) then PowerAttack;  							                         
@@ -2429,6 +2466,7 @@ procedure OnTimerCombat (Sender: TObject);         // боевой таймер
 	if (WarriorSpoilCrafterBd2 = 3) and (selfBaf2 = 1)  and (arrow = 1) then ReflectArrow2 else selfBaf2:= 0;
 	if (WarriorSpoilCrafterBd = 3) and (selfBafBD = 1) then BafBD;
 	if (WarriorSpoilCrafterBd2 = 3) and (selfBafBD = 1) then BafBD2;
+	if (diepause = 1) then exit;
   if (ItemsLastIndex > 0) and (rbmode = 0) then  // если чего-то валяется на земле, то
    begin
     InitPickUpMode(true);   // надо дроп подбирать
